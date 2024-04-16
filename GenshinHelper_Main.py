@@ -8,18 +8,15 @@ import csv
 ###Character Database
 CharacterNames = ['Albedo',]
 
+
 #Character Quality
 Character_5stars = ['Albedo',]
-Character_4stars = 
+Character_4stars = []
 
 #Character Search Features
-rows = []
+def search():
+    Character = input('Insert Character')
+    if Character in Character_5stars:
+        return '5 Star'
+    
 
-with open('Character.csv','r') as file:
-    csvreader = csv.reader(file)
-    header = next(csvreader)
-    for row in csvreader:
-        rows.append(row)
-
-print(header)
-print(rows)
