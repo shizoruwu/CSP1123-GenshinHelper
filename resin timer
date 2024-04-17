@@ -1,0 +1,38 @@
+import tkinter as tk
+from tkinter import *
+import time
+
+root = Tk()
+root.geometry("450x300")
+root.title("Resin Timer")
+
+#resin left
+def number():
+    try:
+        int (resin_box.get())
+        answer.config()
+    except ValueError:
+        answer.config(text="Please fill in ONLY NUMBER!!!")
+
+resin = Label(root, text="Enter current Resin:")
+resin.pack(pady=15)
+
+resin_box = Entry(root)
+resin_box.pack(pady=10)
+
+button = Button(root, text="Confirm", command=number)
+button.pack(pady=5)
+
+answer = Label(root, text='')
+answer.pack(pady=20)
+
+
+
+
+
+
+
+
+
+
+root.mainloop()
