@@ -24,23 +24,26 @@ CharaLst = ['Albedo','Alhaitam','Aloy','Amber','Arataki Itto'
 class search(tk.Tk):
     def __init__(self):
         
-        tk.Tk.__init__(self)
+      tk.Tk.__init__(self)
 
-        self.title('Character Search')
-        self.wm_minsize(width=800,height=450)
+      self.title('Character Search')
+      self.wm_minsize(width=800,height=450)
 
-        ttk.Label(self, text = "Select Character to show their Informations.", 
-        font = ("Times New Roman", 15)).grid(column = 0, 
-        row = 1, padx = 10, pady = 15) 
+      ttk.Label(self, text = "Select Character to show their Informations.", 
+      font = ("Times New Roman", 15)).grid(column = 0, row = 1, padx = 10, pady = 15) 
 
-        ttk.Label(self, text = "Select Character :", 
-          font = ("Times New Roman", 12)).grid(column = 0, 
-          row = 2, padx = 5, pady = 5) 
+      ttk.Label(self, text = "Select Character :", 
+      font = ("Times New Roman", 12)).grid(column = 0, row = 2, padx = 0, pady = 5) 
         
-        textn = tk.StringVar
-        CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=CharaLst,width=30,textvariable=textn)
-        CharaChosen.grid(column = 1, row = 2 , padx=5, pady=5 )
-        CharaChosen.current()
+      textn = tk.StringVar
+      CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=CharaLst,width=30,textvariable=textn)
+      CharaChosen.grid(column = 1, row = 2 , padx = 5, pady = 5 )
+      CharaChosen.current()
+
+      #Buttons to Enter Character Names
+      EnterButton = ttk.Button(self, text="ENTER", width = 8)
+      EnterButton.grid(column = 2, row = 2, padx = 18, pady = 5 )
+
     
 def fetchname():
   conn = sqlite3.connect('genshindata.db')
