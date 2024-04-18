@@ -10,10 +10,27 @@ root.title("Resin Timer")
 #resin left
 def number():
     try:
-        int (resin_box.get())
-        answer.config()
+        #get the number of current resin by the user
+        a = int (resin_box.get())
+
+        #input between 0-160
+        if a <= 160:
+            #calculate how much time needed to gather resin to 160
+            time_per_resin = 8
+            minutes_needed = (160-a) * time_per_resin
+            
+
+
+
+
+            answer.config(text="Time needed: " + str(minutes_needed) + " minutes")
+        
+        else:
+            answer.config(text="Number must be between 0 to 160")
+        
     except ValueError:
         answer.config(text="Please fill in ONLY NUMBER!!!")
+        answer.config(foreground="red")
 
 resin = Label(root, text="Enter current Resin:")
 resin.pack(pady=15)
@@ -26,7 +43,6 @@ button.pack(pady=5)
 
 answer = Label(root, text='')
 answer.pack(pady=20)
-
 
 
 
