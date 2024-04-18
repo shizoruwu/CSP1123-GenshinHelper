@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import *
-import time
+from datetime import datetime, timedelta
 
 #resin timer features
 root = Tk()
@@ -18,20 +18,23 @@ def number():
             #calculate how much time needed to gather resin to 160
             time_per_resin = 8
             minutes_needed = (160-a) * time_per_resin
-            
 
+            #clock
+            duration = timedelta(minutes=minutes_needed)
+            current_time = datetime.now()
+            new_time = current_time + duration
 
-
-
-            answer.config(text="Time needed: " + str(minutes_needed) + " minutes")
+            #result
+            false_result_label.config(text="Full refill in: " + new_time.strftime("%d-%m-%Y %I:%M:%S %p"))
         
         else:
-            answer.config(text="Number must be between 0 to 160")
+            false_result_label.config(text="Number must be between 0 to 160")
         
     except ValueError:
-        answer.config(text="Please fill in ONLY NUMBER!!!")
-        answer.config(foreground="red")
+        false_result_label.config(text="Please fill in ONLY NUMBER!!!")
+        false_result_label.config(foreground="red")
 
+#features label
 resin = Label(root, text="Enter current Resin:")
 resin.pack(pady=15)
 
@@ -41,14 +44,23 @@ resin_box.pack(pady=10)
 button = Button(root, text="Confirm", command=number)
 button.pack(pady=5)
 
-answer = Label(root, text='')
-answer.pack(pady=20)
+#wrong result
+false_result_label = Label(root, text='')
+false_result_label.pack(pady=20)
 
+#correct result
+#result = Label(root)
 
+#clock
+#update clock every second
+def update_clock():
+    current_time = datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
+    clock_label.config(text="Current Time: " + current_time)
+    root.after(1000, update_clock)
 
+#clock label
+clock_label = Label(root, text='')
+clock_label.pack(pady=25)
 
-
-
-
-
+update_clock()
 root.mainloop()
