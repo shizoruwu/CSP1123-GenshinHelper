@@ -1,5 +1,6 @@
 ###Testing for search function
 
+import sqlite3 
 import tkinter as tk
 from tkinter import ttk
 
@@ -20,6 +21,7 @@ CharaLst = ['Albedo','Alhaitam','Aloy','Amber','Arataki Itto'
 
 class search(tk.Tk):
     def __init__(self):
+        
         tk.Tk.__init__(self)
 
         self.title('Character Search')
@@ -29,10 +31,23 @@ class search(tk.Tk):
           font = ("Times New Roman", 15)).grid(column = 0, 
           row = 5, padx = 10, pady = 25) 
         
+        #Retrieve Names
+        fetchname()
+        
         textn = tk.StringVar
-        CharaChosen = ttk.Combobox(self,values=CharaLst,width=30,textvariable=textn)
+        CharaChosen = ttk.Combobox(self,values=namelist,width=30,textvariable=textn)
         CharaChosen.grid(column = 1, row = 5 , padx=10, pady=25 )
         CharaChosen.current()
+    
+def fetchname():
+  conn = sqlite3.connect('genshindata.db')
+  cur = conn.cursor()
+  cur.execute("SELECT Name FROM Characterdata")
+  namerows = cur.fetchall()
+  
+  #Global Variable Namelist to pull
+  global namelist
+  namelist = [list(row) for row in namerows]
 
 CurrentScreen = search()
 CurrentScreen.mainloop()
