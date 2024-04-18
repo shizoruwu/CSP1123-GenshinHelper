@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 #resin timer features
 root = Tk()
-root.geometry("450x300")
+root.geometry("600x400")
 root.title("Resin Timer")
 
 #resin left
@@ -60,7 +60,7 @@ def update_clock():
 
 #clock label
 clock_label = Label(root, text='')
-clock_label.pack(pady=25)
+clock_label.pack(side="bottom", anchor="w")
 
 update_clock()
 root.mainloop()
