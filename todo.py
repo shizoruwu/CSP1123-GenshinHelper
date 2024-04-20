@@ -2,6 +2,7 @@
 
 from tkinter import *
 from tkinter import ttk
+import sqlite3
 
 # Create a window
 root = Tk()
@@ -16,17 +17,28 @@ frame.grid(column=0, row=0) # Render
 label = ttk.Label(frame, text="To-Do List", font=("TkDefaultFont", 12))
 label.grid(column=1, row=0, columnspan=5) # Render
 
-# Create some checkbox
-b1 = BooleanVar()
-b2 = BooleanVar()
-b3 = BooleanVar()
-checkbox1 = ttk.Checkbutton(frame, variable=b1, text='Checkbox 1')
-checkbox2 = ttk.Checkbutton(frame, variable=b2, text='Checkbox 2')
-checkbox3 = ttk.Checkbutton(frame, variable=b3, text='Checkbox 3')
-# Render
-checkbox1.grid(column=1, row=1, pady=5)
-checkbox2.grid(column=1, row=2, pady=5)
-checkbox3.grid(column=1, row=3, pady=5)
+# Connect db
+DBconnection = sqlite3.connect("tasks.db")
+DBcursor = DBconnection.cursor()
+
+# Create a table if not exists
+DBcursor.execute("CREATE TABLE IF NOT EXISTS tasks(Task, Status)")
+
+# Init a dict for tasks and its status later
+tasks = {}
+
+# Read and get values from db
+values = DBcursor.execute("SELECT * FROM tasks") # Read
+values = values.fetchall() # Get
+
+# Add task and status to dict
+def db2dict():
+    for data in values:
+        # print(data[1])
+        tasks[data[0]] = eval(data[1]) # Add items to dict
+    print(f"Dict: {tasks}")
+
+db2dict()
 
 # Create "add" task button
 addB = ttk.Button(frame, text="add", width=5)
@@ -41,6 +53,6 @@ button1.grid(column=2, row=1, padx=10)
 button2.grid(column=2, row=2)
 button3.grid(column=2, row=3)
 
-print(addB.configure())
+# print(addB.configure())
 
 root.mainloop()
