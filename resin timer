@@ -8,45 +8,38 @@ root.geometry("600x400")
 root.title("Resin Timer")
 
 #resin left
-def number():
+def calculate_time():
     try:
         #get the number of current resin by the user
-        a = int (resin_box.get())
+        resin_amount = int(resin_box.get())
 
         #input between 0-160
-        if a <= 160:
-            #calculate how much time needed to gather resin to 160
+        if resin_amount <= 160:            
             time_per_resin = 8
-            minutes_needed = (160-a) * time_per_resin
+            minutes_needed = (160-resin_amount) * time_per_resin
 
-            #clock
             duration = timedelta(minutes=minutes_needed)
             current_time = datetime.now()
             new_time = current_time + duration
 
-            #result
-            false_result_label.config(text="Full refill in: " + new_time.strftime("%d-%m-%Y %I:%M:%S %p"))
-        
+            false_label.config(text="Full refill in: " + new_time.strftime("%d-%m-%Y %I:%M:%S %p"))   
         else:
-            false_result_label.config(text="Number must be between 0 to 160")
-        
+            false_label.config(text="Number must be between 0 to 160")       
     except ValueError:
-        false_result_label.config(text="Please fill in ONLY NUMBER!!!")
-        false_result_label.config(foreground="red")
+        false_label.config(text="Please fill in ONLY NUMBER!!!", foreground="red")
 
 #features label
-resin = Label(root, text="Enter current Resin:")
-resin.pack(pady=15)
+resin_label = Label(root, text="Enter current Resin:")
+resin_label.pack(pady=15)
 
 resin_box = Entry(root)
 resin_box.pack(pady=10)
 
-button = Button(root, text="Confirm", command=number)
-button.pack(pady=5)
+confirm_button = Button(root, text="Confirm", command=calculate_time)
+confirm_button.pack(pady=5)
 
-#wrong result
-false_result_label = Label(root, text='')
-false_result_label.pack(pady=20)
+false_label = Label(root, text='')
+false_label.pack(pady=20)
 
 #correct result
 #result = Label(root)
