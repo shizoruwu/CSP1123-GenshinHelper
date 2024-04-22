@@ -7,42 +7,57 @@ root = Tk()
 root.geometry("600x400")
 root.title("Resin Timer")
 
+#grid
+root.columnconfigure((0,1), weight = 1)
+root.rowconfigure((0,1,2), weight = 1)
+root.rowconfigure(3, weight = 8)
+root.rowconfigure(4, weight = 1)
+
 #resin left
 def calculate_time():
     try:
         #get the number of current resin by the user
-        resin_amount = int(resin_box.get())
+        resin_amount = int(resin_label_box.get())
+        resin_want_amount = int(resin_user_want_box.get())
 
         #input between 0-160
-        if resin_amount <= 160:            
-            time_per_resin = 8
-            minutes_needed = (160-resin_amount) * time_per_resin
-
-            duration = timedelta(minutes=minutes_needed)
-            current_time = datetime.now()
-            new_time = current_time + duration
-
-            false_label.config(text="Full refill in: " + new_time.strftime("%d-%m-%Y %I:%M:%S %p"))   
+        if resin_amount <= 160:
+            if resin_want_amount <= 160:            
+                time_per_resin = 8
+                minutes_needed = (resin_want_amount-resin_amount) * time_per_resin
+                duration = timedelta(minutes=minutes_needed)
+                current_time = datetime.now()
+                new_time = current_time + duration
+                result_label.config(text="Full refill in: " + new_time.strftime("%d-%m-%Y %I:%M:%S %p"), fg="black")   
+            else:
+                if resin_want_amount >160 :
+                    result_label.config(text="Number must be between 0 to 160")
+                else:
+                    result_label.config(text="Please fill in ONLY NUMBER!!!", fg="red")
         else:
-            false_label.config(text="Number must be between 0 to 160")       
+            result_label.config(text="Number must be between 0 to 160")
     except ValueError:
-        false_label.config(text="Please fill in ONLY NUMBER!!!", foreground="red")
+        result_label.config(text="Please fill in ONLY NUMBER!!!", fg="red")
 
 #features label
-resin_label = Label(root, text="Enter current Resin:")
-resin_label.pack(pady=15)
+resin_label = Label(root, text="Enter your current Resin :")
+resin_label.grid(row=0, column=0, sticky="e", padx=(0,20))
 
-resin_box = Entry(root)
-resin_box.pack(pady=10)
+resin_label_box = Entry(root)
+resin_label_box.grid(row=0, column=1, sticky="w")
 
-confirm_button = Button(root, text="Confirm", command=calculate_time)
-confirm_button.pack(pady=5)
+resin_user_want = Label(root, text="Enter Resin you want :")
+resin_user_want.grid(row=1,column=0, sticky="e", padx=(0,20))
 
-false_label = Label(root, text='')
-false_label.pack(pady=20)
+resin_user_want_box = Entry(root)
+resin_user_want_box.grid(row=1, column=1, sticky="w")
 
-#correct result
-#result = Label(root)
+confirm_button = Button(root, text="Confirm", command=calculate_time, width=20, height=2)
+confirm_button.grid(row=2, column=0, columnspan=2)
+
+#result
+result_label = Label(root, text='')
+result_label.grid(row=3, column=0, columnspan=2)
 
 #clock
 #update clock every second
@@ -53,7 +68,7 @@ def update_clock():
 
 #clock label
 clock_label = Label(root, text='')
-clock_label.pack(side="bottom", anchor="w")
+clock_label.grid(row=4, column=0, columnspan=1, sticky="sw")
 
 update_clock()
 root.mainloop()
