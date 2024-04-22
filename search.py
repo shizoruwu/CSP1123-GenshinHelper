@@ -2,7 +2,8 @@
 
 import sqlite3 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk 
+from PIL import ImageTk, Image
 
 #Character List Names ( DATA )
 CharaLst = ['Albedo','Alhaitam','Aloy','Amber','Arataki Itto'
@@ -20,6 +21,19 @@ CharaLst = ['Albedo','Alhaitam','Aloy','Amber','Arataki Itto'
             ,'Wanderer','Wriothesley','Xiangling','Xianyun','Xiao','Xingqiu'
             ,'Xinyan','Yae Miko','Yanfei','Yaoyao','Yelan','Yoimiya','Yun Jin','Zhongli']
 
+FiveStarCharacter = ['Albedo','Alhaitam','Aloy','Arataki Itto'
+            ,'Baizhu','Chiori'
+            ,'Cyno','Dehya','Diluc','Eula'
+            ,'Furina','Ganyu','Hu Tao'
+            ,'Jean','Kaedehara Kazuha','Kamisato Ayaka'
+            ,'Kamisato Ayato','Keqing','Klee'
+            ,'Lyney','Mona','Nahida','Navia','Neuvillette'
+            ,'Nilou','Qiqi','Raiden Shogun'
+            ,'Sangonomiya Kokomi','Shenhe'
+            ,'Tartagila','Tighnari','Traveler','Venti'
+            ,'Wanderer','Wriothesley','Xianyun','Xiao'
+            ,'Yae Miko','Yelan','Yoimiya','Zhongli']
+
 class charactersearch(tk.Tk):
     def __init__(self):
         
@@ -34,20 +48,31 @@ class charactersearch(tk.Tk):
       ttk.Label(self, text = "Select Character :", 
       font = ("Times New Roman", 12)).grid(column = 0, row = 2, padx = 0, pady = 5) 
         
-      textn = tk.StringVar
       global CharaChosen
-      CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=CharaLst,width=30,textvariable=textn)
+      global boxvalue
+      boxvalue = tk.StringVar
+      CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=CharaLst,width=20,textvariable=boxvalue)
       CharaChosen.grid(column = 1, row = 2 , padx = 5, pady = 5 )
       CharaChosen.current()
+      CharaChosen.bind('<KeyRelease>',search)
 
       #Buttons to Enter Character Names
-      EnterButton = ttk.Button(self, text="ENTER", width = 8)
+      EnterButton = ttk.Button(self, text="ENTER", width = 8,command = CharacterDataFetch)
       EnterButton.grid(column = 2, row = 2, padx = 18, pady = 5 )
 
-      CharaChosen.bind('<KeyRelease>',searchs)
+      global CharacterName
+      CharacterName = tk.StringVar()
+      CharacterName.set('')
+      ttk.Label(self,text = "CharacterName :", font = ("Times New Roman",18)).grid(column = 0,row = 4,pady = 20)
+      ttk.Label(self,textvariable = CharacterName, font = ("Times New Roman",18)).grid(column = 1,row = 4,pady = 20)
+
+# Work In Progress
+def CharacterDataFetch():
+  CharacterName = 
+
 
 #Search Function to Remove Unrelated Object
-def searchs(self):
+def search(self):
   searchvalue = self.widget.get()
   if searchvalue == '':
     CharaChosen['values'] = CharaLst
