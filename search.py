@@ -62,13 +62,14 @@ class charactersearch(tk.Tk):
 
       global CharacterName
       CharacterName = tk.StringVar()
-      CharacterName.set('')
+      CharacterName.set(' ')
       ttk.Label(self,text = "CharacterName :", font = ("Times New Roman",18)).grid(column = 0,row = 4,pady = 20)
       ttk.Label(self,textvariable = CharacterName, font = ("Times New Roman",18)).grid(column = 1,row = 4,pady = 20)
 
 # Work In Progress
 def CharacterDataFetch():
-  CharacterName = 
+  CharacterName.set(CharaChosen.get())
+  
 
 
 #Search Function to Remove Unrelated Object
