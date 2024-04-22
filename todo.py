@@ -15,7 +15,7 @@ frame.grid(column=0, row=0) # Render
 
 # Create Label
 label = ttk.Label(frame, text="To-Do List", font=("TkDefaultFont", 12))
-label.grid(column=1, row=0, columnspan=5) # Render
+label.grid(column=1, row=0, padx=(20, 5), pady=10) # Render
 
 # Connect db
 DBconnection = sqlite3.connect("tasks.db")
@@ -40,18 +40,13 @@ def db2dict():
 
 db2dict()
 
-# Create "add" task button
-addB = ttk.Button(frame, text="add", width=5)
-addB.grid(column=1, row=4, pady=5, sticky=W)
+# Create entry
+entry = ttk.Entry(frame)
+entry.grid(column=2, row=0, padx=(50, 5))
 
-# Create some button
-button1 = ttk.Button(frame, text="Delete", width=6)
-button2 = ttk.Button(frame, text="Delete", width=6)
-button3 = ttk.Button(frame, text="Delete", width=6)
-# Render
-button1.grid(column=2, row=1, padx=10)
-button2.grid(column=2, row=2)
-button3.grid(column=2, row=3)
+# Create "add" task button
+add = ttk.Button(frame, text="add", width=5)
+add.grid(column=3, row=0, pady=5, sticky=W)
 
 # print(addB.configure())
 
