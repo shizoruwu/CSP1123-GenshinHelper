@@ -36,9 +36,9 @@ def db2dict():
     for data in values:
         # print(data[1])
         tasks[data[0]] = eval(data[1]) # Add items to dict
-    print(f"Dict: {tasks}")
+    print(f"dict(39) -> {tasks}")
 
-db2dict()
+
 
 # Create entry
 entry = ttk.Entry(frame)
@@ -48,6 +48,24 @@ entry.grid(column=2, row=0, padx=(50, 5))
 add = ttk.Button(frame, text="add", width=5)
 add.grid(column=3, row=0, pady=5, sticky=W)
 
-# print(addB.configure())
+# Create multiple checkbox
+def create_checkbox():
+    row_init = 1
+    for task, status in tasks.items():
+        var = BooleanVar()
+        var.set(status)
+        # print(type(status))
+        checkbox = ttk.Checkbutton(frame, text=task, variable=var)
+        checkbox.grid(column=1, row=row_init, padx=(20, 0), pady=3, sticky=W)
+        tasks[task] = var
+        row_init += 1
+    
+    print(f"\ndict(63) -> {tasks}")
+
+# print(add.configure())
+db2dict()
+create_checkbox()
+# for k, v in tasks.items():
+#     print(v.get())
 
 root.mainloop()
