@@ -51,7 +51,8 @@ class charactersearch(tk.Tk):
       global CharaChosen
       global boxvalue
       boxvalue = tk.StringVar
-      CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=CharaLst,width=20,textvariable=boxvalue)
+      fetchname()
+      CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=namelist,width=20,textvariable=boxvalue)
       CharaChosen.grid(column = 1, row = 2 , padx = 5, pady = 5 )
       CharaChosen.current()
       CharaChosen.bind('<KeyRelease>',search)
@@ -68,9 +69,10 @@ class charactersearch(tk.Tk):
 
 # Work In Progress
 def CharacterDataFetch():
-  CharacterName.set(CharaChosen.get())
-  
+  tempcharname = CharaChosen.get()
 
+  if tempcharname in CharaLst:
+    CharacterName.set(CharaChosen.get())
 
 #Search Function to Remove Unrelated Object
 def search(self):
@@ -95,7 +97,8 @@ def fetchname():
   
   #Global Variable Namelist to pull
   global namelist
-  namelist = [list(row) for row in (namerows)]
+  namelist = [row[0] for row in namerows]
 
+#RUN WINDOW
 CurrentScreen = charactersearch()
 CurrentScreen.mainloop()
