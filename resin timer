@@ -9,9 +9,9 @@ root.title("Resin Timer")
 
 #grid
 root.columnconfigure((0,1), weight = 1)
-root.rowconfigure((0,1,2), weight = 1)
-root.rowconfigure(3, weight = 8)
-root.rowconfigure(4, weight = 1)
+root.rowconfigure((0,1,2,3), weight = 1)
+root.rowconfigure((4,5), weight = 8)
+root.rowconfigure(5, weight = 1)
 
 #resin left
 def calculate_time():
@@ -28,16 +28,19 @@ def calculate_time():
                 duration = timedelta(minutes=minutes_needed)
                 current_time = datetime.now()
                 new_time = current_time + duration
-                result_label.config(text="Full refill in: " + new_time.strftime("%d-%m-%Y %I:%M:%S %p"), fg="black")   
+                error_label.grid_forget()
+                full_refill.config(text="Full refill in: ")
+                result_label_1.config(text=new_time.strftime("%d-%m-%Y"), fg="black")   
+                result_label_2.config(text=new_time.strftime("%I:%M:%S %p"), fg="black")
             else:
                 if resin_want_amount >160 :
-                    result_label.config(text="Number must be between 0 to 160")
+                    error_label.config(text="Number must be between 0 to 160")
                 else:
-                    result_label.config(text="Please fill in ONLY NUMBER!!!", fg="red")
+                    error_label.config(text="Please fill in ONLY NUMBER!!!", fg="red")
         else:
-            result_label.config(text="Number must be between 0 to 160")
+            error_label.config(text="Number must be between 0 to 160")
     except ValueError:
-        result_label.config(text="Please fill in ONLY NUMBER!!!", fg="red")
+        error_label.config(text="Please fill in ONLY NUMBER!!!", fg="red")
 
 #features label
 resin_label = Label(root, text="Enter your current Resin :")
@@ -56,8 +59,17 @@ confirm_button = Button(root, text="Confirm", command=calculate_time, width=20, 
 confirm_button.grid(row=2, column=0, columnspan=2)
 
 #result
-result_label = Label(root, text='')
-result_label.grid(row=3, column=0, columnspan=2)
+error_label = Label(root, text='')
+error_label.grid(row=3, column=0, columnspan=2)
+
+full_refill = Label(root, text='', font=('Helvetica',20))
+full_refill.grid(row=3, column=0, columnspan=2, sticky='w')
+
+result_label_1 = Label(root, text='', font=('Helvetica',50))
+result_label_1.grid(row=4, column=0, columnspan=2)
+
+result_label_2 = Label(root, text='', font=('Helvetica',50))
+result_label_2.grid(row=5, column=0, columnspan=2, pady=(0,50))
 
 #clock
 #update clock every second
@@ -68,7 +80,7 @@ def update_clock():
 
 #clock label
 clock_label = Label(root, text='')
-clock_label.grid(row=4, column=0, columnspan=1, sticky="sw")
+clock_label.grid(row=6, column=0, columnspan=1, sticky="sw")
 
 update_clock()
 root.mainloop()
