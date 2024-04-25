@@ -3,44 +3,47 @@ from tkinter import *
 from datetime import datetime, timedelta
 
 #resin timer features
-root = Tk()
+root = tk.Tk()
 root.geometry("600x400")
 root.title("Resin Timer")
 
 #grid
 root.columnconfigure((0,1), weight = 1)
-root.rowconfigure((0,1,2,3), weight = 1)
-root.rowconfigure((4,5), weight = 8)
-root.rowconfigure(5, weight = 1)
+root.rowconfigure((0,1,2), weight = 1)
+root.rowconfigure(3, weight = 8)
+root.rowconfigure(4, weight = 1)
 
 #resin left
 def calculate_time():
     try:
         #get the number of current resin by the user
         resin_amount = int(resin_label_box.get())
-        resin_want_amount = int(resin_user_want_box.get())
+        result_text.config(state="normal")
+        error_label.grid_forget()
 
         #input between 0-160
         if resin_amount <= 160:
-            if resin_want_amount <= 160:            
-                time_per_resin = 8
-                minutes_needed = (resin_want_amount-resin_amount) * time_per_resin
-                duration = timedelta(minutes=minutes_needed)
-                current_time = datetime.now()
-                new_time = current_time + duration
-                error_label.grid_forget()
-                full_refill.config(text="Full refill in: ")
-                result_label_1.config(text=new_time.strftime("%d-%m-%Y"), fg="black")   
-                result_label_2.config(text=new_time.strftime("%I:%M:%S %p"), fg="black")
-            else:
-                if resin_want_amount >160 :
-                    error_label.config(text="Number must be between 0 to 160")
-                else:
-                    error_label.config(text="Please fill in ONLY NUMBER!!!", fg="red")
+            result_text.delete(1.0, tk.END)
+            for i in range(20, 161, 20):
+                if resin_amount < i:
+                    time_per_resin = 8
+                    minutes_needed = (i-resin_amount) * time_per_resin
+                    duration = timedelta(minutes=minutes_needed)
+                    current_time = datetime.now()
+                    hours = minutes_needed // 60
+                    minutes = minutes_needed % 60
+                    new_time = current_time + duration
+                    result_text.insert(tk.END, f"{i} resin in {hours}h {minutes:02}min {new_time.strftime('%H:%M')}\n")                    
         else:
-            error_label.config(text="Number must be between 0 to 160")
+            error_label.config(text="Number must in between 0 to 160")
+            error_label.grid(row=2, column=0, columnspan=2)
+            result_text.delete(1.0, tk.END)
     except ValueError:
         error_label.config(text="Please fill in ONLY NUMBER!!!", fg="red")
+        error_label.grid(row=2, column=0, columnspan=2)
+        result_text.delete(1.0, tk.END)
+    finally:
+        result_text.config(state="disabled")
 
 #features label
 resin_label = Label(root, text="Enter your current Resin :")
@@ -49,27 +52,18 @@ resin_label.grid(row=0, column=0, sticky="e", padx=(0,20))
 resin_label_box = Entry(root)
 resin_label_box.grid(row=0, column=1, sticky="w")
 
-resin_user_want = Label(root, text="Enter Resin you want :")
-resin_user_want.grid(row=1,column=0, sticky="e", padx=(0,20))
-
-resin_user_want_box = Entry(root)
-resin_user_want_box.grid(row=1, column=1, sticky="w")
-
 confirm_button = Button(root, text="Confirm", command=calculate_time, width=20, height=2)
-confirm_button.grid(row=2, column=0, columnspan=2)
+confirm_button.grid(row=1, column=0, columnspan=2)
 
 #result
 error_label = Label(root, text='')
-error_label.grid(row=3, column=0, columnspan=2)
+error_label.grid(row=2, column=0, columnspan=2)
 
-full_refill = Label(root, text='', font=('Helvetica',20))
-full_refill.grid(row=3, column=0, columnspan=2, sticky='w')
+full_refill = Label(root, text='Results:', font=('Helvetica',20))
+full_refill.grid(row=2, column=0, columnspan=2, sticky='w')
 
-result_label_1 = Label(root, text='', font=('Helvetica',50))
-result_label_1.grid(row=4, column=0, columnspan=2)
-
-result_label_2 = Label(root, text='', font=('Helvetica',50))
-result_label_2.grid(row=5, column=0, columnspan=2, pady=(0,50))
+result_text = tk.Text(root, height=10, width=30)
+result_text.grid(row=3, column=0, columnspan=2)
 
 #clock
 #update clock every second
@@ -80,7 +74,7 @@ def update_clock():
 
 #clock label
 clock_label = Label(root, text='')
-clock_label.grid(row=6, column=0, columnspan=1, sticky="sw")
+clock_label.grid(row=4, column=0, columnspan=1, sticky="sw")
 
 update_clock()
 root.mainloop()
