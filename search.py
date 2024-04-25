@@ -5,22 +5,6 @@ import tkinter as tk
 from tkinter import ttk 
 from PIL import ImageTk, Image
 
-#Character List Names ( DATA )
-CharaLst = ['Albedo','Alhaitam','Aloy','Amber','Arataki Itto'
-            ,'Baizhu','Barbara','Beidou','Bennett','Candace'
-            ,'Charlotte','Chevreuse','Chiori','Chongyun','Collei'
-            ,'Cyno','Dehya','Diluc','Diona','Dori','Eula','Faruzan'
-            ,'Fischl','Freminet','Furina','Gaming','Ganyu','Hu Tao'
-            ,'Jean','Kaedehara Kazuha','Kaeya','Kamisato Ayaka'
-            ,'Kamisato Ayato','Kaveh','Keqing','Kirara','Klee'
-            ,'Kujou Sara','Kuki Shinobu','Layla','Lisa','Lynette'
-            ,'Lyney','Mika','Mona','Nahida','Navia','Neuvillette'
-            ,'Nilou''Nigguang','Noelle','Qiqi','Raiden Shogun','Razor'
-            ,'Rosaria','Sangonomiya Kokomi','Sayu','Shenhe','Shikanoin Heizou'
-            ,'Sucrose','Tartagila','Thoma','Tighnari','Traveler','Venti'
-            ,'Wanderer','Wriothesley','Xiangling','Xianyun','Xiao','Xingqiu'
-            ,'Xinyan','Yae Miko','Yanfei','Yaoyao','Yelan','Yoimiya','Yun Jin','Zhongli']
-
 FiveStarCharacter = ['Albedo','Alhaitam','Aloy','Arataki Itto'
             ,'Baizhu','Chiori'
             ,'Cyno','Dehya','Diluc','Eula'
@@ -67,28 +51,7 @@ class charactersearch(tk.Tk):
       ttk.Label(self,text = "CharacterName :", font = ("Times New Roman",18)).grid(column = 0,row = 4,pady = 20)
       ttk.Label(self,textvariable = CharacterName, font = ("Times New Roman",18)).grid(column = 1,row = 4,pady = 20)
 
-# Work In Progress
-def CharacterDataFetch():
-  tempcharname = CharaChosen.get()
-
-  if tempcharname in CharaLst:
-    CharacterName.set(CharaChosen.get())
-
-#Search Function to Remove Unrelated Object
-def search(self):
-  searchvalue = self.widget.get()
-  if searchvalue == '':
-    CharaChosen['values'] = CharaLst
-
-  else:
-    data = []
-    for item in CharaLst:
-      if searchvalue.lower() in item.lower():
-        data.append(item)
-    
-    CharaChosen['values'] = data
-        
-###UNUSED ATM Connect Data from SQLite3
+#Pull Data From SQLite for dropdown listbox names
 def fetchname():
   conn = sqlite3.connect('genshindata.db')
   cur = conn.cursor()
@@ -98,6 +61,39 @@ def fetchname():
   #Global Variable Namelist to pull
   global namelist
   namelist = [row[0] for row in namerows]
+  namelist.sort()
+
+  conn.close()
+  
+# Work In Progress (Data Fetch From Selection)
+def CharacterDataFetch():
+  conn = sqlite3.connect('genshindata.db')
+  cursor = conn.cursor()
+  currentname = CharaChosen.get()
+  
+  if currentname in namelist:
+    cursor.execute("SELECT Name FROM Characterdata WHERE Name = ?", (currentname,))
+    row = cursor.fetchone()
+    if row:
+      CharacterName.set(row[0])
+    
+  conn.close()
+
+  return CharacterName
+
+#Search Function to Remove Unrelated Object
+def search(self):
+  searchvalue = self.widget.get()
+  if searchvalue == '':
+    CharaChosen['values'] = namelist
+
+  else:
+    data = []
+    for item in namelist:
+      if searchvalue.lower() in item.lower():
+        data.append(item)
+    
+    CharaChosen['values'] = data
 
 #RUN WINDOW
 CurrentScreen = charactersearch()
