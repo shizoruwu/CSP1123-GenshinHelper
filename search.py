@@ -20,36 +20,52 @@ FiveStarCharacter = ['Albedo','Alhaitam','Aloy','Arataki Itto'
 
 class charactersearch(tk.Tk):
     def __init__(self):
-        
       tk.Tk.__init__(self)
 
       self.title('Character Search')
-      self.wm_minsize(width=800,height=450)
+      self.geometry('800x450')
 
       ttk.Label(self, text = "Select Character to show their Informations.", 
-      font = ("Times New Roman", 15)).grid(column = 0, row = 1, padx = 10, pady = 15) 
+      font = ("Times New Roman", 15)).grid(columnspan = 2, row = 1, padx = 10, pady = 15) 
 
       ttk.Label(self, text = "Select Character :", 
-      font = ("Times New Roman", 12)).grid(column = 0, row = 2, padx = 0, pady = 5) 
-        
+      font = ("Times New Roman", 15)).grid(column = 0, row = 2, padx = 20, pady = 20,sticky = 'e') 
+
+      #Search Box Combobox  
       global CharaChosen
       global boxvalue
       boxvalue = tk.StringVar
       fetchname()
       CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=namelist,width=20,textvariable=boxvalue)
-      CharaChosen.grid(column = 1, row = 2 , padx = 5, pady = 5 )
+      CharaChosen.grid(column = 1, row = 2 , padx = 5, pady = 20 )
       CharaChosen.current()
       CharaChosen.bind('<KeyRelease>',search)
 
       #Buttons to Enter Character Names
-      EnterButton = ttk.Button(self, text="ENTER", width = 8,command = CharacterDataFetch)
-      EnterButton.grid(column = 2, row = 2, padx = 18, pady = 5 )
+      EnterButton = ttk.Button(self, text="SEARCH", width = 8,command = CharacterDataFetch)
+      EnterButton.grid(column = 2, row = 2, padx = 18, pady = 20 )
 
+      #Pulled Data from Search
       global CharacterName
+      global CharacterElement
+      global CharacterWeapon
+      global CharacterRegion
+
       CharacterName = tk.StringVar()
+      CharacterElement = tk.StringVar()
+      CharacterWeapon = tk.StringVar()
+      CharacterRegion = tk.StringVar()
+
       CharacterName.set(' ')
-      ttk.Label(self,text = "CharacterName :", font = ("Times New Roman",18)).grid(column = 0,row = 4,pady = 20)
-      ttk.Label(self,textvariable = CharacterName, font = ("Times New Roman",18)).grid(column = 1,row = 4,pady = 20)
+      CharacterElement.set(' ')
+      CharacterWeapon.set(' ')
+      CharacterRegion.set(' ')
+
+      ttk.Label(self,text = "Character Name :", font = ("Times New Roman",18)).grid(column = 0,row = 4,padx = 20,pady = 5,sticky = 'e')
+      ttk.Label(self,textvariable = CharacterName, font = ("Times New Roman",18)).grid(column = 1,row = 4,padx = 15,pady = 5,sticky = 'w')
+
+      ttk.Label(self,text = "Character Element :", font = ("Times New Roman",18)).grid(column = 0,row = 5,pady = 5,sticky = 'e')
+      ttk.Label(self,textvariable = CharacterElement, font = ("Times New Roman",18)).grid(column = 1,row = 5,padx = 15,pady = 5,sticky = 'w')
 
 #Pull Data From SQLite for dropdown listbox names
 def fetchname():
@@ -65,17 +81,31 @@ def fetchname():
 
   conn.close()
   
-# Work In Progress (Data Fetch From Selection)
+#Data Fetch From Selection
 def CharacterDataFetch():
   conn = sqlite3.connect('genshindata.db')
   cursor = conn.cursor()
   currentname = CharaChosen.get()
   
   if currentname in namelist:
+    #Fetch Character Name
     cursor.execute("SELECT Name FROM Characterdata WHERE Name = ?", (currentname,))
     row = cursor.fetchone()
     if row:
       CharacterName.set(row[0])
+
+    #Fetch Character Element
+    cursor.execute("SELECT Element FROM Characterdata WHERE Name = ?", (currentname,))
+    row = cursor.fetchone()
+    if row:
+      CharacterElement.set(row[0])
+
+  #Remove data if Name = False
+  else:
+    CharacterName.set('Please Enter A Valid Name')
+    CharacterElement.set(' ')
+    CharacterWeapon.set(' ')
+    CharacterRegion.set(' ')
     
   conn.close()
 
