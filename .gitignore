@@ -1,5 +1,4 @@
 test*.py
-tasks.db
 oop*.py
 
 ## from https://github.com/github/gitignore/blob/main/Python.gitignore
