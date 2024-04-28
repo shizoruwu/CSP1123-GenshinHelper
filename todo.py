@@ -26,6 +26,8 @@ DBcursor.execute("CREATE TABLE IF NOT EXISTS tasks(Task, Status)")
 
 # Init a dict for tasks and its status later
 tasks = {}
+# Get raw widget variable name(create_checkbox widget(checkbutton name)) for refresh function
+raw_tasks = [] 
 
 # Read and get values from db
 values = DBcursor.execute("SELECT * FROM tasks") # Read
@@ -44,6 +46,7 @@ def db2dict():
 entry = ttk.Entry(frame)
 entry.grid(column=2, row=0, padx=(50, 5))
 
+## Add task function
 def add_task():
     # print(entry.get())
     text = entry.get()
@@ -51,9 +54,11 @@ def add_task():
         print("Error - Blank")
     elif text not in tasks:
         DBcursor.execute(f"INSERT INTO tasks VALUES('{text}', 'False')")
+        tasks[text] = False
         print("Task added.")
     elif text in tasks:
         DBcursor.execute(f"INSERT INTO tasks VALUES('{text} (1)', 'False')")
+        tasks[text] = False
         print("Task added.")
     DBconnection.commit() # Save added task to db
     
@@ -67,14 +72,28 @@ def create_checkbox():
     row_init = 1
     for task, status in tasks.items():
         var = BooleanVar()
-        var.set(status)
+        # if status is BooleanVar, get bool by get func
+        if isinstance(status, BooleanVar):
+            var2 = status.get()
+            var.set(var2)
+        elif isinstance(status, bool):
+            var.set(status)
         # print(type(status))
         checkbox = ttk.Checkbutton(frame, text=task, variable=var)
         checkbox.grid(column=1, row=row_init, padx=(20, 0), pady=3, sticky=W)
         tasks[task] = var
+        raw_tasks.append(checkbox)
         row_init += 1
     
     print(f"\ndict(create_checkbox) -> {tasks}")
+
+def refresh():
+    for var in raw_tasks:
+        var.destroy()
+    create_checkbox()
+
+refreshb = ttk.Button(frame, text="Refresh", width=9, command=refresh)
+refreshb.grid(column=4, row=0, sticky=W, padx=(5, 0))
 
 # print(add.configure())
 db2dict()
