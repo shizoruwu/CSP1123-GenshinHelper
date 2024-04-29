@@ -61,6 +61,14 @@ def add_task():
     DBconnection.commit() # Save added task to db
     
 
+def get_cb_state():
+    for task in tasks:
+        val = tasks[task].get() # Get the value(state)
+        # Update lastest checkbox value(state) to db
+        DBcursor.execute(f"UPDATE tasks SET Status = '{val}' WHERE Task = '{task}'")
+    DBconnection.commit()
+    print("Automatically saved checkbox value.")
+
 # Create "add" task button
 add = ttk.Button(frame, text="Add", width=5, command=add_task)
 add.grid(column=3, row=0, pady=5, sticky=W)
@@ -77,7 +85,7 @@ def create_checkbox():
         elif isinstance(status, bool):
             var.set(status)
         # print(type(status))
-        checkbox = ttk.Checkbutton(frame, text=task, variable=var)
+        checkbox = ttk.Checkbutton(frame, text=task, variable=var, command=get_cb_state)
         checkbox.grid(column=1, row=row_init, padx=(20, 0), pady=3, sticky=W)
         tasks[task] = var
         raw_tasks.append(checkbox)
