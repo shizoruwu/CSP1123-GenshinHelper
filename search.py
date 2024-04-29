@@ -5,18 +5,7 @@ import tkinter as tk
 from tkinter import ttk 
 from PIL import ImageTk, Image
 
-FiveStarCharacter = ['Albedo','Alhaitam','Aloy','Arataki Itto'
-            ,'Baizhu','Chiori'
-            ,'Cyno','Dehya','Diluc','Eula'
-            ,'Furina','Ganyu','Hu Tao'
-            ,'Jean','Kaedehara Kazuha','Kamisato Ayaka'
-            ,'Kamisato Ayato','Keqing','Klee'
-            ,'Lyney','Mona','Nahida','Navia','Neuvillette'
-            ,'Nilou','Qiqi','Raiden Shogun'
-            ,'Sangonomiya Kokomi','Shenhe'
-            ,'Tartagila','Tighnari','Traveler','Venti'
-            ,'Wanderer','Wriothesley','Xianyun','Xiao'
-            ,'Yae Miko','Yelan','Yoimiya','Zhongli']
+FiveStarCharacter = ['Albedo','Alhaitam','Arlecchino','Aloy','Arataki Itto','Baizhu','Chiori','Cyno','Dehya','Diluc','Eula','Furina','Ganyu','Hu Tao','Jean','Kaedehara Kazuha','Kamisato Ayaka','Kamisato Ayato','Keqing','Klee','Lyney','Mona','Nahida','Navia','Neuvillette','Nilou','Qiqi','Raiden Shogun','Sangonomiya Kokomi','Shenhe','Tartagila','Tighnari','Traveler','Venti','Wanderer','Wriothesley','Xianyun','Xiao','Yae Miko','Yelan','Yoimiya','Zhongli']
 
 class charactersearch(tk.Tk):
     def __init__(self):
@@ -29,7 +18,7 @@ class charactersearch(tk.Tk):
       font = ("Times New Roman", 15)).grid(columnspan = 2, row = 1, padx = 10, pady = 15) 
 
       ttk.Label(self, text = "Select Character :", 
-      font = ("Times New Roman", 15)).grid(column = 0, row = 2, padx = 20, pady = 20,sticky = 'e') 
+      font = ("Times New Roman", 18)).grid(column = 0, row = 2, pady = 20,sticky = 'e') 
 
       #Search Box Combobox  
       global CharaChosen
@@ -37,7 +26,7 @@ class charactersearch(tk.Tk):
       boxvalue = tk.StringVar
       fetchname()
       CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=namelist,width=20,textvariable=boxvalue)
-      CharaChosen.grid(column = 1, row = 2 , padx = 5, pady = 20 )
+      CharaChosen.grid(column = 1, row = 2 , padx = 20, pady = 20 )
       CharaChosen.current()
       CharaChosen.bind('<KeyRelease>',search)
 
@@ -50,23 +39,33 @@ class charactersearch(tk.Tk):
       global CharacterElement
       global CharacterWeapon
       global CharacterRegion
+      global CharacterPhoto
 
       CharacterName = tk.StringVar()
       CharacterElement = tk.StringVar()
       CharacterWeapon = tk.StringVar()
       CharacterRegion = tk.StringVar()
+      CharacterPhoto = ImageTk.PhotoImage(Image.new('RGBA', (200, 300), (0, 0, 0, 0)))
 
       CharacterName.set(' ')
       CharacterElement.set(' ')
       CharacterWeapon.set(' ')
       CharacterRegion.set(' ')
 
-      ttk.Label(self,text = "Character Name :", font = ("Times New Roman",18)).grid(column = 0,row = 4,padx = 20,pady = 5,sticky = 'e')
+      ttk.Label(self,text = "Character Name :", font = ("Times New Roman",18)).grid(column = 0,row = 4,pady = 5,sticky = 'e')
       ttk.Label(self,textvariable = CharacterName, font = ("Times New Roman",18)).grid(column = 1,row = 4,padx = 15,pady = 5,sticky = 'w')
 
       ttk.Label(self,text = "Character Element :", font = ("Times New Roman",18)).grid(column = 0,row = 5,pady = 5,sticky = 'e')
       ttk.Label(self,textvariable = CharacterElement, font = ("Times New Roman",18)).grid(column = 1,row = 5,padx = 15,pady = 5,sticky = 'w')
 
+      ttk.Label(self,text = "Character Weapon :", font = ("Times New Roman",18)).grid(column = 0,row = 6,pady = 5,sticky = 'e')
+      ttk.Label(self,textvariable = CharacterWeapon, font = ("Times New Roman",18)).grid(column = 1,row = 6,padx = 15,pady = 5,sticky = 'w')
+
+      ttk.Label(self,text = "Character Region :", font = ("Times New Roman",18)).grid(column = 0,row = 7,pady = 5,sticky = 'e')
+      ttk.Label(self,textvariable = CharacterRegion, font = ("Times New Roman",18)).grid(column = 1,row = 7,padx = 15,pady = 5,sticky = 'w')
+
+      ttk.Label(self,image = CharacterPhoto).grid(column = 3,row = 2,rowspan = 6,sticky = 'e')
+      
 #Pull Data From SQLite for dropdown listbox names
 def fetchname():
   conn = sqlite3.connect('genshindata.db')
@@ -99,6 +98,27 @@ def CharacterDataFetch():
     row = cursor.fetchone()
     if row:
       CharacterElement.set(row[0])
+
+    cursor.execute("SELECT WeaponType FROM Characterdata WHERE Name = ?", (currentname,))
+    row = cursor.fetchone()
+    if row:
+      CharacterWeapon.set(row[0])
+
+    cursor.execute("SELECT Region FROM Characterdata WHERE Name = ?", (currentname,))
+    row = cursor.fetchone()
+    if row:
+      CharacterRegion.set(row[0])
+
+    #Show Character Image
+    file_name = currentname
+
+    image_path = f"Genshin_Image/{file_name}_Card.webp"
+    image = Image.open(image_path)
+    resized_image = image.resize((200, 600))
+    charphoto = ImageTk.PhotoImage(resized_image)
+    charimg
+
+
 
   #Remove data if Name = False
   else:
