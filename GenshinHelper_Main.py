@@ -2,4 +2,8 @@
 
 import tkinter as tk 
 
-#Main Menu
+###Main Menu
+
+###Character Database
+    
+
