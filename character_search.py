@@ -37,12 +37,7 @@ class charactersearch(tk.Tk):
     EnterButton.grid(column = 2, row = 2, padx = 18, pady = 20 )
 
     #Pulled Data from Search
-    global CharacterName
-    global CharacterStar
-    global CharacterElement
-    global CharacterWeapon
-    global CharacterRegion
-    global CharacterPhoto
+    global CharacterName , CharacterStar , CharacterElement , CharacterWeapon , CharacterRegion , CharacterPhoto
 
     CharacterName = tk.StringVar()
     CharacterStar = tk.StringVar()

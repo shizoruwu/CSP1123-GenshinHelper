@@ -19,7 +19,7 @@ label = ttk.Label(frame, text="To-Do List", font=("Georgia", 15))
 label.grid(column=1, row=0, padx=(20, 5), pady=10, sticky=W) # Render
 
 # Connect db
-DBconnection = sqlite3.connect("tasks.db")
+DBconnection = sqlite3.connect("genshindata.db")
 DBcursor = DBconnection.cursor()
 
 # Create a table if not exists
