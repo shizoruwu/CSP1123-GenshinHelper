@@ -1,1 +1,9 @@
-#new file testing
+import tkinter as tk
+from tkinter import *
+
+#clc features
+root = tk.Tk()
+root.geometry("600x400")
+root.title("Character Level Calculator")
+
+#grid
