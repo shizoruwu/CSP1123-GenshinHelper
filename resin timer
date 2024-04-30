@@ -12,7 +12,7 @@ root.title("Resin Timer")
 
 #grid
 root.columnconfigure((0,1), weight = 1)
-root.rowconfigure((0,1,2), weight = 1)
+root.rowconfigure((0,1,2,), weight = 1)
 root.rowconfigure(3, weight = 8)
 root.rowconfigure(4, weight = 1)
 
