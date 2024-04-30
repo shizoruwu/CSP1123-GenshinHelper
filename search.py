@@ -9,8 +9,6 @@ from ctypes import windll
 #FIX BLURRY FONTS
 windll.shcore.SetProcessDpiAwareness(1)
 
-FiveStarCharacter = ['Albedo','Alhaitam','Arlecchino','Aloy','Arataki Itto','Baizhu','Chiori','Cyno','Dehya','Diluc','Eula','Furina','Ganyu','Hu Tao','Jean','Kaedehara Kazuha','Kamisato Ayaka','Kamisato Ayato','Keqing','Klee','Lyney','Mona','Nahida','Navia','Neuvillette','Nilou','Qiqi','Raiden Shogun','Sangonomiya Kokomi','Shenhe','Tartagila','Tighnari','Traveler','Venti','Wanderer','Wriothesley','Xianyun','Xiao','Yae Miko','Yelan','Yoimiya','Zhongli']
-
 class charactersearch(tk.Tk):
   def __init__(self):
     tk.Tk.__init__(self)
@@ -106,7 +104,7 @@ class charactersearch(tk.Tk):
         CharacterName.set(row[0])
 
       #Determine Character Star
-      if currentname in FiveStarCharacter:
+      if currentname in self.FiveStarCharacter:
         CharacterStar.set('5 Star Character')
       else:
         CharacterStar.set('4 Star Character')
@@ -165,7 +163,10 @@ class charactersearch(tk.Tk):
         if searchvalue.lower() in item.lower():
           data.append(item)
       
-      CharaChosen['values'] = data
+      CharaChosen['values'] = data 
+
+  #Temporary Data
+  FiveStarCharacter = ['Albedo','Alhaitham','Arlecchino','Aloy','Arataki Itto','Baizhu','Chiori','Cyno','Dehya','Diluc','Eula','Furina','Ganyu','Hu Tao','Jean','Kaedehara Kazuha','Kamisato Ayaka','Kamisato Ayato','Keqing','Klee','Lyney','Mona','Nahida','Navia','Neuvillette','Nilou','Qiqi','Raiden Shogun','Sangonomiya Kokomi','Shenhe','Tartagila','Tighnari','Traveler','Venti','Wanderer','Wriothesley','Xianyun','Xiao','Yae Miko','Yelan','Yoimiya','Zhongli']
 
 #RUN WINDOW
 CurrentScreen = charactersearch()
