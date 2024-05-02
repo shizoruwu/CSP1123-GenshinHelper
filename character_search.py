@@ -14,36 +14,38 @@ class charactersearch(tk.Tk):
     tk.Tk.__init__(self)
 
     self.title('Character Search')
-    self.geometry('1200x650')
+    self.geometry('1280x725')
   
-    ttk.Label(self, text = "Select Character to show their Informations.", 
-    font = ("Times New Roman", 15)).grid(columnspan = 2, row = 1, padx = 10, pady = 15,sticky = 'w') 
+    TitleChara = ttk.Label(self, text = "Select Character to show their Informations.",
+    font = ("Times New Roman", 22)).grid(columnspan = 3, row = 1, padx = 35, pady = 15,sticky = 'w') 
 
-    ttk.Label(self, text = "Select Character :", 
-    font = ("Times New Roman", 18)).grid(column = 0, row = 2, pady = 20,sticky = 'e') 
+    Searchtext = ttk.Label(self, text = "Select Character ", 
+    font = ("Times New Roman", 20)).grid(column = 0, row = 2, padx = 15 , pady = 10,sticky = 'e') 
 
     #Search Box Combobox
     global CharaChosen
     global boxvalue
     boxvalue = tk.StringVar()
     self.fetchname()
-    CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=namelist,width=30,textvariable=boxvalue)
-    CharaChosen.grid(column = 1, row = 2 , padx = 20, pady = 20 )
+    CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=namelist,width=28,textvariable=boxvalue)
+    CharaChosen.grid(column = 1, row = 2 , padx = 20, pady = 20 , sticky = 'w')
     CharaChosen.current()
     CharaChosen.bind('<KeyRelease>',self.Search)
 
     #Buttons to Enter Character Names
     EnterButton = ttk.Button(self, text="SEARCH", width = 8,command = self.CharacterDataFetch)
-    EnterButton.grid(column = 2, row = 2, padx = 18, pady = 20 )
+    EnterButton.grid(column = 2, row = 2, padx = 18, pady = 20 , sticky = 'w' )
 
     #Pulled Data from Search
-    global CharacterName , CharacterStar , CharacterElement , CharacterWeapon , CharacterRegion , CharacterPhoto
+    global CharacterName , CharacterStar , CharacterElement , CharacterWeapon , CharacterRegion , CharacterPhoto , CharacterBirthday , CharacterInfo
 
     CharacterName = tk.StringVar()
     CharacterStar = tk.StringVar()
     CharacterElement = tk.StringVar()
     CharacterWeapon = tk.StringVar()
     CharacterRegion = tk.StringVar()
+    CharacterBirthday = tk.StringVar()
+    CharacterInfo = tk.StringVar()
     CharacterPhoto = ImageTk.PhotoImage(Image.new('RGBA', (200, 300), (0, 0, 0, 0)))
 
     CharacterName.set(' ')
@@ -51,27 +53,37 @@ class charactersearch(tk.Tk):
     CharacterElement.set(' ')
     CharacterWeapon.set(' ')
     CharacterRegion.set(' ')
+    CharacterBirthday.set(' ')
+    CharacterInfo.set(' ')
 
-    ttk.Label(self,text = "Character Name :", font = ("Times New Roman",18)).grid(column = 0,row = 4,pady = 5,sticky = 'e')
-    ttk.Label(self,textvariable = CharacterName, font = ("Times New Roman",18)).grid(column = 1,row = 4,padx = 15,pady = 5,sticky = 'w')
+    CharaName = ttk.Label(self,text = "Character Name :" , font = ("Times New Roman",15)).grid(column = 0,row = 4,pady = 5,sticky = 'e')
+    CharaNameData = ttk.Label(self,width = 40 , textvariable = CharacterName, font = ("Times New Roman",15)).grid(column = 1,row = 4,padx = 15,pady = 5,sticky = 'w')
 
-    ttk.Label(self,text = "Character Star :", font = ("Times New Roman",18)).grid(column = 0,row = 5,pady = 5,sticky = 'e')
-    ttk.Label(self,textvariable = CharacterStar, font = ("Times New Roman",18)).grid(column = 1,row = 5,padx = 15,pady = 5,sticky = 'w')
+    CharStar = ttk.Label(self,text = "Character Star :", font = ("Times New Roman",15)).grid(column = 0,row = 5,pady = 5,sticky = 'e')
+    CharaStarData = ttk.Label(self,textvariable = CharacterStar, font = ("Times New Roman",15)).grid(column = 1,row = 5,padx = 15,pady = 5,sticky = 'w')
 
-    ttk.Label(self,text = "Character Element :", font = ("Times New Roman",18)).grid(column = 0,row = 6,pady = 5,sticky = 'e')
-    ttk.Label(self,textvariable = CharacterElement, font = ("Times New Roman",18)).grid(column = 1,row = 6,padx = 15,pady = 5,sticky = 'w')
+    CharElement = ttk.Label(self,text = "Character Element :", font = ("Times New Roman",15)).grid(column = 0,row = 6,pady = 5,sticky = 'e')
+    CharaElementData = ttk.Label(self,textvariable = CharacterElement, font = ("Times New Roman",15)).grid(column = 1,row = 6,padx = 15,pady = 5,sticky = 'w')
 
-    ttk.Label(self,text = "Character Weapon :", font = ("Times New Roman",18)).grid(column = 0,row = 7,pady = 5,sticky = 'e')
-    ttk.Label(self,textvariable = CharacterWeapon, font = ("Times New Roman",18)).grid(column = 1,row = 7,padx = 15,pady = 5,sticky = 'w')
+    CharWeapon = ttk.Label(self,text = "Character Weapon :", font = ("Times New Roman",15)).grid(column = 0,row = 7,pady = 5,sticky = 'e')
+    CharWeaponData = ttk.Label(self,textvariable = CharacterWeapon, font = ("Times New Roman",15)).grid(column = 1,row = 7,padx = 15,pady = 5,sticky = 'w')
 
-    ttk.Label(self,text = "Character Region :", font = ("Times New Roman",18)).grid(column = 0,row = 8,pady = 5,sticky = 'e')
-    ttk.Label(self,textvariable = CharacterRegion, font = ("Times New Roman",18)).grid(column = 1,row = 8,padx = 15,pady = 5,sticky = 'w')
+    CharRegion = ttk.Label(self,text = "Character Region :", font = ("Times New Roman",15)).grid(column = 0,row = 8,pady = 5,sticky = 'e')
+    CharRegionData = ttk.Label(self,textvariable = CharacterRegion, font = ("Times New Roman",15)).grid(column = 1,row = 8,padx = 15,pady = 5,sticky = 'w')
+    
+    CharBirthday = ttk.Label(self,text = "Character Birthday :", font = ("Times New Roman",15)).grid(column = 0,row = 9,pady = 5,sticky = 'e')
+    CharBirthdayData = ttk.Label(self,textvariable = CharacterBirthday, font = ("Times New Roman",15)).grid(column = 1,row = 9,padx = 15,pady = 5,sticky = 'w')
+    
+    CharInfo = ttk.Label(self,text = "Character Info :", font = ("Times New Roman",15)).grid(column = 0,row = 10,pady = 5,sticky = 'ne')
+    CharInfoData = ttk.Label(self,textvariable = CharacterInfo , wraplength = 600 , font = ("Times New Roman",12)).grid(column = 1,row = 10,padx = 15,pady = 5,sticky = 'w')
+    
+    CharEmptyRow = ttk.Label(self,text = ' ').grid(columnspan = 3 , row = 11 , pady = 40)
 
     global CharacterImage
     CharacterImage = ttk.Label(self)
-    CharacterImage.grid(column = 3,row = 2,rowspan = 8,sticky = 's')
+    CharacterImage.grid(column = 2,row = 3,rowspan = 10,sticky = 'n')
     
-    #Pull Data From SQLite for dropdown listbox names
+  #Pull Data From SQLite for dropdown listbox names
   def fetchname(self):
     conn = sqlite3.connect('genshindata.db')
     cur = conn.cursor()
@@ -99,10 +111,14 @@ class charactersearch(tk.Tk):
         CharacterName.set(row[0])
 
       #Determine Character Star
-      if currentname in self.FiveStarCharacter:
-        CharacterStar.set('5 Star Character')
-      else:
-        CharacterStar.set('4 Star Character')
+      cursor.execute("SELECT Star FROM Characterdata WHERE Name = ?", (currentname,))
+      row = cursor.fetchone()
+      if row:
+        TemporaryCharStar = int(row[0])
+        if TemporaryCharStar == 1:
+          CharacterStar.set('5 Star')
+        else:
+          CharacterStar.set('4 Star')
 
       #Fetch Character Element
       cursor.execute("SELECT Element FROM Characterdata WHERE Name = ?", (currentname,))
@@ -122,12 +138,24 @@ class charactersearch(tk.Tk):
       if row:
         CharacterRegion.set(row[0])
 
+      #Fetch Character Birthday
+      cursor.execute("SELECT Birthday FROM Characterdata WHERE Name = ?", (currentname,))
+      row = cursor.fetchone()
+      if row:
+        CharacterBirthday.set(row[0])
+      
+      #Fetch Character Info
+      cursor.execute("SELECT Info FROM Characterdata WHERE Name = ?", (currentname,))
+      row = cursor.fetchone()
+      if row:
+        CharacterInfo.set(row[0])
+
       #Show Character Image
       try:
         # Show Character Image
         image_path = f"Genshin_Image/{currentname}_Card.png"
         image = Image.open(image_path)
-        resized_image = image.resize((180, 320))
+        resized_image = image.resize((265, 515))
         charphoto = ImageTk.PhotoImage(resized_image)
         CharacterImage.config(image=charphoto)
         CharacterImage.image = charphoto  # Keep a reference to prevent image from being garbage collected
@@ -159,9 +187,6 @@ class charactersearch(tk.Tk):
           data.append(item)
       
       CharaChosen['values'] = data 
-
-  #Temporary Data
-  FiveStarCharacter = ['Albedo','Alhaitham','Arlecchino','Aloy','Arataki Itto','Baizhu','Chiori','Cyno','Dehya','Diluc','Eula','Furina','Ganyu','Hu Tao','Jean','Kaedehara Kazuha','Kamisato Ayaka','Kamisato Ayato','Keqing','Klee','Lyney','Mona','Nahida','Navia','Neuvillette','Nilou','Qiqi','Raiden Shogun','Sangonomiya Kokomi','Shenhe','Tartagila','Tighnari','Traveler','Venti','Wanderer','Wriothesley','Xianyun','Xiao','Yae Miko','Yelan','Yoimiya','Zhongli']
 
 #RUN WINDOW
 CurrentScreen = charactersearch()
