@@ -1,41 +1,87 @@
 import tkinter as tk
+import sqlite3
 from tkinter import *
 from datetime import datetime, timedelta
 from ctypes import windll
 
 windll.shcore.SetProcessDpiAwareness(1)
+clock_recorded = False
 
 #resin timer features
 root = tk.Tk()
-root.geometry("750x550")
+root.geometry("800x600")
 root.title("Resin Timer")
 
 #grid
 root.columnconfigure((0,1), weight = 1)
-root.rowconfigure((0,1,2,), weight = 1)
-root.rowconfigure(3, weight = 8)
-root.rowconfigure(4, weight = 1)
+root.rowconfigure((0,1,2,3), weight = 1)
+root.rowconfigure(4, weight = 8)
+root.rowconfigure(5, weight = 1)
 
-#resin left
-def calculate_time():
+#function to fetch data from db
+def fetch_data():
+    cur.execute("SELECT * FROM resintimer")
+    rows = cur.fetchall()
+    display_text=""
+    result_text.config(state="normal")
+    for row in rows:
+        display_text += f"Last recorded at {row[0]} with {row[1]} resins left.\n"
+
+        resin = row[1]
+        time = str(row[2])
+        minutes = row[3]
+        #show results after rerun the code
+        current_time = datetime.now()
+
+        current_minutes = current_time.hour * 60 + current_time.minute
+
+        stored_minutes = int(time[:2]) * 60 + int(time[2:4])
+
+        if current_minutes >= stored_minutes:
+            resin_time = current_minutes - stored_minutes
+        else:
+            resin_time = current_minutes + (24 * 60 - stored_minutes)
+        current_resin = (resin_time // 8) + resin      
+        result_text.insert(tk.END, f"Your current resins: {current_resin}\n")
+        calculate_time(current_resin)
+    result_text.config(state="disabled")
+    dbresult_label.config(text = display_text)
+
+#delete records after pressing refresh
+def delete_records():
+    cur.execute("DELETE FROM resintimer")
+    conn.commit()
+    fetch_data()
+
+#function to calculate resin left
+def calculate_time(resin_amount=None):
+    global clock_recorded
     result_text.config(state="normal")
     try:
-        #get the number of current resin by the user
-        resin_amount = int(resin_label_box.get())
+        if resin_amount is None:   #get the number of current resin by the user
+            resin_amount = int(resin_label_box.get())
 
         #input between 0-160
         if resin_amount <= 159:
-            result_text.delete(1.0, tk.END)
             for i in range(20, 161, 20):
                 if resin_amount < i:
                     time_per_resin = 8
                     minutes_needed = (i-resin_amount) * time_per_resin
                     duration = timedelta(minutes=minutes_needed)
                     current_time = datetime.now()
-                    hours = minutes_needed // 60
-                    minutes = minutes_needed % 60
                     new_time = current_time + duration
-                    result_text.insert(tk.END, f"{i} resin in {hours}h {minutes:02}min {new_time.strftime('%H:%M')}\n")  
+                    hours = minutes_needed // 60
+                    minutes = (minutes_needed % 60)
+                    result_text.insert(tk.END, f"{i} resin in {hours}h {minutes:02}min {new_time.strftime('%H:%M')}\n")
+
+            cur.execute("SELECT COUNT(*) FROM resintimer")
+            count = cur.fetchone()[0]
+            if count==0:
+                if not clock_recorded:   #check if the clock is recorded
+                    current_time = datetime.now()
+                    cur.execute("INSERT INTO resintimer (clock, resin, time, minutes) VALUES (?, ?, ?, ?)", (current_time.strftime("%d-%m-%Y %I:%M %p"), resin_amount, current_time.strftime("%H%M.%S"), minutes))
+                    conn.commit()
+                    clock_recorded = True
         elif resin_amount == 160:
             result_text.delete(1.0, tk.END)
             result_text.insert(tk.END, f"Your resin is full")
@@ -49,23 +95,39 @@ def calculate_time():
     finally:
         result_text.config(state="disabled")
 
+#refresh
+def refresh():
+    global clock_recorded
+    result_text.config(state="normal")
+    result_text.delete(1.0, tk.END)
+    result_text.config(state="disabled")
+    delete_records()
+    #reset clock_recorded to "False" so that if there are changes in resin_amount can be insert in db
+    clock_recorded = False
+
 #features label
 resin_label = Label(root, text="Enter your current Resin :")
-resin_label.grid(row=0, column=0, sticky="e", padx=(0,20), pady=(13,10))
+resin_label.grid(row=0, column=0, sticky="e")
 
 resin_label_box = Entry(root)
-resin_label_box.grid(row=0, column=1, sticky="w", pady=(13,10))
+resin_label_box.grid(row=0, column=1, sticky="w")
 
 confirm_button = Button(root, text="Confirm", command=calculate_time, width=15, height=2)
-confirm_button.grid(row=1, column=0, columnspan=2, sticky='s')
+confirm_button.grid(row=2, column=0, sticky='se')
+
+refresh_button = Button(root, text="Refresh", command=refresh, width=15, height=2)
+refresh_button.grid(row=2, column=1, sticky='sw', padx=(0,150))
 
 #result
 full_refill = Label(root, text='Results:', font=('Helvetica',20))
-full_refill.grid(row=2, column=0, columnspan=2, padx=(0,400), sticky='s')
+full_refill.grid(row=3, column=0, columnspan=2, sticky='sw')
 
 result_text = tk.Text(root, height=10, width=40)
-result_text.grid(row=3, column=0, columnspan=2)
+result_text.grid(row=4, column=0, columnspan=2)
 result_text.config(state="disabled")
+
+dbresult_label = Label(root, text="")
+dbresult_label.grid(row=1, column=0, columnspan=2)
 
 #clock
 #update clock every second
@@ -76,7 +138,17 @@ def update_clock():
 
 #clock label
 clock_label = Label(root, text='')
-clock_label.grid(row=4, column=0, columnspan=1, sticky="sw")
+clock_label.grid(row=5, column=0, columnspan=1, sticky="sw")
 
+#connect db
+conn = sqlite3.connect('genshindata.db')
+cur = conn.cursor()
+cur.execute("CREATE TABLE IF NOT EXISTS resintimer(clock,resin)")
+
+#update clock every second
 update_clock()
+
+#fetch and display data
+fetch_data()
+
 root.mainloop()
