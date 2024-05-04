@@ -27,9 +27,10 @@ def fetch_data():
     for row in rows:
         display_text += f"Last recorded at {row[0]} with {row[1]} resins left.\n"
 
+        clock = row[0]
         resin = row[1]
         time = str(row[2])
-        minutes = row[3]
+        new_minutes = int(row[3])
         #show results after rerun the code
         current_time = datetime.now()
 
@@ -43,7 +44,8 @@ def fetch_data():
             resin_time = current_minutes + (24 * 60 - stored_minutes)
         current_resin = (resin_time // 8) + resin      
         result_text.insert(tk.END, f"Your current resins: {current_resin}\n")
-        calculate_time(current_resin)
+        calculate_time(current_resin, new_minutes)
+        
     result_text.config(state="disabled")
     dbresult_label.config(text = display_text)
 
@@ -54,32 +56,43 @@ def delete_records():
     fetch_data()
 
 #function to calculate resin left
-def calculate_time(resin_amount=None):
+def calculate_time(resin_amount=None, new_minutes=None):
     global clock_recorded
     result_text.config(state="normal")
     try:
+        if new_minutes is None:
+            new_minutes = 1
         if resin_amount is None:   #get the number of current resin by the user
             resin_amount = int(resin_label_box.get())
 
         #input between 0-160
         if resin_amount <= 159:
+            #result_text.delete(1.0, tk.END)
             for i in range(20, 161, 20):
                 if resin_amount < i:
                     time_per_resin = 8
-                    minutes_needed = (i-resin_amount) * time_per_resin
+                    current_resin = i-resin_amount
+                    minutes_needed = (current_resin) * time_per_resin
                     duration = timedelta(minutes=minutes_needed)
                     current_time = datetime.now()
                     new_time = current_time + duration
                     hours = minutes_needed // 60
-                    minutes = (minutes_needed % 60)
-                    result_text.insert(tk.END, f"{i} resin in {hours}h {minutes:02}min {new_time.strftime('%H:%M')}\n")
+                    minute = minutes_needed % 60
+                    a = new_minutes + (minute)
+                    if a >= 60:
+                        a = a-60
+                    if resin_amount <= 159:
+                        result_text.insert(tk.END, f"{i} resin in {hours}h {new_time.minute:02}min {new_time.strftime('%H')}:{a:02}\n")
+                    else:
+                        result_text.delete(1.0, tk.END)
+                        result_text.insert(tk.END, f"Your resin is full")
 
             cur.execute("SELECT COUNT(*) FROM resintimer")
             count = cur.fetchone()[0]
             if count==0:
                 if not clock_recorded:   #check if the clock is recorded
                     current_time = datetime.now()
-                    cur.execute("INSERT INTO resintimer (clock, resin, time, minutes) VALUES (?, ?, ?, ?)", (current_time.strftime("%d-%m-%Y %I:%M %p"), resin_amount, current_time.strftime("%H%M.%S"), minutes))
+                    cur.execute("INSERT INTO resintimer (clock, resin, time, new_minutes) VALUES (?, ?, ?, ?)", (current_time.strftime("%d-%m-%Y %I:%M %p"), resin_amount, current_time.strftime("%H%M.%S"), current_time.minute))
                     conn.commit()
                     clock_recorded = True
         elif resin_amount == 160:
