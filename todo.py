@@ -125,13 +125,11 @@ def delete():
     delete_window.title("Delete task")
     delete_window.geometry("+550+150")
     
-    frame3 = ttk.Frame(delete_window, padding=10)
-    frame3.grid(column=0, row=0, padx=5, pady=5)
-    label2 = ttk.Label(frame3, text="Delete Task/s")
+    label2 = ttk.Label(delete_window, text="Delete Task/s")
     label2.grid(column=1, row=0)
     # Create listbox
-    listbox = Listbox(frame3, selectmode=EXTENDED)
-    listbox.grid(column=1, row=1)
+    listbox = Listbox(delete_window, selectmode=EXTENDED)
+    listbox.grid(column=1, row=1, padx=10)
     # Insert values to the listbox
     for task in tasks:
         listbox.insert(END, task)
@@ -152,8 +150,8 @@ def delete():
             raw_task.destroy()
         create_checkbox()
 
-    button = ttk.Button(frame3, text="Delete", width=8, command=delete_func)
-    button.grid(column=1, row=2, pady=(10, 0))
+    button = ttk.Button(delete_window, text="Delete", width=8, command=delete_func)
+    button.grid(column=1, row=2, pady=(10, 10))
 
 delete_button = ttk.Button(frame, text="Delete", width=8, command=delete)
 delete_button.grid(column=5, row=0, sticky=W, padx=(5,0))
