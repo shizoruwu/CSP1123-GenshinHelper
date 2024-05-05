@@ -56,6 +56,28 @@ def delete_records():
     conn.commit()
     fetch_data()
 
+def confirm():
+    try:
+        result_text.config(state="normal")
+        resin_amount = int(resin_label_box.get())
+        if resin_amount <= 159:
+            clear()
+            calculate_time()
+        elif resin_amount == 160:
+            result_text.delete(1.0, tk.END)
+            result_text.insert(tk.END, f"Your resin is full")
+        elif resin_amount >=160:
+            result_text.delete(1.0, tk.END)
+            result_text.insert(tk.END, f"Number must in between 0 to 160")
+            root.after(3000,fetch_data)
+    except ValueError:
+        result_text.delete(1.0, tk.END)
+        result_text.insert(tk.END, f"Please fill in ONLY NUMBER!!!", "colour")
+        result_text.tag_config("colour", foreground="red")
+        root.after(3000, fetch_data)
+    finally:
+        result_text.config(state="disabled")
+
 #function to calculate resin left
 def calculate_time(resin_amount=None, new_minutes=None, resin=None):
     global clock_recorded
@@ -83,7 +105,7 @@ def calculate_time(resin_amount=None, new_minutes=None, resin=None):
                     a = new_minutes + (((i-resin)*8)%60)
                     if a >= 60:
                         a = a-60
-                        hours -= 1
+                        #hours -= 1
                     if current_time.minute < a:
                         minute = a - current_time.minute
                     else:
@@ -116,7 +138,7 @@ def calculate_time(resin_amount=None, new_minutes=None, resin=None):
         result_text.config(state="disabled")
 
 #refresh
-def refresh():
+def clear():
     global clock_recorded
     result_text.config(state="normal")
     result_text.delete(1.0, tk.END)
@@ -132,11 +154,11 @@ resin_label.grid(row=0, column=0, sticky="e")
 resin_label_box = Entry(root)
 resin_label_box.grid(row=0, column=1, sticky="w")
 
-confirm_button = Button(root, text="Confirm", command=calculate_time, width=15, height=2)
+confirm_button = Button(root, text="Confirm", command=confirm, width=15, height=2)
 confirm_button.grid(row=2, column=0, sticky='se')
 
-refresh_button = Button(root, text="Refresh", command=refresh, width=15, height=2)
-refresh_button.grid(row=2, column=1, sticky='sw', padx=(0,150))
+clear_button = Button(root, text="Clear All", command=clear, width=15, height=2)
+clear_button.grid(row=2, column=1, sticky='sw', padx=(0,150))
 
 #result
 full_refill = Label(root, text='Results:', font=('Helvetica',20))
