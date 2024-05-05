@@ -4,11 +4,14 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 import sqlite3
+from ctypes import windll
+
+windll.shcore.SetProcessDpiAwareness(1)
 
 # Create a window
 root = Tk()
 root.title("To-Do List")
-root.geometry("800x400+100+100") # (w, h, x, y)
+root.geometry("900x600+100+100") # (w, h, x, y)
 
 # Create a frame inside the window
 frame = ttk.Frame(root, borderwidth=10)
@@ -16,7 +19,7 @@ frame.grid(column=0, row=0) # Render
 
 # Create Label
 label = ttk.Label(frame, text="To-Do List", font=("Georgia", 15))
-label.grid(column=1, row=0, padx=(20, 5), pady=10, sticky=W) # Render
+label.grid(column=1, row=0, padx=(30, 15), pady=20, sticky=W) # Render
 
 # Connect db
 DBconnection = sqlite3.connect("genshindata.db")
@@ -40,27 +43,12 @@ for data in values:
     tasks[data[0]] = eval(data[1]) # Add items to dict
 print(f"dict -> {tasks}")
 
-# Create entry
-entry = ttk.Entry(frame)
-entry.grid(column=2, row=0, padx=(50, 5))
+def refresh():
+    for var in raw_tasks:
+        var.destroy()
+    create_checkbox()
 
-## Add task function
-def add_task():
-    # print(entry.get())
-    text = entry.get()
-    if text == '':
-        print("Error - Blank")
-    elif text not in tasks:
-        DBcursor.execute(f"INSERT INTO tasks VALUES('{text}', 'False')")
-        tasks[text] = False
-        print("Task added.")
-    elif text in tasks:
-        DBcursor.execute(f"INSERT INTO tasks VALUES('{text} (1)', 'False')")
-        tasks[text] = False
-        print("Task added.")
-    DBconnection.commit() # Save added task to db
-    
-
+# Save checkbutton state
 def get_cb_state():
     for task in tasks:
         val = tasks[task].get() # Get the value(state)
@@ -68,10 +56,6 @@ def get_cb_state():
         DBcursor.execute(f"UPDATE tasks SET Status = '{val}' WHERE Task = '{task}'")
     DBconnection.commit()
     print("Automatically saved checkbox value.")
-
-# Create "add" task button
-add = ttk.Button(frame, text="Add", width=5, command=add_task)
-add.grid(column=3, row=0, pady=5, sticky=W)
 
 # Create multiple checkbox
 def create_checkbox():
@@ -86,38 +70,67 @@ def create_checkbox():
             var.set(status)
         # print(type(status))
         checkbox = ttk.Checkbutton(frame, text=task, variable=var, command=get_cb_state)
-        checkbox.grid(column=1, row=row_init, padx=(20, 0), pady=3, sticky=W)
+        checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
         tasks[task] = var
         raw_tasks.append(checkbox)
         row_init += 1
     
     print(f"\ndict(create_checkbox) -> {tasks}")
 
-def refresh():
-    for var in raw_tasks:
-        var.destroy()
-    create_checkbox()
-
-refreshb = ttk.Button(frame, text="Refresh", width=9, command=refresh)
-refreshb.grid(column=4, row=0, sticky=W, padx=(5, 0))
-
-# print(add.configure())
 create_checkbox()
 
+## Add task function
+def add_task_window():
+
+    def add_task():
+        text = entry.get()
+        if text == '':
+            print("Error - Blank")
+        elif text not in tasks:
+            DBcursor.execute(f"INSERT INTO tasks VALUES('{text}', 'False')")
+            tasks[text] = False
+            print("Task added.")
+        elif text in tasks:
+            DBcursor.execute(f"INSERT INTO tasks VALUES('{text} (1)', 'False')")
+            tasks[f'{text} (1)'] = False
+            print("Task added.")
+        DBconnection.commit() # Save added task to db
+
+        add_window.destroy()
+        refresh()
+
+    # Create a window for add task/s
+    add_window = Toplevel()
+    add_window.title("Add Task")
+    add_window.geometry("+550+150")
+
+    # Create label
+    label2 = ttk.Label(add_window, text="Add a task...")
+    label2.grid(column=0, row=0, pady=(50, 5))
+    # Create entry
+    entry = ttk.Entry(add_window)
+    entry.grid(column=0, row=1, padx=50)
+    # Create "add" task button
+    add2 = ttk.Button(add_window, text="Add", width=5, command=add_task)
+    add2.grid(column=0, row=2, pady=(10, 50))
+
+# Create "add" task button
+add = ttk.Button(frame, text="Add", width=5, command=add_task_window)
+add.grid(column=3, row=0, pady=5, sticky=W)
 
 # Delete function
 def delete():
     # Create another window
     delete_window = Toplevel()
     delete_window.title("Delete task")
-    delete_window.geometry("150x250+550+150")
+    delete_window.geometry("+550+150")
     
-    frame2 = ttk.Frame(delete_window, padding=10)
-    frame2.grid(column=0, row=0, padx=5, pady=5)
-    label2 = ttk.Label(frame2, text="Delete Task/s")
+    frame3 = ttk.Frame(delete_window, padding=10)
+    frame3.grid(column=0, row=0, padx=5, pady=5)
+    label2 = ttk.Label(frame3, text="Delete Task/s")
     label2.grid(column=1, row=0)
     # Create listbox
-    listbox = Listbox(frame2, selectmode=EXTENDED)
+    listbox = Listbox(frame3, selectmode=EXTENDED)
     listbox.grid(column=1, row=1)
     # Insert values to the listbox
     for task in tasks:
@@ -139,11 +152,13 @@ def delete():
             raw_task.destroy()
         create_checkbox()
 
-    button = ttk.Button(frame2, text="Delete", width=8, command=delete_func)
+    button = ttk.Button(frame3, text="Delete", width=8, command=delete_func)
     button.grid(column=1, row=2, pady=(10, 0))
 
 delete_button = ttk.Button(frame, text="Delete", width=8, command=delete)
 delete_button.grid(column=5, row=0, sticky=W, padx=(5,0))
+
+
 
 
 root.mainloop()
