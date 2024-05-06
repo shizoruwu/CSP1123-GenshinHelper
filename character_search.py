@@ -14,20 +14,20 @@ class charactersearch(tk.Tk):
     tk.Tk.__init__(self)
 
     self.title('Character Search')
-    self.geometry('1280x725')
-  
+    self.geometry('1295x785')
+    
     TitleChara = ttk.Label(self, text = "Select Character to show their Informations.",
-    font = ("Times New Roman", 22)).grid(columnspan = 3, row = 1, padx = 35, pady = 15,sticky = 'w') 
+    font = ("Arial", 22)).grid(columnspan = 3, row = 1, padx = 35, pady = 15,sticky = 'w') 
 
     Searchtext = ttk.Label(self, text = "Select Character ", 
-    font = ("Times New Roman", 20)).grid(column = 0, row = 2, padx = 15 , pady = 10,sticky = 'e') 
+    font = ("Arial", 20)).grid(column = 0, row = 2, padx = 15 , pady = 10,sticky = 'e') 
 
     #Search Box Combobox
     global CharaChosen
     global boxvalue
     boxvalue = tk.StringVar()
     self.fetchname()
-    CharaChosen = ttk.Combobox(self,font = ("Times New Roman", 12),values=namelist,width=28,textvariable=boxvalue)
+    CharaChosen = ttk.Combobox(self, font = ("Arial", 12),values=namelist,width=32,textvariable=boxvalue)
     CharaChosen.grid(column = 1, row = 2 , padx = 20, pady = 20 , sticky = 'w')
     CharaChosen.current()
     CharaChosen.bind('<KeyRelease>',self.Search)
@@ -55,33 +55,33 @@ class charactersearch(tk.Tk):
     CharacterRegion.set(' ')
     CharacterBirthday.set(' ')
     CharacterInfo.set(' ')
-
-    CharaName = ttk.Label(self,text = "Character Name :" , font = ("Times New Roman",15)).grid(column = 0,row = 4,pady = 5,sticky = 'e')
-    CharaNameData = ttk.Label(self,width = 40 , textvariable = CharacterName, font = ("Times New Roman",15)).grid(column = 1,row = 4,padx = 15,pady = 5,sticky = 'w')
-
-    CharStar = ttk.Label(self,text = "Character Star :", font = ("Times New Roman",15)).grid(column = 0,row = 5,pady = 5,sticky = 'e')
-    CharaStarData = ttk.Label(self,textvariable = CharacterStar, font = ("Times New Roman",15)).grid(column = 1,row = 5,padx = 15,pady = 5,sticky = 'w')
-
-    CharElement = ttk.Label(self,text = "Character Element :", font = ("Times New Roman",15)).grid(column = 0,row = 6,pady = 5,sticky = 'e')
-    CharaElementData = ttk.Label(self,textvariable = CharacterElement, font = ("Times New Roman",15)).grid(column = 1,row = 6,padx = 15,pady = 5,sticky = 'w')
-
-    CharWeapon = ttk.Label(self,text = "Character Weapon :", font = ("Times New Roman",15)).grid(column = 0,row = 7,pady = 5,sticky = 'e')
-    CharWeaponData = ttk.Label(self,textvariable = CharacterWeapon, font = ("Times New Roman",15)).grid(column = 1,row = 7,padx = 15,pady = 5,sticky = 'w')
-
-    CharRegion = ttk.Label(self,text = "Character Region :", font = ("Times New Roman",15)).grid(column = 0,row = 8,pady = 5,sticky = 'e')
-    CharRegionData = ttk.Label(self,textvariable = CharacterRegion, font = ("Times New Roman",15)).grid(column = 1,row = 8,padx = 15,pady = 5,sticky = 'w')
     
-    CharBirthday = ttk.Label(self,text = "Character Birthday :", font = ("Times New Roman",15)).grid(column = 0,row = 9,pady = 5,sticky = 'e')
-    CharBirthdayData = ttk.Label(self,textvariable = CharacterBirthday, font = ("Times New Roman",15)).grid(column = 1,row = 9,padx = 15,pady = 5,sticky = 'w')
+    CharaName = ttk.Label(self,text = "Character Name :" , font = ("Arial",15)).grid(column = 0,row = 4,pady = 5,sticky = 'e')
+    CharaNameData = ttk.Label(self,width = 36 , textvariable = CharacterName, font = ("Arial",15)).grid(column = 1,row = 4,padx = 15,pady = 5,sticky = 'w')
+
+    CharStar = ttk.Label(self,text = "Character Star :", font = ("Arial",15)).grid(column = 0,row = 5,pady = 5,sticky = 'e')
+    CharaStarData = ttk.Label(self,textvariable = CharacterStar, font = ("Arial",15)).grid(column = 1,row = 5,padx = 15,pady = 5,sticky = 'w')
+
+    CharElement = ttk.Label(self,text = "Character Element :", font = ("Arial",15)).grid(column = 0,row = 6,pady = 5,sticky = 'e')
+    CharaElementData = ttk.Label(self,textvariable = CharacterElement, font = ("Arial",15)).grid(column = 1,row = 6,padx = 15,pady = 5,sticky = 'w')
+
+    CharWeapon = ttk.Label(self,text = "Character Weapon :", font = ("Arial",15)).grid(column = 0,row = 7,pady = 5,sticky = 'e')
+    CharWeaponData = ttk.Label(self,textvariable = CharacterWeapon, font = ("Arial",15)).grid(column = 1,row = 7,padx = 15,pady = 5,sticky = 'w')
+
+    CharRegion = ttk.Label(self,text = "Character Region :", font = ("Arial",15)).grid(column = 0,row = 8,pady = 5,sticky = 'e')
+    CharRegionData = ttk.Label(self,textvariable = CharacterRegion, font = ("Arial",15)).grid(column = 1,row = 8,padx = 15,pady = 5,sticky = 'w')
     
-    CharInfo = ttk.Label(self,text = "Character Info :", font = ("Times New Roman",15)).grid(column = 0,row = 10,pady = 5,sticky = 'ne')
-    CharInfoData = ttk.Label(self,textvariable = CharacterInfo , wraplength = 600 , font = ("Times New Roman",12)).grid(column = 1,row = 10,padx = 15,pady = 5,sticky = 'w')
+    CharBirthday = ttk.Label(self,text = "Character Birthday :", font = ("Arial",15)).grid(column = 0,row = 9,pady = 5,sticky = 'e')
+    CharBirthdayData = ttk.Label(self,textvariable = CharacterBirthday, font = ("Arial",15)).grid(column = 1,row = 9,padx = 15,pady = 5,sticky = 'w')
     
-    CharEmptyRow = ttk.Label(self,text = ' ').grid(columnspan = 3 , row = 11 , pady = 40)
+    CharInfo = ttk.Label(self,text = "Character Info :", font = ("Arial",15)).grid(column = 0,row = 10,pady = 5,sticky = 'ne')
+    CharInfoData = ttk.Label(self,textvariable = CharacterInfo , wraplength = 600 , font = ("Arial",12)).grid(column = 1,row = 10,padx = 15,pady = 5,sticky = 'w')
+    
+    CharEmptyRow = ttk.Label(self,text = ' ').grid(columnspan = 3 , row = 11 , pady = 60)
 
     global CharacterImage
     CharacterImage = ttk.Label(self)
-    CharacterImage.grid(column = 2,row = 3,rowspan = 10,sticky = 'n')
+    CharacterImage.grid(column = 2,row = 3,rowspan = 10,sticky = 'ne')
     
   #Pull Data From SQLite for dropdown listbox names
   def fetchname(self):
@@ -162,7 +162,6 @@ class charactersearch(tk.Tk):
       except FileNotFoundError:
         print("Image not found:", image_path)
         CharacterImage.config(image=CharacterPhoto)
-
       
     #Remove data if Name = False
     else:
@@ -172,6 +171,8 @@ class charactersearch(tk.Tk):
       CharacterWeapon.set(' ')
       CharacterRegion.set(' ')
       CharacterImage.config(image=CharacterPhoto)
+    
+    boxvalue.set('')
     conn.close()
 
   #Search Function to Remove Unrelated Object
