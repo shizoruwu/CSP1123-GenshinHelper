@@ -13,7 +13,7 @@ class weaponsearch(tk.Tk):
 
     #Main Root
     self.title('Weapon Search')
-    self.geometry('1295x785')
+    self.geometry('1310x825')
 
     #Frame1 - MenuFrame
     self.MenuFrame = ttk.Frame(self)
@@ -28,6 +28,9 @@ class weaponsearch(tk.Tk):
 
     weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Type',height = 200,width = 400)
     weaponframe.grid(column=0, row=0, padx=15, pady=15,sticky = 'e')
+
+    self.weaponimage = ttk.LabelFrame(self.MenuFrame,text = 'Weapon List',width = 1240,height = 500)
+    self.weaponimage.grid(columnspan=2,column=0,row=1)
 
     #Sets the Default Value of Checkbox to CHECKED
     self.swordbutton_value = tk.IntVar(value = 1)
@@ -56,15 +59,15 @@ class weaponsearch(tk.Tk):
     bowtype.grid(column=0,row=5,sticky = 'w',padx = 10)
 
     #Create a scrollable frame
-    self.scrollable_frame = ttk.Frame(self.MenuFrame)
-    self.scrollable_frame.grid(columnspan = 2,column = 0,row = 2,sticky='w',padx = 10)
+    self.scrollable_frame = ttk.Frame(self.weaponimage)
+    self.scrollable_frame.grid(column = 0,row = 0,sticky='w',padx = 10)
 
     #Create a scrollbar
     self.scrollbar = ttk.Scrollbar(self.scrollable_frame, orient=tk.VERTICAL)
     self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
     #Create a canvas
-    self.canvas = tk.Canvas(self.scrollable_frame, yscrollcommand=self.scrollbar.set,width = 1230)
+    self.canvas = tk.Canvas(self.scrollable_frame, yscrollcommand=self.scrollbar.set,width = 1220,height = 480)
     self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     self.scrollbar.config(command=self.canvas.yview)
@@ -91,18 +94,18 @@ class weaponsearch(tk.Tk):
     for i, name in enumerate(imagenamelist):
       row = i // 7  # 7 images per row
       if row != 0:
-        row = row + 2
+        row = row*2
       col = i % 7
       weaponname = namelist[i]
       currentname = name
 
-      label = ttk.Label(self.image_frame)
-      label.grid(row=row, column=col, padx=8, pady=10,sticky='n')
-      label.bind("<Button-1>", self.ImageClicked)
+      label = ttk.Label(self.image_frame,width = 160,justify='center')
+      label.grid(row=row, column=col, padx=12, pady=10,sticky='n')
+      label.bind("<Button-1>",lambda event, clickedname = weaponname: self.ImageClicked(event,clickedname))
 
       row = row+1
-      label2 = ttk.Label(self.image_frame,text = weaponname)
-      label2.grid(row=row, column=col, padx=8,sticky = 'we')
+      label2 = ttk.Label(self.image_frame,justify='center',wraplength = 160,text = weaponname)
+      label2.grid(row=row, column=col, padx=12,sticky = 'n')
 
       #Insert Image of Weapon
       image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
@@ -134,7 +137,8 @@ class weaponsearch(tk.Tk):
     conn.close()
 
   #When Clicked , Show info (Switch Frames)
-  def ImageClicked(self,event):
+  def ImageClicked(self,event,clickedname):
+    print (clickedname)
     if self.current_frame == self.MenuFrame:
       self.show_InfoFrame()
     else:
