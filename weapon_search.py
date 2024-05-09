@@ -26,7 +26,7 @@ class weaponsearch(tk.Tk):
     WeaponLabel = ttk.Label(self.MenuFrame,text = 'Please Choose a Weapon to Show Its Info. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
     WeaponLabel.grid(column = 1, row =0, padx = 15, pady = 15, sticky = 'w')
 
-    weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Info',height = 200,width = 400)
+    weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Type',height = 200,width = 400)
     weaponframe.grid(column=0, row=0, padx=15, pady=15,sticky = 'e')
 
     #Sets the Default Value of Checkbox to CHECKED
@@ -57,15 +57,15 @@ class weaponsearch(tk.Tk):
 
     #Create a scrollable frame
     self.scrollable_frame = ttk.Frame(self.MenuFrame)
-    self.scrollable_frame.grid(columnspan = 2,column = 0,row = 2,sticky='w',padx = 22)
+    self.scrollable_frame.grid(columnspan = 2,column = 0,row = 2,sticky='w',padx = 10)
 
     #Create a scrollbar
     self.scrollbar = ttk.Scrollbar(self.scrollable_frame, orient=tk.VERTICAL)
     self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
     #Create a canvas
-    self.canvas = tk.Canvas(self.scrollable_frame, yscrollcommand=self.scrollbar.set,width = 1200)
-    self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    self.canvas = tk.Canvas(self.scrollable_frame, yscrollcommand=self.scrollbar.set,width = 1230)
+    self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
     self.scrollbar.config(command=self.canvas.yview)
 
@@ -75,11 +75,7 @@ class weaponsearch(tk.Tk):
 
     #Adds images to the frame
     self.fetchname()
-    
-    ###UNUSED CODE
-    images = [f"Weapon_{i}.png" for i in imagenamelist]
-
-    self.add_images(images)
+    self.add_images()
 
     #Configure canvas scroll region
     self.canvas.bind("<Configure>", self.on_canvas_configure)
@@ -87,23 +83,26 @@ class weaponsearch(tk.Tk):
     self.show_MenuFrame()
 
     #Frame 2 Codes
-    self.switch_button = ttk.Button(self.InfoFrame, text="Switch Frames", command= self.switch_frames)
+    self.switch_button = ttk.Button(self.InfoFrame, text="Back", command= self.switch_frames)
     self.switch_button.grid(padx=20, pady=10)
 
-  def add_images(self,images):
+  #Add image Functions
+  def add_images(self):
     for i, name in enumerate(imagenamelist):
       row = i // 7  # 7 images per row
+      if row != 0:
+        row = row + 2
       col = i % 7
       weaponname = namelist[i]
       currentname = name
 
       label = ttk.Label(self.image_frame)
-      label.grid(row=row, column=col, padx=10, pady=10)
+      label.grid(row=row, column=col, padx=8, pady=10,sticky='n')
       label.bind("<Button-1>", self.ImageClicked)
 
       row = row+1
       label2 = ttk.Label(self.image_frame,text = weaponname)
-      label2.grid(row=row, column=col, padx=10)
+      label2.grid(row=row, column=col, padx=8,sticky = 'we')
 
       #Insert Image of Weapon
       image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
@@ -116,6 +115,7 @@ class weaponsearch(tk.Tk):
   def on_canvas_configure(self, event):
     self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
+  #Fetch Names of Weapon
   def fetchname(self):
     conn = sqlite3.connect('genshindata.db')
     cur = conn.cursor()
@@ -133,22 +133,26 @@ class weaponsearch(tk.Tk):
 
     conn.close()
 
+  #When Clicked , Show info (Switch Frames)
   def ImageClicked(self,event):
     if self.current_frame == self.MenuFrame:
       self.show_InfoFrame()
     else:
       self.show_MenuFrame()
 
+  #Show Menu Fram Func
   def show_MenuFrame(self):
     self.current_frame = self.MenuFrame
     self.MenuFrame.grid()
     self.InfoFrame.grid_forget()
 
+  #Show Info Frame Func
   def show_InfoFrame(self):
     self.current_frame = self.InfoFrame
     self.InfoFrame.grid()
     self.MenuFrame.grid_forget()
 
+  #Switching between frames
   def switch_frames(self):
     if self.current_frame == self.MenuFrame:
         self.show_InfoFrame()
