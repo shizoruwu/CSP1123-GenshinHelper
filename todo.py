@@ -13,18 +13,52 @@ class ToDoAppFrame(ttk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        title_frame = ttk.Frame(self)
-        title_frame.grid(column=0, row=0)
+        self.title_frame = ttk.Frame(self)
+        self.title_frame.grid(column=0, row=0, sticky=W)
+
+        # Create Label
+        label = ttk.Label(self.title_frame, text="To-Do List", font=("Georgia", 15))
+        label.grid(column=1, row=0, padx=(30, 15), pady=20, sticky=W) # Render
+        # Create "add" task button
+        add = ttk.Button(self.title_frame, text="Add", width=5, command=self.add_task_window)
+        add.grid(column=2, row=0, pady=5, sticky=W)
+        delete_button = ttk.Button(self.title_frame, text="Delete", width=7, command=self.delete)
+        delete_button.grid(column=3, row=0, sticky=W, padx=(5,0))
 
         s = ttk.Style()
         s.configure('a.TFrame', background='red')
-        #, style='a.TFrame'
-        self.tasks_frame = ttk.Frame(self)
-        self.tasks_frame.grid(column=0, row=1, sticky=W)
+        # , style='a.TFrame'
 
-        # Create Label
-        label = ttk.Label(title_frame, text="To-Do List", font=("Georgia", 15))
-        label.grid(column=1, row=0, padx=(30, 15), pady=20, sticky=W) # Render
+        # Create a frame for canvas
+        self.canvas_frame = ttk.Frame(self)
+        self.canvas_frame.grid(column=0, row=1, sticky=NW)
+        self.canvas_frame.grid_rowconfigure(0, weight=1)
+        self.canvas_frame.grid_columnconfigure(0, weight=1)
+        # Make canvas frame able to resizing later
+        self.canvas_frame.grid_propagate(False)
+
+        # Create a canvas
+        self.canvas = Canvas(self.canvas_frame, highlightthickness=0)
+        self.canvas.grid(column=0, row=0, sticky=NSEW)
+
+        # Create a scrollbar and link to canvas
+        self.scrollbar = ttk.Scrollbar(self.canvas_frame, orient=VERTICAL, command=self.canvas.yview)
+        self.scrollbar.grid(column=1, row=0, sticky=NS)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set) # Link canvas
+
+        self.tasks_frame = ttk.Frame(self.canvas)
+        # self.tasks_frame.grid(column=0, row=1, sticky=W)
+        
+        self.canvas.create_window((0, 0), window=self.tasks_frame, anchor='nw')
+
+        # Update widgets to get w, h to resize canvas frame
+        root.update()
+        self.title_frame.update()
+        # print(root.winfo_width(), root.winfo_height(), root.winfo_rooty(), root.winfo_y())
+        # print(self.self.title_frame.winfo_width(), self.self.title_frame.winfo_height())
+        title_bar_height = root.winfo_rooty() - root.winfo_y()
+        self.canvas_frame.config(width=root.winfo_width(), height=root.winfo_height()
+                             - self.title_frame.winfo_height())
 
         # Connect db
         self.DBconnection = sqlite3.connect("genshindata.db")
@@ -47,14 +81,17 @@ class ToDoAppFrame(ttk.Frame):
             # print(data[1])
             self.tasks[data[0]] = eval(data[1]) # Add items to dict
         print(f"\ndict -> {self.tasks}")
-
-        # Create "add" task button
-        add = ttk.Button(title_frame, text="Add", width=5, command=self.add_task_window)
-        add.grid(column=2, row=0, pady=5, sticky=W)
-        delete_button = ttk.Button(title_frame, text="Delete", width=7, command=self.delete)
-        delete_button.grid(column=3, row=0, sticky=W, padx=(5,0))
         
         self.create_checkbox(self.tasks_frame)
+
+        # After created checkbox, make scrollbar works
+        # update the frame
+        self.tasks_frame.update_idletasks()
+        # Set canvas scroll region
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
+        # Resize scrollbar when root size changed
+        root.bind('<Configure>', self.resize_canvas_frame)
 
     def add_task_window(self):
 
@@ -158,7 +195,14 @@ class ToDoAppFrame(ttk.Frame):
         self.DBconnection.commit()
         print("Automatically saved checkbox value.")
 
+    def resize_canvas_frame(self, event):
+        # Update widgets to get w, h to resize canvas frame
 
+        # print(root.winfo_width(), root.winfo_height(), root.winfo_rooty(), root.winfo_y())
+        # print(self.self.title_frame.winfo_width(), self.self.title_frame.winfo_height())
+        title_bar_height = root.winfo_rooty() - root.winfo_y()
+        self.canvas_frame.config(width=root.winfo_width(), height=root.winfo_height()
+                             - self.title_frame.winfo_height())
 
 
 
