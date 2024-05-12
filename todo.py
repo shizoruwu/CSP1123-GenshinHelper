@@ -1,6 +1,4 @@
 # To-Do List in-progress
-# OOP DONE
-# NO SCROLLBAR
 
 from tkinter import *
 from tkinter import ttk
@@ -92,6 +90,7 @@ class ToDoAppFrame(ttk.Frame):
 
         # Resize scrollbar when root size changed
         root.bind('<Configure>', self.resize_canvas_frame)
+        root.bind("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
 
     def add_task_window(self):
 
