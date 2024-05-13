@@ -22,6 +22,11 @@ class ToDoAppFrame(ttk.Frame):
         add.grid(column=2, row=0, pady=5, sticky=W)
         delete_button = ttk.Button(self.title_frame, text="Delete", width=7, command=self.delete)
         delete_button.grid(column=3, row=0, sticky=W, padx=(5,0))
+        self.showHide = ttk.Button(self.title_frame, text="Show Completed Tasks", width=21, command=self.show)
+        self.showHide.grid(column=4, row=0, sticky=W, padx=(5,0))
+        self.delAllTasks = ttk.Button(self.title_frame, text="Delete All Completed Tasks", width=25, command=self.delAllTaskFunc)
+        self.delAllTasks.grid(column=5, row=0, sticky=W, padx=(5,0))
+        self.delAllTasks.grid_remove()
 
         s = ttk.Style()
         s.configure('a.TFrame', background='red')
@@ -101,6 +106,44 @@ class ToDoAppFrame(ttk.Frame):
         self.DBconnection.commit()
         self.DBconnection.close()
 
+    # Create multiple checkbox
+    def create_checkbox(self, master, showCompletedTasks=False):
+        row_init = 1
+        self.sortedTasks = dict(sorted(self.tasks.items(), key=lambda item: item[1]))
+        for task, status in self.sortedTasks.items():
+
+            var = BooleanVar()
+            var.set(status)
+            # if self.sortedTasks[task] == False:
+            #     checkbox = ttk.Checkbutton(master, text=task, variable=var, command=self.get_cb_state)
+            #     checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
+            if showCompletedTasks == False:
+                if self.sortedTasks[task] == False:
+                    checkbox = ttk.Checkbutton(master, text=task, variable=var, command=lambda show=showCompletedTasks: self.get_cb_state(show))
+                    checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
+                else:
+                    print("No Tasks.")
+            else:
+                checkbox = ttk.Checkbutton(master, text=task, variable=var, command=lambda show=showCompletedTasks: self.get_cb_state(show))
+                checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
+            # Keep a refrence for checkbox value
+            self.sortedTasks[task] = var
+            # Add checkbox variable to a list for refresh function
+            self.raw_tasks.append(checkbox)
+            row_init += 1
+        
+        print(f"\nsorted(create_checkbox) -> {self.sortedTasks}")
+
+    def show(self):
+        self.delAllTasks.grid()
+        self.showHide.config(text="Hide Completed Tasks", command=self.hide)
+        self.refresh(True)
+
+    def hide(self):
+        self.delAllTasks.grid_remove()
+        self.showHide.config(text="Show Completed Tasks", command=self.show)
+        self.refresh()
+        
     def add_task_window(self):
 
         ## Add task function
@@ -170,30 +213,13 @@ class ToDoAppFrame(ttk.Frame):
         self.delete_window.destroy()
         self.refresh()
 
-    # Create multiple checkbox
-    def create_checkbox(self, master):
-        row_init = 1
-        self.sortedTasks = dict(sorted(self.tasks.items(), key=lambda item: item[1]))
-        for task, status in self.sortedTasks.items():
 
-            var = BooleanVar()
-            var.set(status)
-            checkbox = ttk.Checkbutton(master, text=task, variable=var, command=self.get_cb_state)
-            checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
-            # Keep a refrence for checkbox value
-            self.sortedTasks[task] = var
-            # Add checkbox variable to a list for refresh function
-            self.raw_tasks.append(checkbox)
-            row_init += 1
-        
-        print(f"\nsorted(create_checkbox) -> {self.sortedTasks}")
-
-    def refresh(self):
+    def refresh(self, showCompletedTasks=False):
         for var in self.raw_tasks:
             var.destroy()
-        self.create_checkbox(self.tasks_frame)
+        self.create_checkbox(self.tasks_frame, showCompletedTasks)
 
-    def get_cb_state(self):
+    def get_cb_state(self, showCompletedTasks):
         # print(self.sortedTasks)
         for task in self.sortedTasks:
             self.tasks[task] = self.sortedTasks[task].get() # Get the value(state)
@@ -202,7 +228,28 @@ class ToDoAppFrame(ttk.Frame):
 
         print("\nSaved checkbox value.")
         print(f"(cb_state) - {self.tasks}")
-        self.refresh()
+
+        notice = ttk.Label(self.title_frame, text="test")
+        notice.grid(column=6, row=0, sticky=W)
+        # notice.after(3000, notice.destroy())
+
+        if showCompletedTasks:
+            self.refresh(True)
+        else:
+            self.refresh()
+
+    def delAllTaskFunc(self):
+        
+        temp = self.tasks.copy()
+        self.tasks.clear()
+        for task, status in temp.items():
+            if status == False:
+                self.tasks[task] = status
+            elif status:
+                self.database("others", f"DELETE FROM tasks WHERE Task = '{task}' ")
+        
+        self.hide()
+        self.refresh(False)
 
     def resize_canvas_frame(self, event):
         # Update widgets to get w, h to resize canvas frame
