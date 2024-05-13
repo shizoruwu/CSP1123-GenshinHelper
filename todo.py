@@ -58,27 +58,17 @@ class ToDoAppFrame(ttk.Frame):
         self.canvas_frame.config(width=root.winfo_width(), height=root.winfo_height()
                              - self.title_frame.winfo_height())
 
-        # Connect db
-        self.DBconnection = sqlite3.connect("genshindata.db")
-        self.DBcursor = self.DBconnection.cursor()
-
-        # Create a table if not exists
-        self.DBcursor.execute("CREATE TABLE IF NOT EXISTS tasks(Task, Status)")
-
         # Init a dict for tasks and its status later
-        self.tasks = {}
+        dictionary = {}
         # Get raw widget variable name(create_checkbox widget(checkbutton name)) for refresh function
         self.raw_tasks = [] 
 
-        # Read and get values from db
-        values = self.DBcursor.execute("SELECT * FROM tasks") # Read
-        values = values.fetchall() # Get
-
         # Add task and status to dict
-        for data in values:
+        for data in self.database("fetch"):
             # print(data[1])
-            self.tasks[data[0]] = eval(data[1]) # Add items to dict
-        print(f"\ndict -> {self.tasks}")
+            dictionary[data[0]] = eval(data[1]) # Add items to dict
+        self.tasks = dict(sorted(dictionary.items(), key=lambda item: item[1]))
+        print(f"\ninit -> {self.tasks}")
         
         self.create_checkbox(self.tasks_frame)
 
@@ -92,6 +82,25 @@ class ToDoAppFrame(ttk.Frame):
         root.bind('<Configure>', self.resize_canvas_frame)
         root.bind("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
 
+    def database(self, action, statement=None):
+        # Connect db
+        self.DBconnection = sqlite3.connect("genshindata.db")
+        self.DBcursor = self.DBconnection.cursor()
+        # Create a table if not exists
+        self.DBcursor.execute("CREATE TABLE IF NOT EXISTS tasks(Task, Status)")
+
+        if action == "fetch":
+            # Read and get values from db
+            data = self.DBcursor.execute("SELECT * FROM tasks") # Read
+            self.data = data.fetchall() # Get
+            return self.data
+
+        elif action == "others":
+            self.DBcursor.execute(statement)
+        
+        self.DBconnection.commit()
+        self.DBconnection.close()
+
     def add_task_window(self):
 
         ## Add task function
@@ -101,14 +110,14 @@ class ToDoAppFrame(ttk.Frame):
             if text == '':
                 print("Error - Blank")
             elif text not in self.tasks:
-                self.DBcursor.execute(f"INSERT INTO tasks VALUES('{text}', 'False')")
+                self.database("others", f"INSERT INTO tasks VALUES('{text}', 'False')")
                 self.tasks[text] = False
                 print("Task added.")
             elif text in self.tasks:
-                self.DBcursor.execute(f"INSERT INTO tasks VALUES('{text} (1)', 'False')")
+                self.database("others", f"INSERT INTO tasks VALUES('{text} (1)', 'False')")
                 self.tasks[f'{text} (1)'] = False
                 print("Task added.")
-            self.DBconnection.commit() # Save added task to db
+
             print(f"\n(add_task) -> {self.tasks}")
 
             self.add_window.destroy()
@@ -153,33 +162,31 @@ class ToDoAppFrame(ttk.Frame):
         if confirm:
             for selected_listbox_index in self.listbox.curselection():
                 # print(listbox.get(selected_listbox_index))
-                self.DBcursor.execute(f"DELETE FROM tasks WHERE Task = '{self.listbox.get(selected_listbox_index)}'")
+                self.database("others", f"DELETE FROM tasks WHERE Task = '{self.listbox.get(selected_listbox_index)}'")
                 self.tasks.pop(f"{self.listbox.get(selected_listbox_index)}")
         else:
             self.delete_window.destroy()
-        self.DBconnection.commit()
+
         self.delete_window.destroy()
         self.refresh()
 
     # Create multiple checkbox
     def create_checkbox(self, master):
         row_init = 1
-        for task, status in self.tasks.items():
+        self.sortedTasks = dict(sorted(self.tasks.items(), key=lambda item: item[1]))
+        for task, status in self.sortedTasks.items():
+
             var = BooleanVar()
-            # if status is BooleanVar, get bool by get func
-            if isinstance(status, BooleanVar):
-                var2 = status.get()
-                var.set(var2)
-            elif isinstance(status, bool):
-                var.set(status)
-            # print(type(status))
+            var.set(status)
             checkbox = ttk.Checkbutton(master, text=task, variable=var, command=self.get_cb_state)
             checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
-            self.tasks[task] = var
+            # Keep a refrence for checkbox value
+            self.sortedTasks[task] = var
+            # Add checkbox variable to a list for refresh function
             self.raw_tasks.append(checkbox)
             row_init += 1
         
-        print(f"\ndict(create_checkbox) -> {self.tasks}")
+        print(f"\nsorted(create_checkbox) -> {self.sortedTasks}")
 
     def refresh(self):
         for var in self.raw_tasks:
@@ -187,12 +194,15 @@ class ToDoAppFrame(ttk.Frame):
         self.create_checkbox(self.tasks_frame)
 
     def get_cb_state(self):
-        for task in self.tasks:
-            val = self.tasks[task].get() # Get the value(state)
+        # print(self.sortedTasks)
+        for task in self.sortedTasks:
+            self.tasks[task] = self.sortedTasks[task].get() # Get the value(state)
             # Update lastest checkbox value(state) to db
-            self.DBcursor.execute(f"UPDATE tasks SET Status = '{val}' WHERE Task = '{task}'")
-        self.DBconnection.commit()
-        print("Automatically saved checkbox value.")
+            self.database("others", f"UPDATE tasks SET Status = '{self.sortedTasks[task].get()}' WHERE Task = '{task}'")
+
+        print("\nSaved checkbox value.")
+        print(f"(cb_state) - {self.tasks}")
+        self.refresh()
 
     def resize_canvas_frame(self, event):
         # Update widgets to get w, h to resize canvas frame
