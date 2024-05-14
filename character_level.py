@@ -37,11 +37,18 @@ def NewWindow():
   currentname = CharaChosen.get()
 
   if currentname in namelist:
+    #normal boss
     cur.execute("SELECT normal_boss FROM CharacterLevel WHERE Name = ?", (currentname,))
     row = cur.fetchone()
-    #normal_boss
     if row:
-      normal_boss.set(row[0]) 
+      normal_boss.set(row[0])
+
+    #ascension
+    cur.execute("SELECT ascension FROM CharacterLevel WHERE Name = ?", (currentname,))
+    row = cur.fetchone()
+    if row:
+      ascension.set(row[0])
+
 
     NewWindow = tk.Toplevel(root)
     NewWindow.geometry("1000x750")
@@ -60,18 +67,27 @@ def NewWindow():
     frame = ttk.LabelFrame(NewWindow, height = 600, width = 900)
     frame.grid(row = 2, column = 0)
 
-    frame.columnconfigure((0,1,2), weight = 1)
+    frame.columnconfigure((0,1,2,3), weight = 1)
     frame.rowconfigure((0,1,2,3), weight = 1)
 
     global character_image, normal_boss_image
     character_image = ttk.Label(frame)
     character_image.grid(row = 1, column = 0, rowspan = 4, sticky = 'w')
 
-    normal_boss_image = ttk.Label(frame)
-    normal_boss_image.grid(row = 0, column = 1, rowspan = 2, sticky = 'n')
-
     gemstone_image = ttk.Label(frame)
-    gemstone_image.grid(row = 0,column = 2, rowspan = 2, sticky = 'n')
+    gemstone_image.grid(row = 0,column = 1, rowspan = 2, sticky = 'n')
+
+    chunk_image = ttk.Label(frame)
+    chunk_image.grid(row = 0, column = 2, rowspan = 2, sticky = 'n')
+
+    fragment_image = ttk.Label(frame)
+    fragment_image.grid(row = 0, column = 3, rowspan = 2, sticky = 'n')
+
+    sliver_image = ttk.Label(frame)
+    sliver_image.grid(row = 0, column = 4, rowspan = 2, sticky = 'n')
+
+    normal_boss_image = ttk.Label(frame)
+    normal_boss_image.grid(row = 2, column = 1, sticky = 'n')
 
     #pull image inside
     image_path_1 = f"Genshin_Image/{currentname}_Card.png"
@@ -91,8 +107,8 @@ def NewWindow():
     normal_boss_image.config(image=norphoto)
     normal_boss_image.image = norphoto
     
-    normal_material = tk.Label(frame, text = normal_boss.get(), font=('Arial', 10), width=28)
-    normal_material.grid(row = 0, column = 1, rowspan = 2)
+    normal_material = tk.Label(frame, text = normal_boss.get(), font=('Arial', 10), width=20)
+    normal_material.grid(row = 2, column = 1)
 
     image_path_3 = f"Materials/ascension/{ascension.get()} Gemstone.png"
     image_3 = Image.open(image_path_3)
@@ -101,31 +117,42 @@ def NewWindow():
     gemstone_image.config(image=gemphoto)
     gemstone_image.image = gemphoto
 
-    gemstone_name = tk.Label(frame, text = f'{ascension.get()} Gemstone', font=('Arial', 10), width=28)
-    gemstone_name.grid(row = 0, column = 2, rowspan = 2)
-    print(ascension.get())
+    gemstone_name = tk.Label(frame, text = f'{ascension.get()} Gemstone', font=('Arial', 10), width=20)
+    gemstone_name.grid(row = 0, column = 1, rowspan = 2)
+
+    image_path_4 = f"Materials/ascension/{ascension.get()} Chunk.png"
+    image_4 = Image.open(image_path_4)
+    resized_image_4 = image_4.resize((100,100))
+    chunkphoto = ImageTk.PhotoImage(resized_image_4)
+    chunk_image.config(image=chunkphoto)
+    chunk_image.image = chunkphoto
+
+    chunk_name = tk.Label(frame, text = f'{ascension.get()} Chunk', font=('Arial', 10), width=20)
+    chunk_name.grid(row = 0, column = 2, rowspan = 2)
+
+    image_path_5 = f"Materials/ascension/{ascension.get()} Fragment.png"
+    image_5 = Image.open(image_path_5)
+    resized_image_5 = image_5.resize((100,100))
+    fragphoto = ImageTk.PhotoImage(resized_image_5)
+    fragment_image.config(image=fragphoto)
+    fragment_image.image = fragphoto
+
+    frag_name = tk.Label(frame, text = f'{ascension.get()} Fragment', font=('Arial', 10), width=20)
+    frag_name.grid(row = 0, column = 3, rowspan = 2)
+
+    image_path_6 = f"Materials/ascension/{ascension.get()} Sliver.png"
+    image_6 = Image.open(image_path_6)
+    resized_image_6 = image_6.resize((100,100))
+    sliphoto = ImageTk.PhotoImage(resized_image_6)
+    sliver_image.config(image=sliphoto)
+    sliver_image.image = sliphoto
+
+    sliver_name = tk.Label(frame, text = f'{ascension.get()} Sliver', font=('Arial', 10), width=20)
+    sliver_name.grid(row = 0, column = 4, rowspan = 2)
+
 
   else:
     print(f'invalid')
-
-def characterdata():
-  conn = sqlite3.connect('genshindata.db')
-  cur = conn.cursor()
-  currentname = CharaChosen.get()
-
-  if currentname in namelist:
-    cur.execute("SELECT normal_boss FROM CharacterLevel WHERE Name = ?", (currentname,))
-    row = cur.fetchone()
-    if row:
-      normal_boss.set(row[0])
-
-    cur.execute("SELECT ascension FROM CharacterLevel WHERE Name = ?", (currentname,))
-    row = cur.fetchone()
-    if row:
-      ascension.set(row[0])
-
-  else:
-    print(f"No data found for {currentname}.")
 
 #character calculator features
 root = tk.Tk()
@@ -138,7 +165,7 @@ root.rowconfigure((0,1), weight = 1)
 root.rowconfigure(2, weight = 10)
 
 #labels
-title = tk.Label(root, text = "Select Character to show their Information.", font = ('Arial', 22))
+title = tk.Label(root, text = "Select character to show their Materials.", font = ('Arial', 22))
 title.grid(row = 0, column = 0, columnspan = 2, sticky = 'w', padx = 20, pady = 10)
 
 search = tk.Label(root, text = "Select Character ", font = ('Arial', 20))
