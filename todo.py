@@ -8,8 +8,10 @@ from ctypes import windll
 
 class ToDoAppFrame(ttk.Frame):
 
-    def __init__(self, master):
-        super().__init__(master)
+    def __init__(self, master, *args, **kargs):
+        super().__init__(master, *args, **kargs)
+
+        self.master = master
 
         self.title_frame = ttk.Frame(self)
         self.title_frame.grid(column=0, row=0, sticky=W)
@@ -55,12 +57,12 @@ class ToDoAppFrame(ttk.Frame):
         self.canvas.create_window((0, 0), window=self.tasks_frame, anchor='nw')
 
         # Update widgets to get w, h to resize canvas frame
-        root.update()
+        self.master.update()
         self.title_frame.update()
         # print(root.winfo_width(), root.winfo_height(), root.winfo_rooty(), root.winfo_y())
         # print(self.self.title_frame.winfo_width(), self.self.title_frame.winfo_height())
-        title_bar_height = root.winfo_rooty() - root.winfo_y()
-        self.canvas_frame.config(width=root.winfo_width(), height=root.winfo_height()
+        title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
+        self.canvas_frame.config(width=self.master.winfo_width() - 300, height=self.master.winfo_height()
                              - self.title_frame.winfo_height())
 
         # Init a dict for tasks and its status later
@@ -84,8 +86,8 @@ class ToDoAppFrame(ttk.Frame):
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
         # Resize scrollbar when root size changed
-        root.bind('<Configure>', self.resize_canvas_frame)
-        root.bind("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
+        # self.master.bind('<Configure>', self.resize_canvas_frame)
+        self.master.bind("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
 
     def database(self, action, statement=None):
         # Connect db
@@ -256,8 +258,8 @@ class ToDoAppFrame(ttk.Frame):
 
         # print(root.winfo_width(), root.winfo_height(), root.winfo_rooty(), root.winfo_y())
         # print(self.self.title_frame.winfo_width(), self.self.title_frame.winfo_height())
-        title_bar_height = root.winfo_rooty() - root.winfo_y()
-        self.canvas_frame.config(width=root.winfo_width(), height=root.winfo_height()
+        title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
+        self.canvas_frame.config(width=self.master.winfo_width(), height=self.master.winfo_height()
                              - self.title_frame.winfo_height())
 
 
@@ -269,14 +271,14 @@ class ToDoAppFrame(ttk.Frame):
 
 
 
-windll.shcore.SetProcessDpiAwareness(1)
+# windll.shcore.SetProcessDpiAwareness(1)
 
-# Create a window
-root = Tk()
-root.title("To-Do List")
-root.geometry("900x600+100+100") # (w, h, x, y)
+# # Create a window
+# root = Tk()
+# root.title("To-Do List")
+# root.geometry("900x600+100+100") # (w, h, x, y)
 
-frame = ToDoAppFrame(root)
-frame.grid()
+# frame = ToDoAppFrame(root)
+# frame.grid()
 
-root.mainloop()
+# root.mainloop()
