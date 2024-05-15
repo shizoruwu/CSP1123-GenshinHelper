@@ -23,14 +23,17 @@ class weaponsearch(tk.Tk):
     self.InfoFrame = ttk.Frame(self)
     
     #Menu Frame Codes
-    WeaponLabel = ttk.Label(self.MenuFrame,text = 'Please Choose a Weapon to Show Its Info. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
-    WeaponLabel.grid(column = 1, row =0, padx = 15, pady = 15, sticky = 'w')
+    WeaponLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Weapon to Show Its Info. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
+    WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nw')
 
-    weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Type',height = 200,width = 400)
-    weaponframe.grid(column=0, row=0, padx=15, pady=15,sticky = 'e')
+    weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Type',height = 220,width = 300)
+    weaponframe.grid(column=0, row=0, padx=8, pady=15,sticky = 'nw')
+
+    qualityframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Quality',height = 220,width = 300)
+    qualityframe.grid(column=1, row=0, padx=8, pady=15,sticky = 'nw')
 
     self.weaponimage = ttk.LabelFrame(self.MenuFrame,text = 'Weapon List',width = 1240,height = 500)
-    self.weaponimage.grid(columnspan=2,column=0,row=1)
+    self.weaponimage.grid(columnspan=3,column=0,row=1)
 
     #Sets the Default Value of Checkbox to CHECKED
     self.swordbutton_value = tk.BooleanVar(value = 1)
@@ -38,6 +41,10 @@ class weaponsearch(tk.Tk):
     self.polearmbutton_value = tk.BooleanVar(value = 1)
     self.catalystbutton_value = tk.BooleanVar(value = 1)
     self.bowbutton_value = tk.BooleanVar(value = 1)
+
+    self.fivestarbutton_value = tk.BooleanVar(value = 1)
+    self.fourstarbutton_value = tk.BooleanVar(value = 1)
+    self.otherstarbutton_value = tk.BooleanVar(value = 1)
 
     chooseweapon = ttk.Label(weaponframe, text='Select Your Weapon Type',width= 30)
     chooseweapon.grid(column=0, row=0, padx = 10,pady = 5)
@@ -57,6 +64,20 @@ class weaponsearch(tk.Tk):
 
     bowtype = ttk.Checkbutton(weaponframe,text = 'Bow',variable=self.bowbutton_value,command=self.add_images_filtered)
     bowtype.grid(column=0,row=5,sticky = 'w',padx = 10)
+
+    #Checkbox for Weapon QUALITY FILTER
+
+    choosequality = ttk.Label(qualityframe, text='Select Your Weapon Quality',width= 30)
+    choosequality.grid(column=0, row=0, padx = 10,pady = 5)
+
+    five_star = ttk.Checkbutton(qualityframe,text = '5 STAR Weapon',variable=self.fivestarbutton_value , command=self.add_images_filtered)
+    five_star.grid(column=0,row=1,sticky = 'w',padx = 10)
+
+    four_star = ttk.Checkbutton(qualityframe,text = '4 STAR Weapon',variable=self.fourstarbutton_value , command=self.add_images_filtered)
+    four_star.grid(column=0,row=2,sticky = 'w',padx = 10)
+
+    four_star = ttk.Checkbutton(qualityframe,text = '3 STAR & Below Weapon',variable=self.otherstarbutton_value , command=self.add_images_filtered)
+    four_star.grid(column=0,row=3,sticky = 'w',padx = 10)
 
     #Create a scrollable frame
     self.scrollable_frame = ttk.Frame(self.weaponimage)
@@ -141,6 +162,11 @@ class weaponsearch(tk.Tk):
     global weapontype
     weapontype = [row[0] for row in namerows]
 
+    cur.execute("SELECT Quality FROM WeaponData")
+    namerows = cur.fetchall()
+    global weaponquality
+    weaponquality = [row[0] for row in namerows]
+
     conn.close()
 
   #When Clicked , Show info (Switch Frames)
@@ -191,6 +217,16 @@ class weaponsearch(tk.Tk):
     if self.bowbutton_value.get():
       selected_types.append("Bow")
 
+    selected_quality = []
+    if self.fivestarbutton_value.get():
+      selected_quality.append('5')
+    if self.fourstarbutton_value.get():
+      selected_quality.append('4')
+    if self.otherstarbutton_value.get():
+      selected_quality.append('3')
+      selected_quality.append('2')
+      selected_quality.append('1')
+
     filtered_name = []
     filtered_imgname = []
 
@@ -199,8 +235,9 @@ class weaponsearch(tk.Tk):
       weaponname = namelist[i]
         
       currentweapontype = weapontype[i]
+      currentweaponquality = weaponquality[i]
 
-      if currentweapontype in selected_types:
+      if (currentweapontype in selected_types) and (currentweaponquality in selected_quality):
         filtered_name.append(weaponname)
         filtered_imgname.append(name)
 
