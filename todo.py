@@ -6,22 +6,26 @@ from tkinter import messagebox
 import sqlite3
 from ctypes import windll
 
-class ToDoAppFrame(ttk.Frame):
+class ToDoAppFrame(ttk.LabelFrame):
 
     def __init__(self, master, *args, **kargs):
         super().__init__(master, *args, **kargs)
 
         self.master = master
+        self.s = ttk.Style()
+        self.s.configure('font.TLabel', font=("Georgia", 15))
+        self.label = ttk.Label(text="To-Do List", style="font.TLabel")
+        self.config(labelwidget=self.label)
 
         self.title_frame = ttk.Frame(self)
         self.title_frame.grid(column=0, row=0, sticky=W)
 
         # Create Label
-        label = ttk.Label(self.title_frame, text="To-Do List", font=("Georgia", 15))
-        label.grid(column=1, row=0, padx=(30, 15), pady=20, sticky=W) # Render
+        # label = ttk.Label(self.title_frame, text="To-Do List", font=("Georgia", 15))
+        # label.grid(column=1, row=0, padx=(30, 15), pady=20, sticky=W) # Render
         # Create "add" task button
         add = ttk.Button(self.title_frame, text="Add", width=5, command=self.add_task_window)
-        add.grid(column=2, row=0, pady=5, sticky=W)
+        add.grid(column=2, row=0, padx=(30, 0), pady=10, sticky=W)
         delete_button = ttk.Button(self.title_frame, text="Delete", width=7, command=self.delete)
         delete_button.grid(column=3, row=0, sticky=W, padx=(5,0))
         self.showHide = ttk.Button(self.title_frame, text="Show Completed Tasks", width=21, command=self.show)
@@ -62,7 +66,7 @@ class ToDoAppFrame(ttk.Frame):
         # print(root.winfo_width(), root.winfo_height(), root.winfo_rooty(), root.winfo_y())
         # print(self.self.title_frame.winfo_width(), self.self.title_frame.winfo_height())
         title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
-        self.canvas_frame.config(width=self.master.winfo_width() - 300, height=self.master.winfo_height()
+        self.canvas_frame.config(width=self.master.winfo_width() - 400, height=self.master.winfo_height()
                              - self.title_frame.winfo_height())
 
         # Init a dict for tasks and its status later
@@ -259,8 +263,8 @@ class ToDoAppFrame(ttk.Frame):
         # print(root.winfo_width(), root.winfo_height(), root.winfo_rooty(), root.winfo_y())
         # print(self.self.title_frame.winfo_width(), self.self.title_frame.winfo_height())
         title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
-        self.canvas_frame.config(width=self.master.winfo_width() - 153, height=self.master.winfo_height()
-                             - self.title_frame.winfo_height())
+        self.canvas_frame.config(width=self.master.winfo_width() - 180, height=self.master.winfo_height()
+                             - self.title_frame.winfo_height() - 200)
 
 
 
