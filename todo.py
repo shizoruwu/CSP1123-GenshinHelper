@@ -12,9 +12,7 @@ class ToDoAppFrame(ttk.LabelFrame):
         super().__init__(master, *args, **kargs)
 
         self.master = master
-        self.s = ttk.Style()
-        self.s.configure('font.TLabel', font=("Georgia", 15))
-        self.label = ttk.Label(text="To-Do List", style="font.TLabel")
+        self.label = ttk.Label(text="To-Do List", style="fontt.TLabel")
         self.config(labelwidget=self.label)
 
         self.title_frame = ttk.Frame(self)
