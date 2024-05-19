@@ -86,7 +86,7 @@ class ToDoAppFrame(ttk.Frame):
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
         # Resize scrollbar when root size changed
-        # self.master.bind('<Configure>', self.resize_canvas_frame)
+        self.master.bind('<Configure>', self.resize_canvas_frame)
         self.master.bind("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
 
     def database(self, action, statement=None):
@@ -231,8 +231,8 @@ class ToDoAppFrame(ttk.Frame):
         print("\nSaved checkbox value.")
         print(f"(cb_state) - {self.tasks}")
 
-        notice = ttk.Label(self.title_frame, text="test")
-        notice.grid(column=6, row=0, sticky=W)
+        notice = ttk.Label(self.title_frame, text="Task Checked/Unchecked")
+        notice.grid(column=6, row=0, sticky=W, padx=5)
         # notice.after(3000, notice.destroy())
 
         if showCompletedTasks:
@@ -259,7 +259,7 @@ class ToDoAppFrame(ttk.Frame):
         # print(root.winfo_width(), root.winfo_height(), root.winfo_rooty(), root.winfo_y())
         # print(self.self.title_frame.winfo_width(), self.self.title_frame.winfo_height())
         title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
-        self.canvas_frame.config(width=self.master.winfo_width(), height=self.master.winfo_height()
+        self.canvas_frame.config(width=self.master.winfo_width() - 153, height=self.master.winfo_height()
                              - self.title_frame.winfo_height())
 
 
