@@ -24,7 +24,7 @@ class weaponsearch(tk.Tk):
     
     #Menu Frame Codes
     WeaponLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Weapon to Show Its Info. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
-    WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nw')
+    WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nws')
 
     weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Type',height = 220,width = 300)
     weaponframe.grid(column=0, row=0, padx=8, pady=15,sticky = 'nw')
@@ -120,18 +120,18 @@ class weaponsearch(tk.Tk):
       weaponname = namelist_sort[i]
       currentname = name
 
-      label = ttk.Label(self.image_frame,width = 160,justify='center')
+      label = ttk.Label(self.image_frame,width = 155,justify='center')
       label.grid(row=row, column=col, padx=10, pady=10,sticky='n')
-      label.bind("<Button-1>",lambda event, clickedname = weaponname: self.ImageClicked(event,clickedname))
+      label.bind("<Button-1>",lambda event, clickedname = weaponname: self.imageclicked(event,clickedname))
 
       row = row+1
-      label2 = ttk.Label(self.image_frame,justify='center',wraplength = 160,text = weaponname)
+      label2 = ttk.Label(self.image_frame,justify='center',wraplength = 155,text = weaponname)
       label2.grid(row=row, column=col, padx=10,sticky = 'n')
 
       #Insert Image of Weapon
       image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
       image = Image.open(image_path)
-      resized_image = image.resize((128, 128))
+      resized_image = image.resize((145, 145))
       charphoto = ImageTk.PhotoImage(resized_image)
       label.config(image=charphoto)
       label.image = charphoto
@@ -170,7 +170,7 @@ class weaponsearch(tk.Tk):
     conn.close()
 
   #When Clicked , Show info (Switch Frames)
-  def ImageClicked(self,event,clickedname):
+  def imageclicked(self,event,clickedname):
     print (clickedname)
     if self.current_frame == self.MenuFrame:
       self.show_InfoFrame()
@@ -196,15 +196,9 @@ class weaponsearch(tk.Tk):
     else:
       self.show_MenuFrame()
 
-  def add_images_filtered(self):
-    #Destroy Current Frame
-    self.image_frame.destroy()
-    
-    #Create another empty frame
-    self.image_frame = ttk.Frame(self.canvas)
-    self.canvas.create_window((0, 0), window=self.image_frame, anchor='nw')
-
+  def filterfunc(self):
     #Determined Filtered Weapon Types
+    global selected_quality , selected_types
     selected_types = []
     if self.swordbutton_value.get():
       selected_types.append("Sword")
@@ -227,6 +221,18 @@ class weaponsearch(tk.Tk):
       selected_quality.append('2')
       selected_quality.append('1')
 
+  def add_images_filtered(self):
+    #Destroy Current Frame
+    self.image_frame.destroy()
+    
+    #Create another empty frame
+    self.image_frame = ttk.Frame(self.canvas)
+    self.canvas.create_window((0, 0), window=self.image_frame, anchor='nw')
+
+    #Determine Filtered Info
+    self.filterfunc()
+
+    #Placeholder for Filtered Data
     filtered_name = []
     filtered_imgname = []
 
@@ -253,21 +259,22 @@ class weaponsearch(tk.Tk):
       weaponname = filtered_name[i]
       currentname = name
 
-      label = ttk.Label(self.image_frame,width = 160,justify='center')
+      label = ttk.Label(self.image_frame,width = 155,justify='center')
       label.grid(row=row, column=col, padx=10, pady=10,sticky='n')
-      label.bind("<Button-1>",lambda event, clickedname = weaponname: self.ImageClicked(event,clickedname))
+      label.bind("<Button-1>",lambda event, clickedname = weaponname: self.imageclicked(event,clickedname))
 
       row = row+1
-      label2 = ttk.Label(self.image_frame,justify='center',wraplength = 160,text = weaponname)
+      label2 = ttk.Label(self.image_frame,justify='center',wraplength = 155,text = weaponname)
       label2.grid(row=row, column=col, padx=10,sticky = 'n')
 
       #Insert Image of Weapon
       image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
       image = Image.open(image_path)
-      resized_image = image.resize((128, 128))
+      resized_image = image.resize((145, 145))
       charphoto = ImageTk.PhotoImage(resized_image)
-      label.config(image=charphoto)
+      label.config(image=charphoto,)
       label.image = charphoto
 
-CurrentScreen = weaponsearch()
-CurrentScreen.mainloop()
+if __name__ == '__main__': 
+  CurrentScreen = weaponsearch()
+  CurrentScreen.mainloop()
