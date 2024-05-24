@@ -47,37 +47,50 @@ class weaponsearch(tk.Tk):
     self.otherstarbutton_value = tk.BooleanVar(value = 1)
 
     chooseweapon = ttk.Label(weaponframe, text='Select Your Weapon Type',width= 30)
-    chooseweapon.grid(column=0, row=0, padx = 10,pady = 5)
+    chooseweapon.grid(columnspan = 2,column=0, row=0, padx = 10,pady = 5)
 
     #Checkbox for WEAPON TYPES
     swordtype = ttk.Checkbutton(weaponframe,text = 'Sword',variable=self.swordbutton_value , command=self.add_images_filtered)
-    swordtype.grid(column=0,row=1,sticky = 'w',padx = 10)
+    swordtype.grid(columnspan = 2,column=0,row=1,sticky = 'w',padx = 10)
 
     claymoretype = ttk.Checkbutton(weaponframe,text = 'Claymore',variable=self.claymorebutton_value,command=self.add_images_filtered)
-    claymoretype.grid(column=0,row=2,sticky = 'w',padx = 10)
+    claymoretype.grid(columnspan = 2,column=0,row=2,sticky = 'w',padx = 10)
 
     polearmtype = ttk.Checkbutton(weaponframe,text = 'Polearm',variable=self.polearmbutton_value,command=self.add_images_filtered)
-    polearmtype.grid(column=0,row=3,sticky = 'w',padx = 10)
+    polearmtype.grid(columnspan = 2,column=0,row=3,sticky = 'w',padx = 10)
 
     catalysttype = ttk.Checkbutton(weaponframe,text = 'Catalyst',variable=self.catalystbutton_value,command=self.add_images_filtered)
-    catalysttype.grid(column=0,row=4,sticky = 'w',padx = 10)
+    catalysttype.grid(columnspan = 2,column=0,row=4,sticky = 'w',padx = 10)
 
     bowtype = ttk.Checkbutton(weaponframe,text = 'Bow',variable=self.bowbutton_value,command=self.add_images_filtered)
-    bowtype.grid(column=0,row=5,sticky = 'w',padx = 10)
+    bowtype.grid(columnspan = 2,column=0,row=5,sticky = 'w',padx = 10)
+
+    selectallbutton = ttk.Button(weaponframe,text='Select All',command=self.selectallweapon)
+    selectallbutton.grid(column = 0, row = 6 ,sticky = 'es',padx = 8,pady = 3)
+
+    clearbutton = ttk.Button(weaponframe,text='Clear All',command=self.clearallweapon)
+    clearbutton.grid(column = 1, row = 6 ,sticky = 'ws',padx = 8,pady = 3)
+
 
     #Checkbox for Weapon QUALITY FILTER
 
     choosequality = ttk.Label(qualityframe, text='Select Your Weapon Quality',width= 30)
-    choosequality.grid(column=0, row=0, padx = 10,pady = 5)
+    choosequality.grid(columnspan = 2,column=0, row=0, padx = 10,pady = 5)
 
     five_star = ttk.Checkbutton(qualityframe,text = '5 STAR Weapon',variable=self.fivestarbutton_value , command=self.add_images_filtered)
-    five_star.grid(column=0,row=1,sticky = 'w',padx = 10)
+    five_star.grid(columnspan = 2,column=0,row=1,sticky = 'w',padx = 10)
 
     four_star = ttk.Checkbutton(qualityframe,text = '4 STAR Weapon',variable=self.fourstarbutton_value , command=self.add_images_filtered)
-    four_star.grid(column=0,row=2,sticky = 'w',padx = 10)
+    four_star.grid(columnspan = 2,column=0,row=2,sticky = 'w',padx = 10)
 
     four_star = ttk.Checkbutton(qualityframe,text = '3 STAR & Below Weapon',variable=self.otherstarbutton_value , command=self.add_images_filtered)
-    four_star.grid(column=0,row=3,sticky = 'w',padx = 10)
+    four_star.grid(columnspan = 2,column=0,row=3,sticky = 'w',padx = 10)
+
+    selectallbuttonstar = ttk.Button(qualityframe,text='Select All',command=self.selectallstar)
+    selectallbuttonstar.grid(column = 0, row = 4 ,sticky = 'es',padx = 8,pady = 8)
+
+    clearbuttonstar = ttk.Button(qualityframe,text='Clear All',command=self.clearallstar)
+    clearbuttonstar.grid(column = 1, row = 4 ,sticky = 'ws',padx = 8,pady = 8)
 
     #Create a scrollable frame
     self.scrollable_frame = ttk.Frame(self.weaponimage)
@@ -107,8 +120,52 @@ class weaponsearch(tk.Tk):
     self.show_MenuFrame()
 
     #Frame 2 Codes
-    self.switch_button = ttk.Button(self.InfoFrame, text="Back", command= self.switch_frames)
-    self.switch_button.grid(padx=20, pady=10)
+    global InfoName , InfoType , InfoInfo , InfoQuality , InfoBaseATK , Info2ndStat , InfoRefinementName , InfoRefinementInfo
+
+    InfoName = tk.StringVar()
+    InfoType = tk.StringVar()
+    InfoInfo = tk.StringVar()
+    InfoQuality = tk.StringVar()
+    InfoBaseATK = tk.StringVar()
+    Info2ndStat = tk.StringVar()
+    InfoRefinementName = tk.StringVar()
+    InfoRefinementInfo = tk.StringVar()
+
+    InfoName.set(' ')
+    InfoType.set(' ')
+    InfoInfo.set(' ')
+    InfoQuality.set(' ')
+    InfoBaseATK.set(' ')
+    Info2ndStat.set(' ')
+    InfoRefinementName.set(' ')
+    InfoRefinementInfo.set(' ')
+
+    InfoLabelFrame = ttk.Labelframe(self.InfoFrame,text = 'Weapon Info')
+    InfoLabelFrame.grid(column=0 , row = 0 , padx = 15 , pady = 15)
+
+    ImageLabelFrame = ttk.Labelframe(InfoLabelFrame,text = 'Image')
+    ImageLabelFrame.grid(column=0 , row = 1 , padx = 8 , pady = 8)
+
+    global displaylabel
+    displaylabel = ttk.Label(ImageLabelFrame)
+    displaylabel.grid(column=0,row=1,padx = 20, pady = 5)
+
+    global displaylabel2nd
+    displaylabel2nd = ttk.Label(ImageLabelFrame)
+    displaylabel2nd.grid(column=1,row=1,padx = 20, pady = 5)
+
+    global basename , basename2nd
+    basename = tk.StringVar()
+    basename2nd = tk.StringVar()
+
+    ttk.Label(ImageLabelFrame,textvariable= basename,justify='center',font = ('Arial',11)).grid(column=0,row=0,pady=5)
+    ttk.Label(ImageLabelFrame,textvariable= basename2nd,justify='center',font = ('Arial',11)).grid(column=1,row=0,pady=5)
+
+    Name = ttk.Label(InfoLabelFrame, textvariable=InfoName, font = ('Arial',15) )
+    Name.grid(column=0,row=0,padx = 8 , pady = 8)
+
+    self.switch_button = ttk.Button(InfoLabelFrame, text="Back", command= self.switch_frames)
+    self.switch_button.grid(column=0,row=2,padx=20, pady=10)
 
   #Add image Functions
   def add_images(self):
@@ -171,7 +228,77 @@ class weaponsearch(tk.Tk):
 
   #When Clicked , Show info (Switch Frames)
   def imageclicked(self,event,clickedname):
-    print (clickedname)
+    #Retrieve Data
+    conn = sqlite3.connect('genshindata.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT Name FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      InfoName.set(row[0])
+
+    cursor.execute("SELECT ImgName FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      currentname = row[0]
+
+    image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
+    image = Image.open(image_path)
+    resized_image = image.resize((145, 145))
+    charphoto = ImageTk.PhotoImage(resized_image)
+    displaylabel.config(image=charphoto,)
+    displaylabel.image = charphoto
+
+    image_path = f"Genshin_Weapon_Image/Weapon_{currentname}_2nd.png"
+    image = Image.open(image_path)
+    resized_image = image.resize((145, 145))
+    charphoto = ImageTk.PhotoImage(resized_image)
+    displaylabel2nd.config(image=charphoto,)
+    displaylabel2nd.image = charphoto
+
+    if clickedname == 'Sword of Narzissenkreuz':
+      basename.set('Pneuma Form')
+      basename2nd.set('Ousia Form')
+    else:
+      basename.set('Base')
+      basename2nd.set('2nd Ascension')
+    
+    cursor.execute("SELECT Info FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      InfoInfo.set(row[0])
+
+    cursor.execute("SELECT Type FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      InfoType.set(row[0])
+
+    cursor.execute("SELECT Quality FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      InfoQuality.set(row[0])
+
+    cursor.execute("SELECT BaseAtk FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      InfoBaseATK.set(row[0])
+
+    cursor.execute("SELECT SecondStat FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      Info2ndStat.set(row[0])
+
+    cursor.execute("SELECT RefinementName FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      InfoRefinementName.set(row[0])
+
+    cursor.execute("SELECT RefinementInfo FROM WeaponData WHERE Name = ?", (clickedname,))
+    row = cursor.fetchone()
+    if row:
+      InfoRefinementInfo.set(row[0])
+
+    #Switch to Info Frame
     if self.current_frame == self.MenuFrame:
       self.show_InfoFrame()
     else:
@@ -180,13 +307,13 @@ class weaponsearch(tk.Tk):
   #Show Menu Frame Func
   def show_MenuFrame(self):
     self.current_frame = self.MenuFrame
-    self.MenuFrame.grid(padx=20, pady=20)
+    self.MenuFrame.grid(padx=20, pady=8)
     self.InfoFrame.grid_forget()
 
   #Show Info Frame Func
   def show_InfoFrame(self):
     self.current_frame = self.InfoFrame
-    self.InfoFrame.grid()
+    self.InfoFrame.grid(padx=20, pady=8)
     self.MenuFrame.grid_forget()
 
   #Switching between frames
@@ -196,6 +323,7 @@ class weaponsearch(tk.Tk):
     else:
       self.show_MenuFrame()
 
+  #Functions to sort out selected filters 
   def filterfunc(self):
     #Determined Filtered Weapon Types
     global selected_quality , selected_types
@@ -274,6 +402,39 @@ class weaponsearch(tk.Tk):
       charphoto = ImageTk.PhotoImage(resized_image)
       label.config(image=charphoto,)
       label.image = charphoto
+
+    #clear all functions
+  def clearallweapon(self):
+    self.swordbutton_value.set(0)
+    self.claymorebutton_value.set(0)
+    self.polearmbutton_value.set(0)
+    self.catalystbutton_value.set(0)
+    self.bowbutton_value.set(0)
+
+    self.add_images_filtered()
+
+  def clearallstar(self):
+    self.fivestarbutton_value.set(0)
+    self.fourstarbutton_value.set(0)
+    self.otherstarbutton_value.set(0)
+
+    self.add_images_filtered()
+
+  def selectallweapon(self):
+    self.swordbutton_value.set(1)
+    self.claymorebutton_value.set(1)
+    self.polearmbutton_value.set(1)
+    self.catalystbutton_value.set(1)
+    self.bowbutton_value.set(1)
+
+    self.add_images_filtered()
+
+  def selectallstar(self):
+    self.fivestarbutton_value.set(1)
+    self.fourstarbutton_value.set(1)
+    self.otherstarbutton_value.set(1)
+
+    self.add_images_filtered()
 
 if __name__ == '__main__': 
   CurrentScreen = weaponsearch()
