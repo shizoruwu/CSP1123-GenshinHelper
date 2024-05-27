@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk 
 from PIL import ImageTk, Image
 from ctypes import windll
+import webbrowser
 
 #FIX BLURRY FONTS
 windll.shcore.SetProcessDpiAwareness(1)
@@ -140,19 +141,21 @@ class weaponsearch(tk.Tk):
     InfoRefinementName.set(' ')
     InfoRefinementInfo.set(' ')
 
-    InfoLabelFrame = ttk.Labelframe(self.InfoFrame,text = 'Weapon Info')
+    InfoLabelFrame = ttk.Labelframe(self.InfoFrame,text = "Weapon's Info")
     InfoLabelFrame.grid(column=0 , row = 0 , padx = 15 , pady = 15)
 
     ImageLabelFrame = ttk.Labelframe(InfoLabelFrame,text = 'Image')
-    ImageLabelFrame.grid(column=0 , row = 1 , padx = 8 , pady = 8)
+    ImageLabelFrame.grid(column=0 , row = 1 , padx = 15 , pady = 15,sticky='n')
 
     global displaylabel
     displaylabel = ttk.Label(ImageLabelFrame)
     displaylabel.grid(column=0,row=1,padx = 20, pady = 5)
+    displaylabel.bind("<Button-1>", self.open_link)
 
     global displaylabel2nd
     displaylabel2nd = ttk.Label(ImageLabelFrame)
     displaylabel2nd.grid(column=1,row=1,padx = 20, pady = 5)
+    displaylabel2nd.bind("<Button-1>", self.open_link)
 
     global basename , basename2nd
     basename = tk.StringVar()
@@ -161,11 +164,45 @@ class weaponsearch(tk.Tk):
     ttk.Label(ImageLabelFrame,textvariable= basename,justify='center',font = ('Arial',11)).grid(column=0,row=0,pady=5)
     ttk.Label(ImageLabelFrame,textvariable= basename2nd,justify='center',font = ('Arial',11)).grid(column=1,row=0,pady=5)
 
-    Name = ttk.Label(InfoLabelFrame, textvariable=InfoName, font = ('Arial',15) )
+    Name = ttk.Label(InfoLabelFrame, textvariable=InfoName, font = ('Arial',15))
     Name.grid(column=0,row=0,padx = 8 , pady = 8)
 
-    self.switch_button = ttk.Button(InfoLabelFrame, text="Back", command= self.switch_frames)
-    self.switch_button.grid(column=0,row=2,padx=20, pady=10)
+    Info = ttk.Label(InfoLabelFrame, textvariable = InfoInfo , wraplength = 370 , font = ('Arial',11))
+    Info.grid(column=0,row=2,padx=5,pady=5)
+
+    WeaponAttackLabelFrame = ttk.Labelframe(self.InfoFrame,text = "Weapon's Attack Info")
+    WeaponAttackLabelFrame.grid(column=1 , row = 0, padx = 15 , pady = 15,sticky='n')
+
+    weapontypelabel = ttk.Label(WeaponAttackLabelFrame,text="Weapon's Type:",font = ('Arial',12))
+    weapontypelabel.grid(column=0,row=0,padx = 5,pady = 5,sticky = 'e')
+    weapontype = ttk.Label(WeaponAttackLabelFrame,textvariable=InfoType,font = ('Arial',12))
+    weapontype.grid(column=1,row=0,padx = 5,pady = 5,sticky = 'w')
+
+    qualitylabel = ttk.Label(WeaponAttackLabelFrame,text="Weapon's Quality:",font = ('Arial',12))
+    qualitylabel.grid(column=0,row=1,padx = 5,pady = 5,sticky = 'e')
+    quality = ttk.Label(WeaponAttackLabelFrame,textvariable=InfoQuality,font = ('Arial',12))
+    quality.grid(column=1,row=1,padx = 5,pady = 5,sticky = 'w')
+
+    baseatklabel = ttk.Label(WeaponAttackLabelFrame,text="Weapon's Base Attack:",font = ('Arial',12))
+    baseatklabel.grid(column=0,row=2,padx = 5,pady = 5,sticky = 'e')
+    baseatk = ttk.Label(WeaponAttackLabelFrame,textvariable=InfoBaseATK,font = ('Arial',12))
+    baseatk.grid(column=1,row=2,padx = 5,pady = 5,sticky = 'w')
+
+    seconstatlabel = ttk.Label(WeaponAttackLabelFrame,text="Weapon's Secondary Stat:",font = ('Arial',12))
+    seconstatlabel.grid(column=0,row=3,padx = 5,pady = 5,sticky = 'e')
+    seconstat = ttk.Label(WeaponAttackLabelFrame,textvariable=Info2ndStat,font = ('Arial',12))
+    seconstat.grid(column=1,row=3,padx = 5,pady = 5,sticky = 'w')
+
+    refinementlabel = ttk.Label(WeaponAttackLabelFrame,text="Weapon's Refinement:",font = ('Arial',12))
+    refinementlabel.grid(column=0,row=4,padx = 5,pady = 5,sticky = 'e')
+    refinement = ttk.Label(WeaponAttackLabelFrame,textvariable=InfoRefinementName,font = ('Arial',12))
+    refinement.grid(column=1,row=4,padx = 5,pady = 5,sticky = 'w')
+
+    refinementinfo = ttk.Label(WeaponAttackLabelFrame,textvariable=InfoRefinementInfo,font = ('Arial',10),wraplength=370)
+    refinementinfo.grid(column=1,row=5,padx = 5,pady = 5,sticky = 'w')
+
+    self.switch_button = ttk.Button(self.InfoFrame,width = 12, text="Back", command= self.switch_frames)
+    self.switch_button.grid(columnspan=2,column=0,row=1,padx=20, pady=10,sticky = 'w')
 
   #Add image Functions
   def add_images(self):
@@ -228,6 +265,7 @@ class weaponsearch(tk.Tk):
 
   #When Clicked , Show info (Switch Frames)
   def imageclicked(self,event,clickedname):
+
     #Retrieve Data
     conn = sqlite3.connect('genshindata.db')
     cursor = conn.cursor()
@@ -241,6 +279,12 @@ class weaponsearch(tk.Tk):
     row = cursor.fetchone()
     if row:
       currentname = row[0]
+
+    global url 
+    if currentname == "'Ultimate_Overlord's_Mega_Magic_Sword'" or currentname == "'The_Catch'":
+      url = f'https://genshin-impact.fandom.com/wiki/{clickedname}'
+    else:
+      url = f'https://genshin-impact.fandom.com/wiki/{currentname}'
 
     image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
     image = Image.open(image_path)
@@ -276,7 +320,8 @@ class weaponsearch(tk.Tk):
     cursor.execute("SELECT Quality FROM WeaponData WHERE Name = ?", (clickedname,))
     row = cursor.fetchone()
     if row:
-      InfoQuality.set(row[0])
+      row = f'{row[0]} Star'
+      InfoQuality.set(row)
 
     cursor.execute("SELECT BaseAtk FROM WeaponData WHERE Name = ?", (clickedname,))
     row = cursor.fetchone()
@@ -296,7 +341,10 @@ class weaponsearch(tk.Tk):
     cursor.execute("SELECT RefinementInfo FROM WeaponData WHERE Name = ?", (clickedname,))
     row = cursor.fetchone()
     if row:
-      InfoRefinementInfo.set(row[0])
+      if (row[0]) == 'None':
+        InfoRefinementInfo.set(' ')
+      else:
+        InfoRefinementInfo.set(row[0])
 
     #Switch to Info Frame
     if self.current_frame == self.MenuFrame:
@@ -349,6 +397,7 @@ class weaponsearch(tk.Tk):
       selected_quality.append('2')
       selected_quality.append('1')
 
+  #Function for adding in images , but with filter
   def add_images_filtered(self):
     #Destroy Current Frame
     self.image_frame.destroy()
@@ -404,6 +453,8 @@ class weaponsearch(tk.Tk):
       label.image = charphoto
 
     #clear all functions
+  
+  #Function for Clearing all weapon checkbox
   def clearallweapon(self):
     self.swordbutton_value.set(0)
     self.claymorebutton_value.set(0)
@@ -413,6 +464,7 @@ class weaponsearch(tk.Tk):
 
     self.add_images_filtered()
 
+  #Function for clearing all weapon's star checkbox
   def clearallstar(self):
     self.fivestarbutton_value.set(0)
     self.fourstarbutton_value.set(0)
@@ -420,6 +472,7 @@ class weaponsearch(tk.Tk):
 
     self.add_images_filtered()
 
+  #Select all Weapon
   def selectallweapon(self):
     self.swordbutton_value.set(1)
     self.claymorebutton_value.set(1)
@@ -429,12 +482,17 @@ class weaponsearch(tk.Tk):
 
     self.add_images_filtered()
 
+  #Select all stars
   def selectallstar(self):
     self.fivestarbutton_value.set(1)
     self.fourstarbutton_value.set(1)
     self.otherstarbutton_value.set(1)
 
     self.add_images_filtered()
+
+  #QOL Feature, Opens up webpage when clicked on image for more details
+  def open_link(self,event):
+    webbrowser.open(url)
 
 if __name__ == '__main__': 
   CurrentScreen = weaponsearch()
