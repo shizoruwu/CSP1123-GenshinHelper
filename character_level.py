@@ -22,16 +22,18 @@ def fetchname():   #fetch name from data base
 fetchname()
 
 #Search Function to Remove Unrelated Object
-def Search():
+def Search(event=None):
   searchvalue = CharaChosen.get().lower()
-  if searchvalue == '':
-    CharaChosen['values'] = namelist
+  matching_names = [name for name in namelist if searchvalue in name.lower()]
+  CharaChosen['values'] = matching_names
 
-  else:
-    data = [item for item in namelist if searchvalue in item.lower()]
-    CharaChosen['values'] = data
+#clear content inside frame2 
+def clear_frame():
+    for widget in frame2.winfo_children():
+        widget.destroy()
 
-def NewWindow():
+def frame():
+  clear_frame()
   conn = sqlite3.connect('genshindata.db')
   cur = conn.cursor()
   currentname = CharaChosen.get()
@@ -59,59 +61,235 @@ def NewWindow():
     if row:
       flower.set(row[0])
 
-    NewWindow = tk.Toplevel(root)
-    NewWindow.geometry("1000x750")
-    NewWindow.title("Character Information")
+    #current level and level wanted to be upgrade to
+    curlevel = ["1", "20★", "40★", "50★", "60★", "70★", "80★"]
+    sellevel = ["20★", "40★", "50★", "60★", "70★", "80★"]
 
-    #grid
-    NewWindow.columnconfigure(0, weight = 1)
-    NewWindow.rowconfigure((0,1), weight = 1)
-    NewWindow.rowconfigure(2, weight = 10)
+    current_level = tk.StringVar()
+    selected_level = tk.StringVar()
+    
+    curlevel_combo = ttk.Combobox(frame1, textvariable=current_level, values=curlevel)
+    curlevel_combo.place(x = frame1_width + 330, y = frame1_height + 50)
+    sellevel_combo = ttk.Combobox(frame1, textvariable=selected_level, values=sellevel)
+    sellevel_combo.place(x = frame1_width + 630, y = frame1_height + 50)
+    arrow = tk.Label(frame1, text="→", font=('Arial', 20))
+    arrow.place(x = frame1_width + 560, y = frame1_height + 37)
 
-    # Add widgets to the new window/frame
-    character_info_label = tk.Label(NewWindow, text="Character Information", font=('Arial', 20))
-    character_info_label.grid(row = 0, column = 0, pady=10)
+    def combobox_selection(event):
+      curlevel_value = curlevel_combo.get()
+      sellevel_value = sellevel_combo.get()
+      
+      gemstone_value = 6
+      chunk_value = 9
+      fragment_value = 9
+      sliver_value = 1
+      enhan1_value = 18
+      enhan2_value = 30
+      enhan3_value = 36
+      normalboss_value = 46
+      flower_value = 168
 
-    #add frame
-    frame = ttk.LabelFrame(NewWindow, height = 600, width = 900)
-    frame.grid(row = 1, column = 0)
+      if curlevel_value == "1":
+        pass
+      elif curlevel_value == "20★":
+        sliver_value -= 1
+        flower_value -= 3
+        enhan1_value -= 3
+
+      elif curlevel_value == "40★":
+        sliver_value -= 1
+        fragment_value -= 3
+        enhan1_value -= 18
+        normalboss_value -= 2
+        flower_value -= 13
+      
+      elif curlevel_value == "50★":
+        sliver_value -= 1
+        fragment_value -= 9
+        enhan1_value -= 18
+        enhan2_value -= 12
+        normalboss_value -= 6
+        flower_value -= 33
+
+      elif curlevel_value == "60★":
+        sliver_value -= 1
+        fragment_value -= 9
+        chunk_value -= 3
+        enhan1_value -= 18
+        enhan2_value -= 30
+        normalboss_value -= 14
+        flower_value -= 63
+
+      elif curlevel_value == "70★":
+        sliver_value -= 1
+        fragment_value -= 9
+        chunk_value -= 9
+        enhan1_value -= 18
+        enhan2_value -= 30
+        enhan3_value -= 12
+        normalboss_value -= 26
+        flower_value -= 108
+
+      elif curlevel_value == "80★":
+        sliver_value -= 1
+        fragment_value -= 9
+        chunk_value -= 9
+        gemstone_value -= 6
+        enhan1_value -= 18
+        enhan2_value -= 30
+        enhan3_value -= 36
+        normalboss_value -= 46
+        flower_value -= 168
+      
+      else:
+        gemstone_value = 0
+        chunk_value = 0
+        fragment_value = 0
+        sliver_value = 0
+        enhan1_value = 0
+        enhan2_value = 0
+        enhan3_value = 0
+        normalboss_value = 0
+        flower_value = 0
+
+      gemstone_value = gemstone_value
+      chunk_value = chunk_value
+      fragment_value = fragment_value
+      sliver_value = sliver_value
+      enhan1_value = enhan1_value
+      enhan2_value = enhan2_value
+      enhan3_value = enhan3_value
+      normalboss_value = normalboss_value
+      flower_value = flower_value
+
+      if sellevel_value == "20★":
+        fragment_value -= 9
+        chunk_value -= 9
+        gemstone_value -= 6
+        enhan1_value -= 15
+        enhan2_value -= 30
+        enhan3_value -= 36
+        normalboss_value -= 46
+        flower_value -= 165
+
+      elif sellevel_value == "40★":
+        fragment_value -= 6
+        chunk_value -= 9
+        gemstone_value -= 6
+        enhan2_value -= 30
+        enhan3_value -= 36
+        normalboss_value -= 44
+        flower_value -= 155
+
+      elif sellevel_value == "50★":
+        chunk_value -= 9
+        gemstone_value -= 6
+        enhan2_value -= 18
+        enhan3_value -= 36
+        normalboss_value -= 40
+        flower_value -= 135
+
+      elif sellevel_value == "60★":
+        chunk_value -= 6
+        gemstone_value -= 6
+        enhan3_value -= 36
+        normalboss_value -= 32
+        flower_value -= 105
+
+      elif sellevel_value == "70★":
+        gemstone_value -= 6
+        enhan3_value -= 24
+        normalboss_value -= 20
+        flower_value -= 60
+
+      elif sellevel_value == "80★":
+        pass
+
+      #take only number  
+      curnumber = int(curlevel_combo.get().replace("★", ""))
+      selnumber = int(sellevel_combo.get().replace("★", ""))
+
+      if selnumber <= curnumber:
+        gemstone_value = 0
+        chunk_value = 0
+        fragment_value = 0
+        sliver_value = 0
+        enhan1_value = 0
+        enhan2_value = 0
+        enhan3_value = 0
+        normalboss_value = 0
+        flower_value = 0
+          
+      gemstone.config(text=f"x{gemstone_value}")
+      chunk.config(text=f"x{chunk_value}")
+      fragment.config(text=f"x{fragment_value}")
+      sliver.config(text=f"x{sliver_value}")
+      enhan1.config(text=f"x{enhan1_value}")
+      enhan2.config(text=f"x{enhan2_value}")
+      enhan3.config(text=f"x{enhan3_value}")
+      normalboss.config(text=f"x{normalboss_value}")
+      flowers.config(text=f"x{flower_value}")
+
+    curlevel_combo.bind("<<ComboboxSelected>>", combobox_selection)
+    sellevel_combo.bind("<<ComboboxSelected>>", combobox_selection)
 
     global character_image, normal_boss_image
-    character_image = ttk.Label(frame)
+    character_image = ttk.Label(frame2)
     character_image.grid(row = 1, column = 0, rowspan = 6, sticky = 'w')
 
-    gemstone_image = ttk.Label(frame)
-    gemstone_image.grid(row = 0, column = 4)
+    gemstone_image = ttk.Label(frame2)
+    gemstone_image.grid(row = 0, column = 4, columnspan=2)
 
-    chunk_image = ttk.Label(frame)
-    chunk_image.grid(row = 0, column = 3)
+    gemstone = tk.Label(frame2, text="x0", font=('Arial', 10))
+    gemstone.grid(row = 1, column = 4, columnspan=2, sticky = 's')
 
-    fragment_image = ttk.Label(frame)
-    fragment_image.grid(row = 0, column = 2)
+    chunk_image = ttk.Label(frame2)
+    chunk_image.grid(row = 0, column = 3, columnspan=2)
 
-    sliver_image = ttk.Label(frame)
-    sliver_image.grid(row = 0, column = 1)
+    chunk = tk.Label(frame2, text="x0", font=('Arial', 10))
+    chunk.grid(row = 1, column = 3, columnspan=2, sticky = 's')
 
-    enhan1_image = ttk.Label(frame)
-    enhan1_image.grid(row = 2, column = 1, columnspan=2)
+    fragment_image = ttk.Label(frame2)
+    fragment_image.grid(row = 0, column = 2, columnspan=2)
 
-    enhan2_image = ttk.Label(frame)
-    enhan2_image.grid(row = 2, column = 2, columnspan=2)
+    fragment = tk.Label(frame2, text="x0", font=('Arial', 10))
+    fragment.grid(row = 1, column = 2, columnspan=2, sticky = 's')
 
-    enhan3_image = ttk.Label(frame)
-    enhan3_image.grid(row = 2, column = 3, columnspan=2)
+    sliver_image = ttk.Label(frame2)
+    sliver_image.grid(row = 0, column = 1, columnspan=2)
 
-    flower_image = ttk.Label(frame)
-    flower_image.grid(row = 4, column = 2)
+    sliver = tk.Label(frame2, text="x0", font=('Arial', 10))
+    sliver.grid(row = 1, column = 1, columnspan=2, sticky = 's')
 
-    normal_boss_image = ttk.Label(frame)
-    normal_boss_image.grid(row = 4, column = 1)
+    enhan1_image = ttk.Label(frame2)
+    enhan1_image.grid(row = 2, column = 1)
 
-    mora_image = ttk.Label(frame)
-    mora_image.grid(row = 4, column = 3)
+    enhan1 = tk.Label(frame2, text="x0", font=('Arial', 10))
+    enhan1.grid(row = 3, column = 1, sticky = 's')
 
-    character_exp_image = ttk.Label(frame)
-    character_exp_image.grid(row = 4, column = 4)
+    enhan2_image = ttk.Label(frame2)
+    enhan2_image.grid(row = 2, column = 2)
+
+    enhan2 = tk.Label(frame2, text="x0", font=('Arial', 10))
+    enhan2.grid(row = 3, column = 2, sticky = 's')
+
+    enhan3_image = ttk.Label(frame2)
+    enhan3_image.grid(row = 2, column = 3)
+
+    enhan3 = tk.Label(frame2, text="x0", font=('Arial', 10))
+    enhan3.grid(row = 3, column = 3, sticky = 's')
+
+    flower_image = ttk.Label(frame2)
+    flower_image.grid(row = 2, column = 4)
+
+    flowers = tk.Label(frame2, text="x0", font=('Arial', 10))
+    flowers.grid(row = 3, column = 4, sticky = 's')
+
+    normal_boss_image = ttk.Label(frame2)
+    normal_boss_image.grid(row = 2, column = 5)
+
+    normalboss = tk.Label(frame2, text="x0", font=('Arial', 10))
+    normalboss.grid(row = 3, column = 5, sticky = 's')
 
     #pull image inside
     image_path_1 = f"Genshin_Image/{currentname}_Card.png"
@@ -121,7 +299,7 @@ def NewWindow():
     character_image.config(image=charphoto)
     character_image.image = charphoto
     
-    character_name = tk.Label(frame, text=currentname, font=('Arial', 20))
+    character_name = tk.Label(frame2, text=currentname, font=('Arial', 20))
     character_name.grid(row = 0, column = 0) 
 
     image_path_2 = f"Materials/ascension/{ascension.get()} Gemstone.png"
@@ -131,8 +309,8 @@ def NewWindow():
     gemstone_image.config(image=gemphoto)
     gemstone_image.image = gemphoto
 
-    gemstone_name = tk.Label(frame, text = f'{ascension.get()} Gemstone', font=('Arial', 10), wraplength=100)
-    gemstone_name.grid(row = 1, column = 4, sticky = 'n')
+    gemstone_name = tk.Label(frame2, text = f'{ascension.get()} Gemstone', font=('Arial', 10), wraplength=100)
+    gemstone_name.grid(row = 1, column = 4, columnspan=2, sticky = 'n')
 
     image_path_3 = f"Materials/ascension/{ascension.get()} Chunk.png"
     image_3 = Image.open(image_path_3)
@@ -141,8 +319,8 @@ def NewWindow():
     chunk_image.config(image=chunkphoto)
     chunk_image.image = chunkphoto
 
-    chunk_name = tk.Label(frame, text = f'{ascension.get()} Chunk', font=('Arial', 10), wraplength=100)
-    chunk_name.grid(row = 1, column = 3, sticky = 'n')   #, padx=10, pady=(25,0))
+    chunk_name = tk.Label(frame2, text = f'{ascension.get()} Chunk', font=('Arial', 10), wraplength=100)
+    chunk_name.grid(row = 1, column = 3, columnspan=2, sticky = 'n')   #, padx=10, pady=(25,0))
 
     image_path_4 = f"Materials/ascension/{ascension.get()} Fragment.png"
     image_4 = Image.open(image_path_4)
@@ -151,8 +329,8 @@ def NewWindow():
     fragment_image.config(image=fragphoto)
     fragment_image.image = fragphoto
 
-    frag_name = tk.Label(frame, text = f'{ascension.get()} Fragment', font=('Arial', 10), wraplength=100)
-    frag_name.grid(row = 1, column = 2, sticky = 'n')   #, padx=10, pady=(25,0))
+    frag_name = tk.Label(frame2, text = f'{ascension.get()} Fragment', font=('Arial', 10), wraplength=100)
+    frag_name.grid(row = 1, column = 2, columnspan=2, sticky = 'n')   #, padx=10, pady=(25,0))
 
     image_path_5 = f"Materials/ascension/{ascension.get()} Sliver.png"
     image_5 = Image.open(image_path_5)
@@ -161,8 +339,8 @@ def NewWindow():
     sliver_image.config(image=sliphoto)
     sliver_image.image = sliphoto
 
-    sliver_name = tk.Label(frame, text = f'{ascension.get()} Sliver', font=('Arial', 10), wraplength=100)
-    sliver_name.grid(row = 1, column = 1, sticky = 'n')
+    sliver_name = tk.Label(frame2, text = f'{ascension.get()} Sliver', font=('Arial', 10), wraplength=100)
+    sliver_name.grid(row = 1, column = 1, columnspan=2, sticky = 'n')
 
     if enhancement.get() == "1":
       #'Divining Scroll, Sealed Scroll, Forbidden Curse Scroll'
@@ -173,8 +351,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Divining Scroll', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Divining Scroll', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Sealed Scroll.png"
       image_7 = Image.open(image_path_7)
@@ -183,8 +361,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Sealed Scroll', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Sealed Scroll', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Forbidden Curse Scroll.png"
       image_8 = Image.open(image_path_8)
@@ -193,8 +371,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Forbidden Curse Scroll', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Forbidden Curse Scroll', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "2":
       #'Faded Red Satin, Trimmed Red Silk, Rich Red Brocade'
@@ -205,8 +383,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Faded Red Satin', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Faded Red Satin', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Trimmed Red Silk.png"
       image_7 = Image.open(image_path_7)
@@ -215,8 +393,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Trimmed Red Silk', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Trimmed Red Silk', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Rich Red Brocade.png"
       image_8 = Image.open(image_path_8)
@@ -225,8 +403,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Rich Red Brocade', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Rich Red Brocade', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "3":
       #'Spectral Husk, Spectral Heart, Spectral Nucleus'
@@ -237,8 +415,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Spectral Husk', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Spectral Husk', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Spectral Heart.png"
       image_7 = Image.open(image_path_7)
@@ -247,8 +425,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Spectral Heart', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Spectral Heart', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Spectral Nucleus.png"
       image_8 = Image.open(image_path_8)
@@ -257,8 +435,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Spectral Nucleus', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Spectral Nucleus', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "4":
       #'Firm Arrowhead, Sharp Arrowhead, Weathered Arrowhead'
@@ -269,8 +447,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Firm Arrowhead', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Firm Arrowhead', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Sharp Arrowhead.png"
       image_7 = Image.open(image_path_7)
@@ -279,8 +457,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Sharp Arrowhead', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Sharp Arrowhead', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Weathered Arrowhead.png"
       image_8 = Image.open(image_path_8)
@@ -289,8 +467,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Weathered Arrowhead', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Weathered Arrowhead', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "5":
       #'Slime Condensate, Slime Secretions, Slime Concentrate'
@@ -301,8 +479,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Slime Condensate', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Slime Condensate', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Slime Secretions.png"
       image_7 = Image.open(image_path_7)
@@ -311,8 +489,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Slime Secretions', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Slime Secretions', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Slime Concentrate.png"
       image_8 = Image.open(image_path_8)
@@ -321,8 +499,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Slime Concentrate', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Slime Concentrate', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "6":
       #'Fungal Spores, Luminescent Pollen, Crystalline Cyst Dust'
@@ -333,8 +511,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Fungal Spores', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Fungal Spores', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Luminescent Pollen.png"
       image_7 = Image.open(image_path_7)
@@ -343,8 +521,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Luminescent Pollen', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Luminescent Pollen', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Crystalline Cyst Dust.png"
       image_8 = Image.open(image_path_8)
@@ -353,8 +531,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Crystalline Cyst Dust', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Crystalline Cyst Dust', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "7":
       #'Treasure Hoarder Insignia, Silver Raven Insignia, Golden Raven Insignia'
@@ -365,8 +543,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Treasure Hoarder Insignia', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Treasure Hoarder Insignia', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Silver Raven Insignia.png"
       image_7 = Image.open(image_path_7)
@@ -375,8 +553,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Silver Raven Insignia', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Silver Raven Insignia', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Golden Raven Insignia.png"
       image_8 = Image.open(image_path_8)
@@ -385,8 +563,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Golden Raven Insignia', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Golden Raven Insignia', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "8":
       #'Meshing Gear, Mechanical Spur Gear, Artificed Dynamic Gear'
@@ -397,8 +575,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Meshing Gear', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Meshing Gear', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Mechanical Spur Gear.png"
       image_7 = Image.open(image_path_7)
@@ -407,8 +585,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Mechanical Spur Gear', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Mechanical Spur Gear', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Artificed Dynamic Gear.png"
       image_8 = Image.open(image_path_8)
@@ -417,8 +595,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Artificed Dynamic Gear', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Artificed Dynamic Gear', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "9":
       #'Damaged Mask, Stained Mask, Ominous Mask'
@@ -429,8 +607,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Damaged Mask', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Damaged Mask', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Stained Mask.png"
       image_7 = Image.open(image_path_7)
@@ -439,8 +617,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Stained Mask', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Stained Mask', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Ominous Mask.png"
       image_8 = Image.open(image_path_8)
@@ -449,8 +627,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Ominous Mask', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Ominous Mask', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "10":
       #'Recruit's Insignia, Sergeant's Insignia, Lieutenant's Insignia'
@@ -461,8 +639,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = "Recruit's Insignia", font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = "Recruit's Insignia", font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Sergeant's Insignia.png"
       image_7 = Image.open(image_path_7)
@@ -471,8 +649,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = "Sergeant's Insignia", font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = "Sergeant's Insignia", font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Lieutenant's Insignia.png"
       image_8 = Image.open(image_path_8)
@@ -481,8 +659,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = "Lieutenant's Insignia", font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = "Lieutenant's Insignia", font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
       
     if enhancement.get() == "11":
       #'Transoceanic Pearl, Transoceanic Chunk, Xenochromatic Crystal'
@@ -493,8 +671,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Transoceanic Pearl', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Transoceanic Pearl', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Transoceanic Chunk.png"
       image_7 = Image.open(image_path_7)
@@ -503,8 +681,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Transoceanic Chunk', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Transoceanic Chunk', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Xenochromatic Crystal.png"
       image_8 = Image.open(image_path_8)
@@ -513,8 +691,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Xenochromatic Crystal', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Xenochromatic Crystal', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "12":
       #'Whopperflower Nectar, Shimmering Nectar, Energy Nectar'
@@ -525,8 +703,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Whopperflower Nectar', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Whopperflower Nectar', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Shimmering Nectar.png"
       image_7 = Image.open(image_path_7)
@@ -535,8 +713,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Shimmering Nectar', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Shimmering Nectar', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Energy Nectar.png"
       image_8 = Image.open(image_path_8)
@@ -545,8 +723,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Energy Nectar', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Energy Nectar', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     if enhancement.get() == "13":
       #'Old Handguard, Kageuchi Handguard, Famed Handguard'
@@ -557,8 +735,8 @@ def NewWindow():
       enhan1_image.config(image=enhan1photo)
       enhan1_image.image = enhan1photo
 
-      enhan1_name = tk.Label(frame, text = 'Old Handguard', font=('Arial', 10), wraplength=100)
-      enhan1_name.grid(row = 3, column = 1, columnspan=2, sticky = 'n')
+      enhan1_name = tk.Label(frame2, text = 'Old Handguard', font=('Arial', 10), wraplength=100)
+      enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
       image_path_7 = f"Materials/enhancement/Kageuchi Handguard.png"
       image_7 = Image.open(image_path_7)
@@ -567,8 +745,8 @@ def NewWindow():
       enhan2_image.config(image=enhan2photo)
       enhan2_image.image = enhan2photo
 
-      enhan2_name = tk.Label(frame, text = 'Kageuchi Handguard', font=('Arial', 10), wraplength=100)
-      enhan2_name.grid(row = 3, column = 2, columnspan=2, sticky = 'n')
+      enhan2_name = tk.Label(frame2, text = 'Kageuchi Handguard', font=('Arial', 10), wraplength=100)
+      enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
       image_path_8 = f"Materials/enhancement/Famed Handguard.png"
       image_8 = Image.open(image_path_8)
@@ -577,8 +755,8 @@ def NewWindow():
       enhan3_image.config(image=enhan3photo)
       enhan3_image.image = enhan3photo
 
-      enhan3_name = tk.Label(frame, text = 'Famed Handguard', font=('Arial', 10), wraplength=100)
-      enhan3_name.grid(row = 3, column = 3, columnspan=2, sticky = 'n')
+      enhan3_name = tk.Label(frame2, text = 'Famed Handguard', font=('Arial', 10), wraplength=100)
+      enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
     image_path_9 = f"Materials/flower/{flower.get()}.png"
     image_9 = Image.open(image_path_9)
@@ -587,8 +765,8 @@ def NewWindow():
     flower_image.config(image=flophoto)
     flower_image.image = flophoto
 
-    flower_name = tk.Label(frame, text = f'{flower.get()}', font=('Arial', 10), wraplength=100)
-    flower_name.grid(row = 5, column = 2, sticky = 'n')
+    flower_name = tk.Label(frame2, text = f'{flower.get()}', font=('Arial', 10), wraplength=100)
+    flower_name.grid(row = 3, column = 4, sticky = 'n')
 
     image_path_10 = f"Materials/normal boss/{normal_boss.get()}.png"
     image_10= Image.open(image_path_10)
@@ -597,35 +775,15 @@ def NewWindow():
     normal_boss_image.config(image=norphoto)
     normal_boss_image.image = norphoto
     
-    normal_material = tk.Label(frame, text = normal_boss.get(), font=('Arial', 10), wraplength=100)
-    normal_material.grid(row = 5, column = 1, sticky = 'n')
-
-    image_path_11 = f"Materials/mora.png"
-    image_11 = Image.open(image_path_11)
-    resized_image_11 = image_11.resize((100,100))
-    moraphoto = ImageTk.PhotoImage(resized_image_11)
-    mora_image.config(image=moraphoto)
-    mora_image.image = moraphoto
-
-    mora_name = tk.Label(frame, text = 'Mora', font=('Arial', 10), wraplength=100)
-    mora_name.grid(row = 5, column = 3, sticky = 'n')
-
-    image_path_12 = f"Materials/CharacterEXP.png"
-    image_12 = Image.open(image_path_12)
-    resized_image_12 = image_12.resize((100,100))
-    EXPphoto = ImageTk.PhotoImage(resized_image_12)
-    character_exp_image.config(image=EXPphoto)
-    character_exp_image.image = EXPphoto
-
-    character_exp = tk.Label(frame, text = 'EXP', font=('Arial', 10), wraplength=100)
-    character_exp.grid(row = 5, column = 4, sticky = 'n')
+    normal_material = tk.Label(frame2, text = normal_boss.get(), font=('Arial', 10), wraplength=100)
+    normal_material.grid(row = 3, column = 5, sticky = 'n')
 
   else:
     print(f'invalid')
 
 #character calculator features
 root = tk.Tk()
-root.geometry("1295x785")
+root.geometry("1300x900")
 root.title("Character Level Calculator")
 
 #grid
@@ -639,6 +797,22 @@ title.grid(row = 0, column = 0, columnspan = 2, sticky = 'w', padx = 20, pady = 
 
 search = tk.Label(root, text = "Select Character ", font = ('Arial', 20))
 search.grid(row = 1, column = 0, sticky = 'e', pady = (0,6))
+
+#add frame1
+frame1 = ttk.LabelFrame(root, height = 750, width = 1200)
+frame1.grid_propagate(False)
+frame1.grid(row = 2, columnspan=3, column = 0)
+
+frame1_width = frame1.winfo_width()
+frame1_height = frame1.winfo_height()
+
+#add frame2
+frame2 = ttk.LabelFrame(frame1, height = 600, width = 900)
+frame2.place(x = frame1_width + 580, y = frame1_height + 400, anchor = "center")
+
+# Add widgets to the new window/frame
+character_info_label = tk.Label(frame1, text="Character's Materials", font=('Arial', 20))
+character_info_label.place(x = frame1_width + 580, y = frame1_height + 25, anchor = "center")
 
 #search box
 global CharaChosen
@@ -656,8 +830,8 @@ enhancement.set('')
 flower = tk.StringVar()
 flower.set('')
 
-AddCharacterButton = ttk.Button(root, text="SEARCH", width = 8,command = NewWindow)
-AddCharacterButton.grid(row = 1, column = 1, sticky = 'e', padx = (0,175))
+AddCharacterButton = ttk.Button(root, text="SEARCH", width = 8,command = frame)
+AddCharacterButton.grid(row = 1, column = 1, sticky = 'e', padx = (0,150))
 
 CharaChosen.current()
 CharaChosen.bind('<KeyRelease>', Search)
