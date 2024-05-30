@@ -26,7 +26,7 @@ def fetch_data():
     result_text.config(state="normal")
     result_text.delete(1.0, tk.END)
     for row in rows:
-        display_text += f"Last recorded at {row[0]} with {row[1]} resins left.\n"
+        display_text = f"Last recorded at {row[0]} with {row[1]} resins left.\n"
 
         clock = row[0]
         resin = row[1]
@@ -43,8 +43,7 @@ def fetch_data():
             resin_time = current_minutes - stored_minutes
         else:
             resin_time = current_minutes + (24 * 60 - stored_minutes)
-        current_resin = (resin_time // 8) + resin      
-        #result_text.insert(tk.END, f"Your current resins: {current_resin}\n")
+        current_resin = (resin_time // 8) + resin
         calculate_time(current_resin, new_minutes, resin)
         
     result_text.config(state="disabled")
@@ -60,16 +59,14 @@ def confirm():
     try:
         result_text.config(state="normal")
         resin_amount = int(resin_label_box.get())
-        if resin_amount <= 159:
+
+        if resin_amount < 0 or resin_amount > 160:
+            result_text.delete(1.0, tk.END)
+            result_text.insert(tk.END, f"Number must be between 0 to 160")
+            root.after(3000, fetch_data)
+        else:
             clear()
-            calculate_time()
-        elif resin_amount == 160:
-            result_text.delete(1.0, tk.END)
-            result_text.insert(tk.END, f"Your resin is full")
-        elif resin_amount >=160:
-            result_text.delete(1.0, tk.END)
-            result_text.insert(tk.END, f"Number must in between 0 to 160")
-            root.after(3000,fetch_data)
+            calculate_time(resin_amount=resin_amount)
     except ValueError:
         result_text.delete(1.0, tk.END)
         result_text.insert(tk.END, f"Please fill in ONLY NUMBER!!!", "colour")
@@ -105,7 +102,6 @@ def calculate_time(resin_amount=None, new_minutes=None, resin=None):
                     a = new_minutes + (((i-resin)*8)%60)
                     if a >= 60:
                         a = a-60
-                        #hours -= 1
                     if current_time.minute < a:
                         minute = a - current_time.minute
                     else:
@@ -124,12 +120,9 @@ def calculate_time(resin_amount=None, new_minutes=None, resin=None):
                     cur.execute("INSERT INTO resintimer (clock, resin, time, new_minutes) VALUES (?, ?, ?, ?)", (current_time.strftime("%d-%m-%Y %I:%M %p"), resin_amount, current_time.strftime("%H%M.%S"), current_time.minute))
                     conn.commit()
                     clock_recorded = True
-        elif resin_amount == 160:
+        elif resin_amount >= 160:
             result_text.delete(1.0, tk.END)
             result_text.insert(tk.END, f"Your resin is full")
-        else:
-            result_text.delete(1.0, tk.END)
-            result_text.insert(tk.END, f"Number must in between 0 to 160")
     except ValueError:
         result_text.delete(1.0, tk.END)
         result_text.insert(tk.END, f"Please fill in ONLY NUMBER!!!", "colour")
