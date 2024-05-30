@@ -779,7 +779,7 @@ def frame():
     normal_material.grid(row = 3, column = 5, sticky = 'n')
 
   else:
-    print(f'invalid')
+    pass
 
 #character calculator features
 root = tk.Tk()
