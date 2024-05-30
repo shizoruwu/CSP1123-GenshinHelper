@@ -142,7 +142,7 @@ class weaponsearch(tk.Tk):
     InfoRefinementInfo.set(' ')
 
     InfoLabelFrame = ttk.Labelframe(self.InfoFrame,text = "Weapon's Info")
-    InfoLabelFrame.grid(column=0 , row = 0 , padx = 15 , pady = 15)
+    InfoLabelFrame.grid(column=0 , row = 0 , padx = 15 , pady = 15,sticky = 'n')
 
     ImageLabelFrame = ttk.Labelframe(InfoLabelFrame,text = 'Image')
     ImageLabelFrame.grid(column=0 , row = 1 , padx = 15 , pady = 15,sticky='n')
