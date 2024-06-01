@@ -1,6 +1,6 @@
 import sqlite3 
 import tkinter as tk
-from tkinter import ttk 
+import ttkbootstrap as ttk
 from PIL import ImageTk, Image
 from ctypes import windll
 import webbrowser
@@ -8,13 +8,13 @@ import webbrowser
 #FIX BLURRY FONTS
 windll.shcore.SetProcessDpiAwareness(1)
 
-class weaponsearch(tk.Tk):
-  def __init__(self):
-    tk.Tk.__init__(self)
-
-    #Main Root
-    self.title('Weapon Search')
-    self.geometry('1310x825')
+class weaponsearch(ttk.LabelFrame):
+  def __init__(self,master,*args,**kargs):
+    super().__init__(master,*args,**kargs)
+    
+    self.master = master
+    self.label = ttk.Label(text="Weapon Search", style="fontt.TLabel")
+    self.config(labelwidget=self.label)
 
     #Frame1 - MenuFrame
     self.MenuFrame = ttk.Frame(self)
@@ -25,7 +25,7 @@ class weaponsearch(tk.Tk):
     
     #Menu Frame Codes
     WeaponLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Weapon to Show Its Info. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
-    WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nws')
+    WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'ne')
 
     weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Type',height = 220,width = 300)
     weaponframe.grid(column=0, row=0, padx=8, pady=15,sticky = 'nw')
@@ -494,6 +494,17 @@ class weaponsearch(tk.Tk):
   def open_link(self,event):
     webbrowser.open(url)
 
-if __name__ == '__main__': 
-  CurrentScreen = weaponsearch()
-  CurrentScreen.mainloop()
+def main():
+    windll.shcore.SetProcessDpiAwareness(1)
+
+    root = ttk.Window()
+    root.title("Character Search")
+    root.geometry('1310x825')
+
+    notic = weaponsearch(root)
+    notic.grid(column=1, row=1, padx=15, pady=10, ipady=100, ipadx=250)
+
+    root.mainloop()
+
+if __name__ == '__main__':
+    main()

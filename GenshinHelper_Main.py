@@ -7,11 +7,13 @@ from PIL import Image, ImageTk
 import os
 
 import todo
+import weapon_search
+import character_search
 
 windll.shcore.SetProcessDpiAwareness(1)
 root = ttk.Window(themename="light_4")
 root.title("Genshin Helper")
-root.geometry("900x600+100+100")
+root.geometry("1555x900")
 
 s = ttk.Style()
 s.configure('green.TButton', foreground = "green")
@@ -31,14 +33,14 @@ sideBarFrame.update()
 
 
 ## Features
-characterSearch = ttk.Label(root, text="Character")
+characterSearch = character_search.charsearch(root)
 characterSearch.grid(column=2, row=2, sticky=N)
 
 CharacterLevelCalc = ttk.Label(root, text="Character Level Calculator")
 CharacterLevelCalc.grid(column=2, row=2, sticky=N)
 CharacterLevelCalc.grid_remove()
 
-weapon = ttk.Label(root, text="Weapon")
+weapon = weapon_search.weaponsearch(root)
 weapon.grid(column=2, row=2, sticky=N)
 weapon.grid_remove()
 
