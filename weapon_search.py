@@ -84,8 +84,8 @@ class weaponsearch(tk.Tk):
     four_star = ttk.Checkbutton(qualityframe,text = '4 STAR Weapon',variable=self.fourstarbutton_value , command=self.add_images_filtered)
     four_star.grid(columnspan = 2,column=0,row=2,sticky = 'w',padx = 10)
 
-    four_star = ttk.Checkbutton(qualityframe,text = '3 STAR & Below Weapon',variable=self.otherstarbutton_value , command=self.add_images_filtered)
-    four_star.grid(columnspan = 2,column=0,row=3,sticky = 'w',padx = 10)
+    other_star = ttk.Checkbutton(qualityframe,text = '3 STAR & Below Weapon',variable=self.otherstarbutton_value , command=self.add_images_filtered)
+    other_star.grid(columnspan = 2,column=0,row=3,sticky = 'w',padx = 10)
 
     selectallbuttonstar = ttk.Button(qualityframe,text='Select All',command=self.selectallstar)
     selectallbuttonstar.grid(column = 0, row = 4 ,sticky = 'es',padx = 8,pady = 8)
@@ -226,9 +226,9 @@ class weaponsearch(tk.Tk):
       image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
       image = Image.open(image_path)
       resized_image = image.resize((145, 145))
-      charphoto = ImageTk.PhotoImage(resized_image)
-      label.config(image=charphoto)
-      label.image = charphoto
+      weapphoto = ImageTk.PhotoImage(resized_image)
+      label.config(image=weapphoto)
+      label.image = weapphoto
 
   def on_canvas_configure(self, event):
     self.canvas.configure(scrollregion=self.canvas.bbox("all"))
@@ -289,16 +289,16 @@ class weaponsearch(tk.Tk):
     image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
     image = Image.open(image_path)
     resized_image = image.resize((145, 145))
-    charphoto = ImageTk.PhotoImage(resized_image)
-    displaylabel.config(image=charphoto,)
-    displaylabel.image = charphoto
+    weapphoto = ImageTk.PhotoImage(resized_image)
+    displaylabel.config(image=weapphoto,)
+    displaylabel.image = weapphoto
 
     image_path = f"Genshin_Weapon_Image/Weapon_{currentname}_2nd.png"
     image = Image.open(image_path)
     resized_image = image.resize((145, 145))
-    charphoto = ImageTk.PhotoImage(resized_image)
-    displaylabel2nd.config(image=charphoto,)
-    displaylabel2nd.image = charphoto
+    weapphoto = ImageTk.PhotoImage(resized_image)
+    displaylabel2nd.config(image=weapphoto,)
+    displaylabel2nd.image = weapphoto
 
     if clickedname == 'Sword of Narzissenkreuz':
       basename.set('Pneuma Form')
@@ -448,9 +448,9 @@ class weaponsearch(tk.Tk):
       image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
       image = Image.open(image_path)
       resized_image = image.resize((145, 145))
-      charphoto = ImageTk.PhotoImage(resized_image)
-      label.config(image=charphoto,)
-      label.image = charphoto
+      weapphoto = ImageTk.PhotoImage(resized_image)
+      label.config(image=weapphoto,)
+      label.image = weapphoto
 
     #clear all functions
   
