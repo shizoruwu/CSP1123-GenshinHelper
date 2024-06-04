@@ -11,6 +11,7 @@ import weapon_search
 import character_search
 import character_level
 import resin_timer
+import notifier_gui
 
 windll.shcore.SetProcessDpiAwareness(1)
 root = ttk.Window(themename="light_4")
@@ -39,7 +40,7 @@ characterSearch = character_search.charsearch(root)
 characterSearch.grid(column=2, row=2,padx=10, pady=15, sticky=NW)
 
 CharacterLevelCalc = character_level.characterlevel(root)
-CharacterLevelCalc.grid(column=2, row=2, sticky=N)
+CharacterLevelCalc.grid(column=2, row=2, sticky=W)
 CharacterLevelCalc.grid_remove()
 
 weapon = weapon_search.weaponsearch(root)
@@ -47,15 +48,15 @@ weapon.grid(column=2, row=2,padx=10, pady=15, sticky=NW)
 weapon.grid_remove()
 
 resin_timer = resin_timer.resintimer(root)
-resin_timer.grid(column=2, row=2, sticky=N)
+resin_timer.grid(column=2, row=2, sticky=NW)
 resin_timer.grid_remove()
 
 todoList = todo.ToDoAppFrame(root)
-todoList.grid(column=2, row=2, padx=10, pady=15, sticky=N)
+todoList.grid(column=2, row=2, padx=10, pady=15, sticky=W)
 todoList.grid_remove()
 
-notifier = ttk.Label(root, text="Notifier")
-notifier.grid(column=2, row=2, padx=10, pady=15, sticky=N)
+notifier = notifier_gui.NotificationFrame(root)
+notifier.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=1500, ipady=100)
 notifier.grid_remove()
 
 ## Side bar functions

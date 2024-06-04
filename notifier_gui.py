@@ -192,14 +192,10 @@ def main():
     root.title("Notification")
     root.geometry("900x600+100+100")
 
-
     notic = NotificationFrame(root)
     notic.grid(column=1, row=1, padx=15, pady=10, ipady=100, ipadx=250)
 
-
-
-
-
     root.mainloop()
 
-main()
+if __name__ == '__main__':
+    main()
