@@ -1,6 +1,6 @@
 import sqlite3 
 import tkinter as tk
-from tkinter import ttk 
+import ttkbootstrap as ttk
 from PIL import ImageTk, Image
 from ctypes import windll
 import webbrowser
@@ -8,24 +8,24 @@ import webbrowser
 #FIX BLURRY FONTS
 windll.shcore.SetProcessDpiAwareness(1)
 
-class weaponsearch(tk.Tk):
-  def __init__(self):
-    tk.Tk.__init__(self)
-
-    #Main Root
-    self.title('Weapon Search')
-    self.geometry('1310x825')
+class weaponsearch(ttk.LabelFrame):
+  def __init__(self,master,*args,**kargs):
+    super().__init__(master,*args,**kargs)
+    
+    self.master = master
+    self.label = ttk.Label(text="Weapon Search", style="fontt.TLabel")
+    self.config(labelwidget=self.label)
 
     #Frame1 - MenuFrame
     self.MenuFrame = ttk.Frame(self)
-    self.MenuFrame.grid(padx=20, pady=20)
+    self.MenuFrame.grid(column=0, row=0,sticky='W')
 
     #Frame2 - InfoFrame
     self.InfoFrame = ttk.Frame(self)
     
     #Menu Frame Codes
     WeaponLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Weapon to Show Its Info. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
-    WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nws')
+    WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'ne')
 
     weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Type',height = 220,width = 300)
     weaponframe.grid(column=0, row=0, padx=8, pady=15,sticky = 'nw')
@@ -84,8 +84,8 @@ class weaponsearch(tk.Tk):
     four_star = ttk.Checkbutton(qualityframe,text = '4 STAR Weapon',variable=self.fourstarbutton_value , command=self.add_images_filtered)
     four_star.grid(columnspan = 2,column=0,row=2,sticky = 'w',padx = 10)
 
-    four_star = ttk.Checkbutton(qualityframe,text = '3 STAR & Below Weapon',variable=self.otherstarbutton_value , command=self.add_images_filtered)
-    four_star.grid(columnspan = 2,column=0,row=3,sticky = 'w',padx = 10)
+    other_star = ttk.Checkbutton(qualityframe,text = '3 STAR & Below Weapon',variable=self.otherstarbutton_value , command=self.add_images_filtered)
+    other_star.grid(columnspan = 2,column=0,row=3,sticky = 'w',padx = 10)
 
     selectallbuttonstar = ttk.Button(qualityframe,text='Select All',command=self.selectallstar)
     selectallbuttonstar.grid(column = 0, row = 4 ,sticky = 'es',padx = 8,pady = 8)
@@ -226,9 +226,9 @@ class weaponsearch(tk.Tk):
       image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
       image = Image.open(image_path)
       resized_image = image.resize((145, 145))
-      charphoto = ImageTk.PhotoImage(resized_image)
-      label.config(image=charphoto)
-      label.image = charphoto
+      weapphoto = ImageTk.PhotoImage(resized_image)
+      label.config(image=weapphoto)
+      label.image = weapphoto
 
   def on_canvas_configure(self, event):
     self.canvas.configure(scrollregion=self.canvas.bbox("all"))
@@ -289,16 +289,16 @@ class weaponsearch(tk.Tk):
     image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
     image = Image.open(image_path)
     resized_image = image.resize((145, 145))
-    charphoto = ImageTk.PhotoImage(resized_image)
-    displaylabel.config(image=charphoto,)
-    displaylabel.image = charphoto
+    weapphoto = ImageTk.PhotoImage(resized_image)
+    displaylabel.config(image=weapphoto,)
+    displaylabel.image = weapphoto
 
     image_path = f"Genshin_Weapon_Image/Weapon_{currentname}_2nd.png"
     image = Image.open(image_path)
     resized_image = image.resize((145, 145))
-    charphoto = ImageTk.PhotoImage(resized_image)
-    displaylabel2nd.config(image=charphoto,)
-    displaylabel2nd.image = charphoto
+    weapphoto = ImageTk.PhotoImage(resized_image)
+    displaylabel2nd.config(image=weapphoto,)
+    displaylabel2nd.image = weapphoto
 
     if clickedname == 'Sword of Narzissenkreuz':
       basename.set('Pneuma Form')
@@ -448,9 +448,9 @@ class weaponsearch(tk.Tk):
       image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
       image = Image.open(image_path)
       resized_image = image.resize((145, 145))
-      charphoto = ImageTk.PhotoImage(resized_image)
-      label.config(image=charphoto,)
-      label.image = charphoto
+      weapphoto = ImageTk.PhotoImage(resized_image)
+      label.config(image=weapphoto,)
+      label.image = weapphoto
 
     #clear all functions
   
@@ -494,6 +494,17 @@ class weaponsearch(tk.Tk):
   def open_link(self,event):
     webbrowser.open(url)
 
-if __name__ == '__main__': 
-  CurrentScreen = weaponsearch()
-  CurrentScreen.mainloop()
+def main():
+    windll.shcore.SetProcessDpiAwareness(1)
+
+    root = ttk.Window()
+    root.title("Character Search")
+    root.geometry('1310x825')
+
+    notic = weaponsearch(root)
+    notic.grid(column=1, row=1, padx=15, pady=10, ipady=100, ipadx=250)
+
+    root.mainloop()
+
+if __name__ == '__main__':
+    main()
