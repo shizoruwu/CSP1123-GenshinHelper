@@ -11,8 +11,9 @@ class resintimer(ttk.LabelFrame):
     super().__init__(master, *args, **kargs)
 
     #resin timer features
-    #self.geometry("800x600")
-    #self.title("Resin Timer")
+    self.master = master
+    self.label = ttk.Label(text="Resin Timer", style="fontt.TLabel")
+    self.config(labelwidget=self.label)
     clock_recorded = False
 
     #grid

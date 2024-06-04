@@ -11,9 +11,9 @@ class characterlevel(ttk.LabelFrame):
     super().__init__(master, *args, **kargs)
 
     #character calculator features
-    #self.geometry("1300x900")
-    #self.title("Character Level Calculator")
-
+    self.master = master
+    self.label = ttk.Label(text="Character Level Calculator", style="fontt.TLabel")
+    self.config(labelwidget=self.label)
     #grid
     self.columnconfigure((0,1,2), weight = 1)
     self.rowconfigure(0, weight = 1)
@@ -21,7 +21,7 @@ class characterlevel(ttk.LabelFrame):
 
     #labels
     search = tk.Label(self, text = "Select Character ", font = ('Arial', 20))
-    search.grid(row = 0, column = 0, sticky = 'se', pady = (30,0))
+    search.grid(row = 0, column = 0, sticky = 'se', padx = (10,0), pady = (0,0))
 
     #add frame1
     self.frame1 = ttk.LabelFrame(self, height = 750, width = 1200)
@@ -56,7 +56,7 @@ class characterlevel(ttk.LabelFrame):
     global CharaChosen
     boxvalue = tk.StringVar()
     CharaChosen = ttk.Combobox(self, textvariable=boxvalue, values=namelist, width=42)
-    CharaChosen.grid(row = 0, column = 1 , sticky = 'w', padx = (0,20), pady = (42,0))
+    CharaChosen.grid(row = 0, column = 1 , sticky = 'w', padx = (0,200), pady = (35,0))
 
     global normal_boss, ascension, enhancement, flower
     normal_boss = tk.StringVar()
