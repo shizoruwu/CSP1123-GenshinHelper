@@ -1,18 +1,18 @@
 import tkinter as tk
 import sqlite3
-from tkinter import *
+from tkinter import ttk
 from datetime import datetime, timedelta
 from ctypes import windll
 
 windll.shcore.SetProcessDpiAwareness(1)
 
-class resintimer(tk.Tk):
-  def __init__(self):
-    tk.Tk.__init__(self)
+class resintimer(ttk.LabelFrame):
+  def __init__(self, master, *args, **kargs):
+    super().__init__(master, *args, **kargs)
 
     #resin timer features
-    self.geometry("800x600")
-    self.title("Resin Timer")
+    #self.geometry("800x600")
+    #self.title("Resin Timer")
     clock_recorded = False
 
     #grid
@@ -22,21 +22,21 @@ class resintimer(tk.Tk):
     self.rowconfigure(5, weight = 1)
     
     #features label
-    resin_label = Label(self, text="Enter your current Resin :")
+    resin_label = tk.Label(self, text="Enter your current Resin :")
     resin_label.grid(row=0, column=0, sticky="e")
 
-    resin_label_box = Entry(self)
+    resin_label_box = tk.Entry(self)
     resin_label_box.grid(row=0, column=1, sticky="w")
 
     #result
-    full_refill = Label(self, text='Results:', font=('Helvetica',20))
+    full_refill = tk.Label(self, text='Results:', font=('Helvetica',20))
     full_refill.grid(row=3, column=0, columnspan=2, sticky='sw')
 
     result_text = tk.Text(self, height=10, width=40)
     result_text.grid(row=4, column=0, columnspan=2)
     result_text.config(state="disabled")
 
-    dbresult_label = Label(self, text="")
+    dbresult_label = tk.Label(self, text="")
     dbresult_label.grid(row=1, column=0, columnspan=2)
 
     #function to fetch data from db
@@ -106,10 +106,10 @@ class resintimer(tk.Tk):
         #reset clock_recorded to "False" so that if there are changes in resin_amount can be insert in db
         clock_recorded = False
 
-    confirm_button = Button(self, text="Confirm", command= confirm, width=15, height=2)
+    confirm_button = tk.Button(self, text="Confirm", command= confirm, width=15, height=2)
     confirm_button.grid(row=2, column=0, sticky='se')
 
-    clear_button = Button(self, text="Clear All", command = clear, width=15, height=2)
+    clear_button = tk.Button(self, text="Clear All", command = clear, width=15, height=2)
     clear_button.grid(row=2, column=1, sticky='sw', padx=(0,150))
 
     #function to calculate resin left
@@ -175,7 +175,7 @@ class resintimer(tk.Tk):
         self.after(1000, update_clock)
 
     #clock label
-    clock_label = Label(self, text='')
+    clock_label = tk.Label(self, text='')
     clock_label.grid(row=5, column=0, columnspan=1, sticky="sw")
 
     #connect db
@@ -197,5 +197,17 @@ class resintimer(tk.Tk):
     fetch_data()
     update_result()
 
-CurrentScreen = resintimer()
-CurrentScreen.mainloop()
+def main():
+  windll.shcore.SetProcessDpiAwareness(1)
+
+  root = ttk.Window()
+  root.title("Character Search")
+  root.geometry('1310x825')
+
+  notic = resintimer(root)
+  notic.grid(column=1, row=1, padx=15, pady=10, ipady=100, ipadx=250)
+
+  root.mainloop()
+
+if __name__ == '__main__':
+  main()

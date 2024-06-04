@@ -6,13 +6,13 @@ from ctypes import windll
 
 windll.shcore.SetProcessDpiAwareness(1)
 
-class characterlevel(tk.Tk):
-  def __init__(self):
-    tk.Tk.__init__(self)
+class characterlevel(ttk.LabelFrame):
+  def __init__(self, master, *args, **kargs):
+    super().__init__(master, *args, **kargs)
 
     #character calculator features
-    self.geometry("1300x900")
-    self.title("Character Level Calculator")
+    #self.geometry("1300x900")
+    #self.title("Character Level Calculator")
 
     #grid
     self.columnconfigure((0,1,2), weight = 1)
@@ -874,6 +874,18 @@ class characterlevel(tk.Tk):
     
     AddCharacterButton = ttk.Button(self, text="SEARCH", width = 8, command = frame)
     AddCharacterButton.grid(row = 0, column = 1, sticky = 'se', padx = (0,150), pady = (0,5))    
-    
-CurrentScreen = characterlevel()
-CurrentScreen.mainloop()
+
+def main():
+  windll.shcore.SetProcessDpiAwareness(1)
+
+  root = ttk.Window()
+  root.title("Character Level Calculator")
+  root.geometry('1310x825')
+
+  notic = characterlevel(root)
+  notic.grid(column=1, row=1, padx=15, pady=10, ipady=100, ipadx=250)
+
+  root.mainloop()   
+   
+if __name__ == '__main__':
+  main()
