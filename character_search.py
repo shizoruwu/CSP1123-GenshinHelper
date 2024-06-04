@@ -1,6 +1,7 @@
 import sqlite3 
+from tkinter import *
 import tkinter as tk
-import ttkbootstrap as ttk 
+import ttkbootstrap as ttk
 from PIL import ImageTk, Image
 from ctypes import windll
 import webbrowser
@@ -15,7 +16,7 @@ class charsearch(ttk.LabelFrame):
 
         #Frame1 - MenuFrame
         self.MenuFrame = ttk.Frame(self)
-        self.MenuFrame.grid(padx=20, pady=20)
+        self.MenuFrame.grid(column=0, row=0, sticky='w')
 
         #Frame2 - InfoFrame
         self.InfoFrame = ttk.Frame(self)

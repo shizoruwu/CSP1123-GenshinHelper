@@ -18,7 +18,7 @@ class weaponsearch(ttk.LabelFrame):
 
     #Frame1 - MenuFrame
     self.MenuFrame = ttk.Frame(self)
-    self.MenuFrame.grid(padx=20, pady=20)
+    self.MenuFrame.grid(column=0, row=0,sticky='W')
 
     #Frame2 - InfoFrame
     self.InfoFrame = ttk.Frame(self)
