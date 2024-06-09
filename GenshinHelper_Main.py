@@ -11,6 +11,7 @@ import weapon_search
 import character_search
 import character_level
 import resin_timer
+import notifier_gui
 
 windll.shcore.SetProcessDpiAwareness(1)
 root = ttk.Window(themename="light_4")
@@ -51,11 +52,11 @@ resin_timer.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=301, ipady=
 resin_timer.grid_remove()
 
 todoList = todo.ToDoAppFrame(root)
-todoList.grid(column=2, row=2, padx=10, pady=15, sticky=N)
+todoList.grid(column=2, row=2, padx=10, pady=15, sticky=W)
 todoList.grid_remove()
 
-notifier = ttk.Label(root, text="Notifier")
-notifier.grid(column=2, row=2, padx=10, pady=15, sticky=N)
+notifier = notifier_gui.NotificationFrame(root)
+notifier.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=1500, ipady=100)
 notifier.grid_remove()
 
 ## Side bar functions
