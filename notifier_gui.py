@@ -4,6 +4,7 @@ from ctypes import windll
 import sqlite3
 import subprocess
 from ttkbootstrap.tooltip import ToolTip
+import win32com.shell.shell as shell
 
 
 class NotificationFrame(ttk.LabelFrame):
@@ -22,10 +23,21 @@ class NotificationFrame(ttk.LabelFrame):
         self.notification_list = {}
         self.checkbox_nameVar = []
 
-        
         for data in self.database("fetch"):
             self.notification_list[data[0]] = data[1]
 
+        self.option = ttk.LabelFrame(self, text="Option")
+        self.option.grid(column=2, row=1, sticky=W)
+        startup_val = self.notification_list['STARTUP']
+        var = ttk.IntVar(value=startup_val)
+        self.startup_button = ttk.Checkbutton(self.option, text="Start in Startup", bootstyle="round-toggle", command=self.startup_on, variable=var)
+        self.startup_button.grid(column=1, row=1, sticky=W, padx=20, pady=5)
+        if var.get() == 1:
+            self.startup_button.config(command=self.startup_off)
+        else:
+            self.startup_button.config(command=self.startup_on)
+        ToolTip(self.startup_button, text="Turn on this option to run the script in background when computer start up to get notification without open Genshin Helper.")
+        
         print(f"\n{self.notification_list}")
         self.create_list()
         self.time.bind('<Return>', self.set_time)
@@ -60,7 +72,7 @@ class NotificationFrame(ttk.LabelFrame):
             if data == "DAILY_NOTIFICATION":
                 self.daily_notification_status = var
                 print(self.daily_notification_status.get())
-                self.daily_notification = ttk.Checkbutton(self, text="Desktop Notification", bootstyle="round-toggle", variable=self.daily_notification_status, command=self.start)
+                self.daily_notification = ttk.Checkbutton(self, text="Desktop Notification", bootstyle="round-toggle", variable=self.daily_notification_status)
                 self.daily_notification.grid(column=1, row=1, padx=20, pady=(10, 0), columnspan=2, sticky=W)
                 if self.daily_notification_status.get() == 1: # True
                     self.daily_notification.config(command=lambda: self.off("normal"))
@@ -69,8 +81,9 @@ class NotificationFrame(ttk.LabelFrame):
 
             elif data == "ADVANCED_NOTIFICATION":
                 self.advanced_notification_status = var
-                self.advanced_notification = ttk.Checkbutton(self, text="Notification (Advanced)", bootstyle="round-toggle", variable=self.advanced_notification_status, command=self.startup)
+                self.advanced_notification = ttk.Checkbutton(self, text="Notification (Advanced)", bootstyle="round-toggle", variable=self.advanced_notification_status, command=self.start)
                 self.advanced_notification.grid(column=1, row=6, padx=20, pady=(20, 10), columnspan=2, sticky=W)
+                ToolTip(self.advanced_notification, text="Strongly recommended you to turn on the startup option to get the notification below without open Genshin Helper.")
                 if self.advanced_notification_status.get() == 1: # True
                     self.advanced_notification.config(command=lambda: self.off("advanced"))
                 else:
@@ -78,15 +91,14 @@ class NotificationFrame(ttk.LabelFrame):
 
             elif data == "DAILY_NOTIFICATION_TIME":
                 self.timeVar = ttk.StringVar(value=var.get())
-                ttk.Label(self, text="Daily Notification Time (24 Hrs Format)").grid(column=1, row=2, sticky=W, padx=(30, 0), pady=(10, 0))
+                ttk.Label(self, text="Daily Notification Time (24 Hrs Format)").grid(column=1, row=2, sticky=W, padx=(30, 0), pady=(5, 0))
                 self.time = ttk.Spinbox(self, width=3, textvariable=self.timeVar, from_=0,to=23) # , textvariable=pass
-                self.time.grid(column=2, row=2, sticky=W)
+                self.time.grid(column=2, row=2, sticky=W, pady=(10, 0))
                 ToolTip(self.time, text="Press Enter to Apply new value.")
-                
 
-            if data != "DAILY_NOTIFICATION" and data != "DAILY_NOTIFICATION_TIME" and data != "ADVANCED_NOTIFICATION":
+            if data != "DAILY_NOTIFICATION" and data != "DAILY_NOTIFICATION_TIME" and data != "ADVANCED_NOTIFICATION" and data != "STARTUP":
                 if data == "Resin Overflow Reminder":
-                    row_init += 1
+                    row_init += 2
                 self.checkbox = ttk.Checkbutton(self, text=data, variable=var, bootstyle="round-toggle", command=self.state)
                 self.checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
                 row_init += 1
@@ -111,11 +123,13 @@ class NotificationFrame(ttk.LabelFrame):
             self.daily_notification.config(command=lambda: self.off("normal"))
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=NORMAL)
+            self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'DAILY_NOTIFICATION'")
         elif type == "advanced":
             print("advanced on")
             self.advanced_notification.config(command=lambda: self.off("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
                     checkbox.config(state=NORMAL)
+            self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'ADVANCED_NOTIFICATION'")
 
     def off(self, type):
         if type == "normal":
@@ -123,11 +137,13 @@ class NotificationFrame(ttk.LabelFrame):
             self.daily_notification.config(command=lambda: self.on("normal"))
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=DISABLED)
+            self.database("others", "UPDATE notification SET Status = '0' WHERE Notification = 'DAILY_NOTIFICATION'")
         elif type == "advanced":
             print("advanced off")
             self.advanced_notification.config(command=lambda: self.on("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
                     checkbox.config(state=DISABLED)
+            self.database("others", "UPDATE notification SET Status = '0' WHERE Notification = 'ADVANCED_NOTIFICATION'")
 
     def state(self):
         for notifications in self.notification_list:
@@ -143,20 +159,33 @@ class NotificationFrame(ttk.LabelFrame):
         # subprocess.Popen("python test_notic.pyw", shell=True)
         pass
 
-    def startup(self):
-        pass
+    def startup_on(self):
+        create_schtask = 'schtasks /create /sc ONSTART /tn "Genshin Helper Notification" /tr "C:/Users/Jiahe31/AppData/Local/Programs/Python/Python311/python.exe c:/Users/Jiahe31/Desktop/CSP1123-GenshinHelper/notifier.pyw" | schtasks /change /tn "Genshin Helper Notification" /ENABLE'
+        shell.ShellExecuteEx(lpVerb='runas', lpFile='cmd.exe', lpParameters='/c '+create_schtask)
+        self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'STARTUP'")
+        self.startup_button.config(command=self.startup_off)
+        
+    def startup_off(self):
+        stop_schtask = 'schtasks /change /tn "Genshin Helper Notification" /DISABLE'
+        shell.ShellExecuteEx(lpVerb='runas', lpFile='cmd.exe', lpParameters='/c '+stop_schtask)
+        self.database("others", "UPDATE notification SET Status = '0' WHERE Notification = 'STARTUP'")
+        self.startup_button.config(command=self.startup_on)
+
 
     def set_time(self, a):
 
         def info(status=None):
-            info = ttk.Label(self)
-            info.grid(column=3, row=2, sticky=W, padx=10)
+            self.grid = False
+            if self.grid == True:
+                info_label.destroy()
+            info_label = ttk.Label(self)
+            info_label.grid(column=3, row=2, sticky=W, padx=10)
             if status == "success":
-                info.config(text="New Value Saved!")
+                info_label.config(text="New Value Saved!")
             elif status == "exceed":
-                info.config(text="Invalid Value, Please type 0 to 23 only.", bootstyle="danger")
+                info_label.config(text="Invalid Value, Please type 0 to 23 only.", bootstyle="danger")
             else:
-                info.config(text="Invalid Value/Type, Please type 0 to 23 (Integer) only.", bootstyle="danger")
+                info_label.config(text="Invalid Value/Type, Please type 0 to 23 (Integer) only.", bootstyle="danger")
 
         try:
             if int(self.time.get()) >= 0 and int(self.time.get()) <= 23:
@@ -166,6 +195,7 @@ class NotificationFrame(ttk.LabelFrame):
                 info("exceed")
         except:
             info()
+
 
     
 
