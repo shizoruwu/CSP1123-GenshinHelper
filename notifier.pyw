@@ -60,15 +60,15 @@ def toaster(type):
     if type == 'normal':
         win11toast.toast('Genhsin Helper', msg, buttons=buttons, on_click = click, duration = "10")
     elif type == 'game':
-        win11toast.toast('Genhsin Helper', msg, button=['View Details'], on_click = click, duration = "10")
+        win11toast.toast('Genhsin Helper', msg, button='View Details', on_click = click, duration = "10")
     elif type == 'resin':
-        win11toast.toast('Genhsin Helper', resin, button=['View Details'], on_click = click, duration = "10")
+        win11toast.toast('Genhsin Helper', resin, button='View Details', on_click = click, duration = "10")
     elif type == 'boss':
-        win11toast.toast('Genhsin Helper', boss, button=['View Details'], on_click = click, duration = "10")
+        win11toast.toast('Genhsin Helper', boss, button='View Details', on_click = click, duration = "10")
     elif type == 'abyss':
-        win11toast.toast('Genhsin Helper', abyss, button=['View Details'], on_click = click, duration = "10")
+        win11toast.toast('Genhsin Helper', abyss, button='View Details', on_click = click, duration = "10")
     elif type == 'paimon':
-        win11toast.toast('Genhsin Helper', paimon, button=['View Details'], on_click = click, duration = "10")
+        win11toast.toast('Genhsin Helper', paimon, button='View Details', on_click = click, duration = "10")
 
 def click(a):
     import test_main
@@ -101,6 +101,6 @@ def start_service(hour):
             toaster("paimon")
       
 fetch()
-start_service(hours)
-# toaster('normal')
+# start_service(hours)
+toaster('abyss')
 
