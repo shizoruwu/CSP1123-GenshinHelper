@@ -1,6 +1,6 @@
 import tkinter as tk
 import sqlite3
-from tkinter import ttk
+import ttkbootstrap as ttk
 from datetime import datetime, timedelta
 from ctypes import windll
 
@@ -23,18 +23,18 @@ class resintimer(ttk.LabelFrame):
     self.rowconfigure(5, weight = 1)
     
     #features label
-    resin_label = tk.Label(self, text="Enter your current Resin :")
-    resin_label.grid(row=0, column=0, sticky="e")
+    resin_label = tk.Label(self, text="Enter your current Resin :", font=('Helvetica',20))
+    resin_label.grid(row=0, column=0)
 
-    resin_label_box = tk.Entry(self)
-    resin_label_box.grid(row=0, column=1, sticky="w")
+    resin_label_box = tk.Entry(self, width=40)
+    resin_label_box.grid(row=0, column=0, columnspan=2, padx=(250,0), pady=(3,0))
 
     #result
     full_refill = tk.Label(self, text='Results:', font=('Helvetica',20))
-    full_refill.grid(row=3, column=0, columnspan=2, sticky='sw')
+    full_refill.grid(row=3, column=0, columnspan=2, sticky='sw', padx=(100,0))
 
-    result_text = tk.Text(self, height=10, width=40)
-    result_text.grid(row=4, column=0, columnspan=2)
+    result_text = tk.Text(self, height=10, width=40, font=('Helvetica',18))
+    result_text.grid(row=4, column=0, columnspan=2, sticky="n", pady=(20,0))
     result_text.config(state="disabled")
 
     dbresult_label = tk.Label(self, text="")
@@ -108,10 +108,10 @@ class resintimer(ttk.LabelFrame):
         clock_recorded = False
 
     confirm_button = tk.Button(self, text="Confirm", command= confirm, width=15, height=2)
-    confirm_button.grid(row=2, column=0, sticky='se')
+    confirm_button.grid(row=2, column=0, sticky='e', padx=(0,180))
 
     clear_button = tk.Button(self, text="Clear All", command = clear, width=15, height=2)
-    clear_button.grid(row=2, column=1, sticky='sw', padx=(0,150))
+    clear_button.grid(row=2, column=0, columnspan=2, padx=(150,0))
 
     #function to calculate resin left
     def calculate_time(resin_amount=None, new_minutes=None, resin=None):

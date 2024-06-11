@@ -37,10 +37,10 @@ sideBarFrame.update()
 
 ## Features
 characterSearch = character_search.charsearch(root)
-characterSearch.grid(column=2, row=2,padx=10, pady=15, sticky=NW)
+characterSearch.grid(column=2, row=2, padx=10, pady=15, sticky=NW)
 
 CharacterLevelCalc = character_level.characterlevel(root)
-CharacterLevelCalc.grid(column=2, row=2, sticky=NW)
+CharacterLevelCalc.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=48, ipady=5)
 CharacterLevelCalc.grid_remove()
 
 weapon = weapon_search.weaponsearch(root)
@@ -48,7 +48,7 @@ weapon.grid(column=2, row=2,padx=10, pady=15, sticky=NW)
 weapon.grid_remove()
 
 resin_timer = resin_timer.resintimer(root)
-resin_timer.grid(column=2, row=2, sticky=NW)
+resin_timer.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=301, ipady=60)
 resin_timer.grid_remove()
 
 todoList = todo.ToDoAppFrame(root)
@@ -194,7 +194,5 @@ notifier_button.grid(column=1, row=6, padx=10, pady=(0, 15))
 
 sideBarFrame.update()
 title.grid(column=1, row=1, sticky=W, pady=(0, 10), padx=(5, root.winfo_width() - (sideBarFrame.winfo_width() + 50) ))
-
-
 
 root.mainloop()
