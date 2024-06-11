@@ -71,7 +71,7 @@ def toaster(type):
         win11toast.toast('Genhsin Helper', paimon, button=['View Details'], on_click = click, duration = "10")
 
 def click(a):
-    import test_main
+    import GenshinHelper_Main
 
 def start_service(hour):
     # Add a zero get a proper 24 Hrs Format
