@@ -52,7 +52,7 @@ resin_timer.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=301, ipady=
 resin_timer.grid_remove()
 
 todoList = todo.ToDoAppFrame(root)
-todoList.grid(column=2, row=2, padx=10, pady=15, sticky=W)
+todoList.grid(column=2, row=2, padx=10, pady=15, sticky=NW)
 todoList.grid_remove()
 
 notifier = notifier_gui.NotificationFrame(root)
@@ -194,7 +194,5 @@ notifier_button.grid(column=1, row=6, padx=10, pady=(0, 15))
 
 sideBarFrame.update()
 title.grid(column=1, row=1, sticky=W, pady=(0, 10), padx=(5, root.winfo_width() - (sideBarFrame.winfo_width() + 50) ))
-
-
 
 root.mainloop()

@@ -9,7 +9,7 @@ windll.shcore.SetProcessDpiAwareness(1)
 class characterlevel(ttk.LabelFrame):
   def __init__(self, master, *args, **kargs):
     super().__init__(master, *args, **kargs)
-
+    
     #character calculator features
     self.master = master
     self.label = ttk.Label(text="Materials Calculator", style="fontt.TLabel")
@@ -34,6 +34,22 @@ class characterlevel(ttk.LabelFrame):
     #add frame2
     self.frame2 = ttk.LabelFrame(self.frame1, text = "Character", height = 540, width = 788)
     self.frame2.place(x = self.frame1_width + 585, y = self.frame1_height + 330, anchor = "center")
+
+    #current level and level wanted to be upgrade to
+    curlevel = ["1", "20★", "40★", "50★", "60★", "70★", "80★"]
+    sellevel = ["20★", "40★", "50★", "60★", "70★", "80★"]
+
+    current_level = tk.StringVar()
+    selected_level = tk.StringVar()
+    
+    curlevel_combo = ttk.Combobox(self.frame1, textvariable=current_level, values=curlevel)
+    curlevel_combo.place(x = self.frame1_width + 330, y = self.frame1_height + 15)
+    sellevel_combo = ttk.Combobox(self.frame1, textvariable=selected_level, values=sellevel)
+    sellevel_combo.place(x = self.frame1_width + 630, y = self.frame1_height + 15)
+    arrow = tk.Label(self.frame1, text="→", font=('Arial', 20))
+    arrow.place(x = self.frame1_width + 560, y = self.frame1_height + 5)
+    curlevel_combo.state(["disabled"])
+    sellevel_combo.state(["disabled"])
 
     def fetchname(self):   #fetch name from data base
       conn = sqlite3.connect('genshindata.db')
@@ -77,12 +93,14 @@ class characterlevel(ttk.LabelFrame):
     def clear_frame():
       for widget in self.frame2.winfo_children():
         widget.destroy()
-
+                  
     def frame():
       clear_frame()
       conn = sqlite3.connect('genshindata.db')
       cur = conn.cursor()
       currentname = CharaChosen.get()
+      curlevel_combo.state(["!disabled"])
+      sellevel_combo.state(["!disabled"])
 
       if currentname in namelist:
         #normal boss
@@ -108,20 +126,6 @@ class characterlevel(ttk.LabelFrame):
           flower.set(row[0])
         
         self.frame2.config(text=currentname)
-
-        #current level and level wanted to be upgrade to
-        curlevel = ["1", "20★", "40★", "50★", "60★", "70★", "80★"]
-        sellevel = ["20★", "40★", "50★", "60★", "70★", "80★"]
-
-        current_level = tk.StringVar()
-        selected_level = tk.StringVar()
-    
-        curlevel_combo = ttk.Combobox(self.frame1, textvariable=current_level, values=curlevel)
-        curlevel_combo.place(x = self.frame1_width + 330, y = self.frame1_height + 15)
-        sellevel_combo = ttk.Combobox(self.frame1, textvariable=selected_level, values=sellevel)
-        sellevel_combo.place(x = self.frame1_width + 630, y = self.frame1_height + 15)
-        arrow = tk.Label(self.frame1, text="→", font=('Arial', 20))
-        arrow.place(x = self.frame1_width + 560, y = self.frame1_height + 5)
 
         def combobox_selection(self):
           curlevel_value = curlevel_combo.get()
@@ -409,9 +413,6 @@ class characterlevel(ttk.LabelFrame):
     
           normal_material = tk.Label(self.frame2, text = normal_boss.get(), font=('Arial', 10), wraplength=100)
           normal_material.grid(row = 3, column = 5, sticky = 'n')
-    
-        #character_name = tk.Label(self.frame2, text=currentname, font=('Arial', 20))
-        #character_name.grid(row = 0, column = 0) 
 
         image_path_2 = f"Materials/ascension/{ascension.get()} Gemstone.png"
         image_2 = Image.open(image_path_2)
@@ -870,8 +871,25 @@ class characterlevel(ttk.LabelFrame):
       else:
         pass
     
+    def todolist():
+      conn = sqlite3.connect('genshindata.db')
+      cur = conn.cursor()
+      cur.execute("CREATE TABLE IF NOT EXISTS tasks(Task, Status)")
+      curnumber = int(curlevel_combo.get().replace("★", ""))
+      selnumber = int(sellevel_combo.get().replace("★", ""))
+      currentname = CharaChosen.get()
+      todo = f"Upgrade {currentname} from Level {curlevel_combo.get()} to Level {sellevel_combo.get()}"
+      if curlevel_combo.get() == "" or sellevel_combo.get() == "" or curnumber >= selnumber:
+        pass
+      else:
+        cur.execute(f"INSERT INTO tasks (Task, Status) VALUES (?, ?)", (todo, f"False"))
+      conn.commit()
+
     AddCharacterButton = ttk.Button(self, text="SEARCH", width = 8, command = frame)
-    AddCharacterButton.grid(row = 0, column = 1, sticky = 'se', padx = (0,200), pady = (0,38))    
+    AddCharacterButton.grid(row = 0, column = 1, sticky = 'se', padx = (0,190), pady = (0,36), ipady=10)    
+
+    AddtoTODO = ttk.Button(self, text="  Add to\nto-do list", width = 12, command = todolist)
+    AddtoTODO.grid(row = 0, column = 1, sticky = 'se', padx = (0,60), pady = (0,36))    
 
 def main():
   windll.shcore.SetProcessDpiAwareness(1)
