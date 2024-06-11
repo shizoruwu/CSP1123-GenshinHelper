@@ -83,7 +83,6 @@ def start_service(hour):
         current_time = datetime.datetime.now().strftime("%H")
         weekday = datetime.datetime.now().strftime("%a")
         date = datetime.datetime.now().strftime("%d")
-        print(current_time)
 
         time.sleep(1)
         # Daily notification
@@ -102,5 +101,5 @@ def start_service(hour):
       
 fetch()
 start_service(hours)
-# toaster('normal')
+#toaster('normal')
 
