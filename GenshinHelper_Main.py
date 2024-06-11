@@ -40,7 +40,7 @@ characterSearch = character_search.charsearch(root)
 characterSearch.grid(column=2, row=2,padx=10, pady=15, sticky=NW)
 
 CharacterLevelCalc = character_level.characterlevel(root)
-CharacterLevelCalc.grid(column=2, row=2, sticky=W)
+CharacterLevelCalc.grid(column=2, row=2, sticky=NW)
 CharacterLevelCalc.grid_remove()
 
 weapon = weapon_search.weaponsearch(root)
@@ -52,7 +52,7 @@ resin_timer.grid(column=2, row=2, sticky=NW)
 resin_timer.grid_remove()
 
 todoList = todo.ToDoAppFrame(root)
-todoList.grid(column=2, row=2, padx=10, pady=15, sticky=W)
+todoList.grid(column=2, row=2, padx=10, pady=15, sticky=NW)
 todoList.grid_remove()
 
 notifier = notifier_gui.NotificationFrame(root)

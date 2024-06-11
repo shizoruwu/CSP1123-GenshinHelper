@@ -2,6 +2,12 @@ import time
 import datetime
 import win11toast
 import sqlite3
+import multiprocessing
+import pystray
+import PIL.Image
+import os
+
+current_path = os.path.abspath(os.getcwd())
 
 def fetch():
     DBconnection = sqlite3.connect("genshindata.db")
@@ -71,7 +77,7 @@ def toaster(type):
         win11toast.toast('Genhsin Helper', paimon, button='View Details', on_click = click, duration = "10")
 
 def click(a):
-    import test_main
+    import GenshinHelper_Main
 
 def start_service(hour):
     # Add a zero get a proper 24 Hrs Format
@@ -100,7 +106,46 @@ def start_service(hour):
         elif date == "01":
             toaster("paimon")
       
-fetch()
-# start_service(hours)
-toaster('abyss')
+def notifier():
+    fetch()
+    start_service(hours)
+    # toaster('abyss')
+    
+def quit(pid):
+    tray.stop()
+    os.popen(f'taskkill /pid {pid} /f')
+
+### System tray
+def sys_tray(pid):
+    global tray
+    image = PIL.Image.open(current_path + "\Materials\Mora.png")
+    tray = pystray.Icon("Tray", image, menu=pystray.Menu(
+        pystray.MenuItem("Exit", lambda:quit(pid=pid))
+    ))
+    # Get tray PID
+    pid_tray = os.getpid()
+    DBconnection = sqlite3.connect("genshindata.db")
+    DBcursor = DBconnection.cursor()
+    DBcursor.execute(f"UPDATE notification SET Status = {pid_tray} WHERE Notification = 'PID_TRAY'")
+    DBconnection.commit()
+    DBconnection.close()
+    tray.run()
+
+def main():
+    # Get PID
+    pid_notifier = os.getpid()
+    DBconnection = sqlite3.connect("genshindata.db")
+    DBcursor = DBconnection.cursor()
+    DBcursor.execute(f"UPDATE notification SET Status = {pid_notifier} WHERE Notification = 'PID_NOTIFIER'")
+    DBconnection.commit()
+    DBconnection.close()
+    # Start
+    tray_process = multiprocessing.Process(target=sys_tray, args=([pid_notifier])) 
+    tray_process.start()
+    notifier()
+
+if __name__ == "__main__":
+    main()
+    
+    
 

@@ -36,6 +36,8 @@ class NotificationFrame(ttk.LabelFrame):
             self.startup_button.config(command=self.startup_off)
         else:
             self.startup_button.config(command=self.startup_on)
+        # if self.daily_notification_status.get() == 0 and self.advanced_notification_status.get() == 0:
+        #         self.startup_button.config(state=DISABLED)
         ToolTip(self.startup_button, text="Turn on this option to run the script in background when computer start up to get notification without open Genshin Helper.")
         
         print(f"\n{self.notification_list}")
@@ -81,7 +83,7 @@ class NotificationFrame(ttk.LabelFrame):
 
             elif data == "ADVANCED_NOTIFICATION":
                 self.advanced_notification_status = var
-                self.advanced_notification = ttk.Checkbutton(self, text="Notification (Advanced)", bootstyle="round-toggle", variable=self.advanced_notification_status, command=self.start)
+                self.advanced_notification = ttk.Checkbutton(self, text="Notification (Advanced)", bootstyle="round-toggle", variable=self.advanced_notification_status)
                 self.advanced_notification.grid(column=1, row=6, padx=20, pady=(20, 10), columnspan=2, sticky=W)
                 ToolTip(self.advanced_notification, text="Strongly recommended you to turn on the startup option to get the notification below without open Genshin Helper.")
                 if self.advanced_notification_status.get() == 1: # True
@@ -96,7 +98,7 @@ class NotificationFrame(ttk.LabelFrame):
                 self.time.grid(column=2, row=2, sticky=W, pady=(10, 0))
                 ToolTip(self.time, text="Press Enter to Apply new value.")
 
-            if data != "DAILY_NOTIFICATION" and data != "DAILY_NOTIFICATION_TIME" and data != "ADVANCED_NOTIFICATION" and data != "STARTUP":
+            if data != "DAILY_NOTIFICATION" and data != "DAILY_NOTIFICATION_TIME" and data != "ADVANCED_NOTIFICATION" and data != "STARTUP" and data != "PID_NOTIFIER" and data != "PID_TRAY":
                 if data == "Resin Overflow Reminder":
                     row_init += 2
                 self.checkbox = ttk.Checkbutton(self, text=data, variable=var, bootstyle="round-toggle", command=self.state)
@@ -115,6 +117,10 @@ class NotificationFrame(ttk.LabelFrame):
                     else:
                         checkbox.config(state=DISABLED)
 
+            
+            # if self.daily_notification_status.get() == 0:
+            #     self.startup_button.config(state=DISABLED)
+
         print(self.notification_list)
                         
     def on(self, type):
@@ -124,6 +130,7 @@ class NotificationFrame(ttk.LabelFrame):
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=NORMAL)
             self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'DAILY_NOTIFICATION'")
+            subprocess.Popen("pythonw notifier.pyw", shell=True)
         elif type == "advanced":
             print("advanced on")
             self.advanced_notification.config(command=lambda: self.off("advanced"))
@@ -138,6 +145,13 @@ class NotificationFrame(ttk.LabelFrame):
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=DISABLED)
             self.database("others", "UPDATE notification SET Status = '0' WHERE Notification = 'DAILY_NOTIFICATION'")
+            DBconnection = sqlite3.connect("genshindata.db")
+            DBcursor = DBconnection.cursor()
+            data = DBcursor.execute("SELECT Status FROM notification WHERE rowid >= 22")
+            pid = data.fetchall()
+            DBconnection.close()
+            subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
+            subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
         elif type == "advanced":
             print("advanced off")
             self.advanced_notification.config(command=lambda: self.on("advanced"))
@@ -156,8 +170,8 @@ class NotificationFrame(ttk.LabelFrame):
 
 
     def start(self):
-        # subprocess.Popen("python test_notic.pyw", shell=True)
-        pass
+        subprocess.Popen("python notifier.pyw", shell=True)
+        # pass
 
     def startup_on(self):
         create_schtask = 'schtasks /create /sc ONSTART /tn "Genshin Helper Notification" /tr "C:/Users/Jiahe31/AppData/Local/Programs/Python/Python311/python.exe c:/Users/Jiahe31/Desktop/CSP1123-GenshinHelper/notifier.pyw" | schtasks /change /tn "Genshin Helper Notification" /ENABLE'
