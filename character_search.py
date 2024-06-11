@@ -23,16 +23,24 @@ class charsearch(ttk.LabelFrame):
         
         #Menu Frame Codes
         charLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Character By Clicking Them. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
-        charLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nws')
+        charLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nw')
+
+        global boxvalue, CharaChosen
+        boxvalue = tk.StringVar()
+        self.fetchname()
+        CharaChosen = ttk.Combobox(self.MenuFrame, font = ("Arial", 12),values=charnamelist_sort,width=30,textvariable=boxvalue)
+        CharaChosen.grid(column = 2, row = 1 , padx = 20, pady = 20 , sticky = 'nw')
+        CharaChosen.current()
+        CharaChosen.bind('<KeyRelease>',self.search)
 
         elementframe = ttk.LabelFrame(self.MenuFrame,text = 'Character Element',height = 220,width = 300)
-        elementframe.grid(column=0, row=0, padx=8, pady=15,sticky = 'nw')
+        elementframe.grid(rowspan = 2,column=0, row=0, padx=8, pady=15,sticky = 'nw')
 
         starframe = ttk.LabelFrame(self.MenuFrame,text = 'Character Star',height = 220,width = 300)
-        starframe.grid(column=1, row=0, padx=8, pady=15,sticky = 'nw')
+        starframe.grid(rowspan = 2,column=1, row=0, padx=8, pady=15,sticky = 'nw')
 
         self.charimage = ttk.LabelFrame(self.MenuFrame,text = 'Character List',width = 1240,height = 500)
-        self.charimage.grid(columnspan=3,column=0,row=1)
+        self.charimage.grid(columnspan=3,column=0,row=2,sticky='nw')
 
         #Sets the Default Value of Checkbox to CHECKED
         self.cryo_value = tk.BooleanVar(value = 1)
@@ -71,10 +79,10 @@ class charsearch(ttk.LabelFrame):
         geotype = ttk.Checkbutton(elementframe,text = 'Geo',variable=self.geo_value,command=self.add_images_filtered)
         geotype.grid(column=1,row=3,sticky = 'w',padx = 10)
 
-        selectallbutton = ttk.Button(elementframe,text='Select All',command=self.selectallweapon)
+        selectallbutton = ttk.Button(elementframe,text='Select All',command=self.selectallcharacter)
         selectallbutton.grid(column = 0, row = 6 ,sticky = 'es',padx = 8,pady = 3)
 
-        clearbutton = ttk.Button(elementframe,text='Clear All',command=self.clearallweapon)
+        clearbutton = ttk.Button(elementframe,text='Clear All',command=self.clearallcharacter)
         clearbutton.grid(column = 1, row = 6 ,sticky = 'ws',padx = 8,pady = 3)
 
 
@@ -114,7 +122,6 @@ class charsearch(ttk.LabelFrame):
         self.canvas.create_window((0, 0), window=self.image_frame, anchor='nw')
 
         #Adds images to the frame
-        self.fetchname()
         self.add_images_filtered()
 
         #Configure canvas scroll region
@@ -265,6 +272,10 @@ class charsearch(ttk.LabelFrame):
         self.current_frame = self.MenuFrame
         self.MenuFrame.grid(padx=20, pady=8)
         self.InfoFrame.grid_forget()
+        self.selectallcharacter()
+        self.selectallstar()
+        boxvalue.set('')
+        self.searchdefault()
 
     #Show Info Frame Func
     def show_InfoFrame(self):
@@ -323,9 +334,17 @@ class charsearch(ttk.LabelFrame):
         #Sort Out Filtered Names
         for i, name in enumerate(charnamelist):
             charname = name
-                
-            currentcharelement = charelement[i]
-            currentcharquality = characterstar[i]
+            
+            conn = sqlite3.connect('genshindata.db')
+            cur = conn.cursor()
+
+            cur.execute("SELECT Element FROM Characterdata WHERE Name = ?", (charnamelist[i],))
+            row = cur.fetchone()
+            currentcharelement = row[0]
+
+            cur.execute("SELECT Star FROM Characterdata WHERE Name = ?", (charnamelist[i],))
+            row = cur.fetchone()
+            currentcharquality = row[0]
 
             if (currentcharelement in selected_element) and (currentcharquality in selected_quality):
                 filtered_name.append(charname)
@@ -357,7 +376,7 @@ class charsearch(ttk.LabelFrame):
             label.image = charphoto
         
     #Function for Clearing all weapon checkbox
-    def clearallweapon(self):
+    def clearallcharacter(self):
         self.cryo_value.set(0)
         self.dendro_value.set(0)
         self.pyro_value.set(0)
@@ -376,7 +395,7 @@ class charsearch(ttk.LabelFrame):
         self.add_images_filtered()
 
     #Select all Weapon
-    def selectallweapon(self):
+    def selectallcharacter(self):
         self.cryo_value.set(1)
         self.dendro_value.set(1)
         self.pyro_value.set(1)
@@ -391,6 +410,50 @@ class charsearch(ttk.LabelFrame):
     def selectallstar(self):
         self.fivestarbutton_value.set(1)
         self.fourstarbutton_value.set(1)
+
+        self.add_images_filtered()
+    
+    def search(self,event):
+        searchvalue = CharaChosen.get()
+        global charnamelist
+        charnamelist = []
+
+        if searchvalue == '':
+            CharaChosen['values'] = charnamelist_sort
+            for item in charnamelist_sort:
+                charnamelist.append(item)  
+        else:
+            data = []
+            for item in charnamelist_sort:
+                if searchvalue.lower() in item.lower():
+                    data.append(item)
+
+            CharaChosen['values'] = data
+            
+            for item in data:
+                charnamelist.append(item)
+
+        self.add_images_filtered()
+
+    def searchdefault(self):
+        searchvalue = CharaChosen.get()
+        global charnamelist
+        charnamelist = []
+
+        if searchvalue == '':
+            CharaChosen['values'] = charnamelist_sort
+            for item in charnamelist_sort:
+                charnamelist.append(item)  
+        else:
+            data = []
+            for item in charnamelist_sort:
+                if searchvalue.lower() in item.lower():
+                    data.append(item)
+
+            CharaChosen['values'] = data
+            
+            for item in data:
+                charnamelist.append(item)
 
         self.add_images_filtered()
 

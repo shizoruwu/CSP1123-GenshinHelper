@@ -27,14 +27,22 @@ class weaponsearch(ttk.LabelFrame):
     WeaponLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Weapon to Show Its Info. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
     WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'ne')
 
+    global boxvalue, WeaponChosen
+    boxvalue = tk.StringVar()
+    self.fetchname()
+    WeaponChosen = ttk.Combobox(self.MenuFrame, font = ("Arial", 12),values=namelist_sort,width=30,textvariable=boxvalue)
+    WeaponChosen.grid(column = 2, row = 1 , padx = 20, pady = 20 , sticky = 'nw')
+    WeaponChosen.current()
+    WeaponChosen.bind('<KeyRelease>',self.search)
+
     weaponframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Type',height = 220,width = 300)
-    weaponframe.grid(column=0, row=0, padx=8, pady=15,sticky = 'nw')
+    weaponframe.grid(rowspan = 2,column=0, row=0, padx=8, pady=15,sticky = 'nw')
 
     qualityframe = ttk.LabelFrame(self.MenuFrame,text = 'Weapon Quality',height = 220,width = 300)
-    qualityframe.grid(column=1, row=0, padx=8, pady=15,sticky = 'nw')
+    qualityframe.grid(rowspan = 2,column=1, row=0, padx=8, pady=15,sticky = 'nw')
 
     self.weaponimage = ttk.LabelFrame(self.MenuFrame,text = 'Weapon List',width = 1240,height = 500)
-    self.weaponimage.grid(columnspan=3,column=0,row=1)
+    self.weaponimage.grid(columnspan=3,column=0,row=2)
 
     #Sets the Default Value of Checkbox to CHECKED
     self.swordbutton_value = tk.BooleanVar(value = 1)
@@ -163,6 +171,8 @@ class weaponsearch(ttk.LabelFrame):
 
     ttk.Label(ImageLabelFrame,textvariable= basename,justify='center',font = ('Arial',11)).grid(column=0,row=0,pady=5)
     ttk.Label(ImageLabelFrame,textvariable= basename2nd,justify='center',font = ('Arial',11)).grid(column=1,row=0,pady=5)
+
+    texturl = ttk.Label(ImageLabelFrame,text = 'Click on Image to go Wikipedia',justify='center',font = ('Arial',6)).grid(columnspan=2,column=0,row=2,pady=5)
 
     Name = ttk.Label(InfoLabelFrame, textvariable=InfoName, font = ('Arial',15))
     Name.grid(column=0,row=0,padx = 8 , pady = 8)
@@ -357,6 +367,10 @@ class weaponsearch(ttk.LabelFrame):
     self.current_frame = self.MenuFrame
     self.MenuFrame.grid(padx=20, pady=8)
     self.InfoFrame.grid_forget()
+    self.selectallweapon()
+    self.selectallstar()
+    boxvalue.set('')
+    self.searchdefault()
 
   #Show Info Frame Func
   def show_InfoFrame(self):
@@ -417,8 +431,16 @@ class weaponsearch(ttk.LabelFrame):
     for i, name in enumerate(imagenamelist):
       weaponname = namelist[i]
         
-      currentweapontype = weapontype[i]
-      currentweaponquality = weaponquality[i]
+      conn = sqlite3.connect('genshindata.db')
+      cur = conn.cursor()
+
+      cur.execute("SELECT Type FROM WeaponData WHERE Name = ?", (namelist[i],))
+      row = cur.fetchone()
+      currentweapontype = row[0]
+
+      cur.execute("SELECT Quality FROM WeaponData WHERE Name = ?", (namelist[i],))
+      row = cur.fetchone()
+      currentweaponquality = row[0]
 
       if (currentweapontype in selected_types) and (currentweaponquality in selected_quality):
         filtered_name.append(weaponname)
@@ -493,6 +515,54 @@ class weaponsearch(ttk.LabelFrame):
   #QOL Feature, Opens up webpage when clicked on image for more details
   def open_link(self,event):
     webbrowser.open(url)
+
+  def search(self,event):
+    searchvalue = WeaponChosen.get()
+    global imagenamelist
+    global namelist
+    imagenamelist = []
+    namelist = []
+
+    if searchvalue == '':
+      WeaponChosen['values'] = namelist_sort
+      for item in namelist_sort:
+        namelist.append(item)  
+      for item in imagenamelist_sort:
+        imagenamelist.append(item)
+
+    else:
+      for i, name in enumerate(namelist_sort):
+        if searchvalue.lower() in name.lower():
+          namelist.append(name)
+          imagenamelist.append(imagenamelist_sort[i])
+
+      WeaponChosen['values'] = namelist
+
+    self.add_images_filtered()
+
+  def searchdefault(self):
+    searchvalue = WeaponChosen.get()
+    global imagenamelist
+    global namelist
+    imagenamelist = []
+    namelist = []
+
+    if searchvalue == '':
+      WeaponChosen['values'] = namelist_sort
+      for item in namelist_sort:
+        namelist.append(item)  
+      for item in imagenamelist_sort:
+        imagenamelist.append(item)
+
+    else:
+      for i, name in enumerate(namelist_sort):
+        if searchvalue.lower() in name.lower():
+          namelist.append(name)
+          imagenamelist.append(imagenamelist_sort[i])
+
+      WeaponChosen['values'] = namelist
+
+    self.add_images_filtered()
 
 def main():
     windll.shcore.SetProcessDpiAwareness(1)
