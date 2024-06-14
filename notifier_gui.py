@@ -1,9 +1,10 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from ctypes import windll
+from ttkbootstrap.tooltip import ToolTip
 import sqlite3
 import subprocess
-from ttkbootstrap.tooltip import ToolTip
+import win32com.shell.shell as shell
+from ctypes import windll
 
 
 class NotificationFrame(ttk.LabelFrame):
@@ -22,10 +23,9 @@ class NotificationFrame(ttk.LabelFrame):
         self.notification_list = {}
         self.checkbox_nameVar = []
 
-        
         for data in self.database("fetch"):
             self.notification_list[data[0]] = data[1]
-
+        
         print(f"\n{self.notification_list}")
         self.create_list()
         self.time.bind('<Return>', self.set_time)
@@ -42,6 +42,10 @@ class NotificationFrame(ttk.LabelFrame):
             data = self.DBcursor.execute("SELECT * FROM notification") # Read
             self.data = data.fetchall() # Get
             return self.data
+        
+        elif action == "fetch_PID":
+            data = self.DBcursor.execute("SELECT Status FROM notification WHERE rowid >= 4 AND rowid <= 5")
+            return data.fetchall()
 
         elif action == "others":
             self.DBcursor.execute(statement)
@@ -60,7 +64,7 @@ class NotificationFrame(ttk.LabelFrame):
             if data == "DAILY_NOTIFICATION":
                 self.daily_notification_status = var
                 print(self.daily_notification_status.get())
-                self.daily_notification = ttk.Checkbutton(self, text="Desktop Notification", bootstyle="round-toggle", variable=self.daily_notification_status, command=self.start)
+                self.daily_notification = ttk.Checkbutton(self, text="Desktop Notification", bootstyle="round-toggle", variable=self.daily_notification_status)
                 self.daily_notification.grid(column=1, row=1, padx=20, pady=(10, 0), columnspan=2, sticky=W)
                 if self.daily_notification_status.get() == 1: # True
                     self.daily_notification.config(command=lambda: self.off("normal"))
@@ -69,7 +73,7 @@ class NotificationFrame(ttk.LabelFrame):
 
             elif data == "ADVANCED_NOTIFICATION":
                 self.advanced_notification_status = var
-                self.advanced_notification = ttk.Checkbutton(self, text="Notification (Advanced)", bootstyle="round-toggle", variable=self.advanced_notification_status, command=self.startup)
+                self.advanced_notification = ttk.Checkbutton(self, text="Notification (Advanced)", bootstyle="round-toggle", variable=self.advanced_notification_status)
                 self.advanced_notification.grid(column=1, row=6, padx=20, pady=(20, 10), columnspan=2, sticky=W)
                 if self.advanced_notification_status.get() == 1: # True
                     self.advanced_notification.config(command=lambda: self.off("advanced"))
@@ -78,15 +82,16 @@ class NotificationFrame(ttk.LabelFrame):
 
             elif data == "DAILY_NOTIFICATION_TIME":
                 self.timeVar = ttk.StringVar(value=var.get())
-                ttk.Label(self, text="Daily Notification Time (24 Hrs Format)").grid(column=1, row=2, sticky=W, padx=(30, 0), pady=(10, 0))
+                label = ttk.Label(self, text="Daily Notification Time (24 Hrs Format)")
+                label.grid(column=1, row=2, sticky=W, padx=(30, 0), pady=(5, 0))
                 self.time = ttk.Spinbox(self, width=3, textvariable=self.timeVar, from_=0,to=23) # , textvariable=pass
-                self.time.grid(column=2, row=2, sticky=W)
+                self.time.grid(column=2, row=2, sticky=W, pady=(10, 0))
                 ToolTip(self.time, text="Press Enter to Apply new value.")
-                
+                ToolTip(label, text="Press Enter to Apply new value.")
 
-            if data != "DAILY_NOTIFICATION" and data != "DAILY_NOTIFICATION_TIME" and data != "ADVANCED_NOTIFICATION":
+            if data != "DAILY_NOTIFICATION" and data != "DAILY_NOTIFICATION_TIME" and data != "ADVANCED_NOTIFICATION" and data != "PID_NOTIFIER" and data != "PID_TRAY":
                 if data == "Resin Overflow Reminder":
-                    row_init += 1
+                    row_init += 2
                 self.checkbox = ttk.Checkbutton(self, text=data, variable=var, bootstyle="round-toggle", command=self.state)
                 self.checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
                 row_init += 1
@@ -111,11 +116,15 @@ class NotificationFrame(ttk.LabelFrame):
             self.daily_notification.config(command=lambda: self.off("normal"))
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=NORMAL)
+            self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'DAILY_NOTIFICATION'")
+            subprocess.Popen("pythonw notifier.pyw", shell=True)
         elif type == "advanced":
             print("advanced on")
             self.advanced_notification.config(command=lambda: self.off("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
                     checkbox.config(state=NORMAL)
+            self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'ADVANCED_NOTIFICATION'")
+            subprocess.Popen("pythonw notifier.pyw", shell=True)
 
     def off(self, type):
         if type == "normal":
@@ -123,11 +132,19 @@ class NotificationFrame(ttk.LabelFrame):
             self.daily_notification.config(command=lambda: self.on("normal"))
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=DISABLED)
+            self.database("others", "UPDATE notification SET Status = '0' WHERE Notification = 'DAILY_NOTIFICATION'")
+            pid = self.database("fetch_PID")
+            subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
+            subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
         elif type == "advanced":
             print("advanced off")
             self.advanced_notification.config(command=lambda: self.on("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
                     checkbox.config(state=DISABLED)
+            self.database("others", "UPDATE notification SET Status = '0' WHERE Notification = 'ADVANCED_NOTIFICATION'")
+            pid = self.database("fetch_PID")
+            subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
+            subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
 
     def state(self):
         for notifications in self.notification_list:
@@ -138,27 +155,25 @@ class NotificationFrame(ttk.LabelFrame):
                 connection.commit()
                 connection.close()
 
-
-    def start(self):
-        # subprocess.Popen("python test_notic.pyw", shell=True)
-        pass
-
-    def startup(self):
-        pass
-
     def set_time(self, a):
 
         def info(status=None):
-            info = ttk.Label(self)
-            info.grid(column=3, row=2, sticky=W, padx=10)
+            global info_label
+            self.grid = False
+            info_label = ttk.Label(self)
+            info_label.grid(column=3, row=2, sticky=W, padx=10)
             if status == "success":
-                info.config(text="New Value Saved!")
+                info_label.config(text="New Value Saved!")
             elif status == "exceed":
-                info.config(text="Invalid Value, Please type 0 to 23 only.", bootstyle="danger")
+                info_label.config(text="Invalid Value, Please type 0 to 23 only.", bootstyle="danger")
             else:
-                info.config(text="Invalid Value/Type, Please type 0 to 23 (Integer) only.", bootstyle="danger")
+                info_label.config(text="Invalid Value/Type, Please type 0 to 23 (Integer) only.", bootstyle="danger")
+            self.grid = True
 
         try:
+            if self.grid == True:
+                info_label.destroy()
+                self.grid = False
             if int(self.time.get()) >= 0 and int(self.time.get()) <= 23:
                 self.database("others", statement=f"UPDATE notification SET Status = {self.time.get()} WHERE Notification = 'DAILY_NOTIFICATION_TIME'")
                 info("success")
@@ -166,6 +181,7 @@ class NotificationFrame(ttk.LabelFrame):
                 info("exceed")
         except:
             info()
+
 
     
 
@@ -187,7 +203,7 @@ def main():
 
     windll.shcore.SetProcessDpiAwareness(1)
 
-    root = ttk.Window(themename='themee')
+    root = ttk.Window()
     # root = ttk.Window()
     root.title("Notification")
     root.geometry("900x600+100+100")
