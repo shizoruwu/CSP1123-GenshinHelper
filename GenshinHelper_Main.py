@@ -18,7 +18,6 @@ windll.shcore.SetProcessDpiAwareness(1)
 root = ttk.Window(themename="light_4")
 root.title("Genshin Helper")
 root.geometry("1520x900+200+50")
-root.resizable(0, 0)
 
 iconimg = PhotoImage(file='Image/Paimon.png')
 root.iconphoto(False, iconimg)
