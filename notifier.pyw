@@ -114,13 +114,23 @@ def notifier():
 def quit(pid):
     tray.stop()
     os.popen(f'taskkill /pid {pid} /f')
+    DBconnection = sqlite3.connect("genshindata.db")
+    DBcursor = DBconnection.cursor()
+    DBcursor.execute(f"UPDATE notification SET Status = '0' WHERE Notification = 'DAILY_NOTIFICATION'")
+    DBcursor.execute(f"UPDATE notification SET Status = '0' WHERE Notification = 'ADVANCED_NOTIFICATION'")
+    DBconnection.commit()
+    DBconnection.close()
+
+def on():
+    import GenshinHelper_Main
 
 ### System tray
 def sys_tray(pid):
     global tray
     image = PIL.Image.open(current_path + "\Materials\Mora.png")
     tray = pystray.Icon("Tray", image, menu=pystray.Menu(
-        pystray.MenuItem("Exit", lambda:quit(pid=pid))
+        pystray.MenuItem("Exit", lambda:quit(pid=pid)),
+        pystray.MenuItem("Open", on)
     ))
     # Get tray PID
     pid_tray = os.getpid()

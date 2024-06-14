@@ -31,7 +31,7 @@ class NotificationFrame(ttk.LabelFrame):
         startup_val = self.notification_list['STARTUP']
         var = ttk.IntVar(value=startup_val)
         self.startup_button = ttk.Checkbutton(self.option, text="Start in Startup", bootstyle="round-toggle", command=self.startup_on, variable=var)
-        self.startup_button.grid(column=1, row=1, sticky=W, padx=20, pady=5)
+        # self.startup_button.grid(column=1, row=1, sticky=W, padx=20, pady=5)
         if var.get() == 1:
             self.startup_button.config(command=self.startup_off)
         else:
