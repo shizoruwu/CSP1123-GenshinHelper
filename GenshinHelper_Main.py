@@ -1,5 +1,6 @@
 # Top - Side / Bar
 
+from tkinter import*
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ctypes import windll
@@ -7,11 +8,19 @@ from PIL import Image, ImageTk
 import os
 
 import todo
+import weapon_search
+import character_search
+import character_level
+import resin_timer
+import notifier_gui
 
 windll.shcore.SetProcessDpiAwareness(1)
 root = ttk.Window(themename="light_4")
 root.title("Genshin Helper")
-root.geometry("900x600+100+100")
+root.geometry("1520x900")
+
+iconimg = PhotoImage(file='Image/Paimon.png')
+root.iconphoto(False, iconimg)
 
 s = ttk.Style()
 s.configure('green.TButton', foreground = "green")
@@ -31,27 +40,27 @@ sideBarFrame.update()
 
 
 ## Features
-characterSearch = ttk.Label(root, text="Character")
-characterSearch.grid(column=2, row=2, sticky=N)
+characterSearch = character_search.charsearch(root)
+characterSearch.grid(column=2, row=2, padx=10, pady=15, sticky=NW)
 
-CharacterLevelCalc = ttk.Label(root, text="Character Level Calculator")
-CharacterLevelCalc.grid(column=2, row=2, sticky=N)
+CharacterLevelCalc = character_level.characterlevel(root)
+CharacterLevelCalc.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=48, ipady=5)
 CharacterLevelCalc.grid_remove()
 
-weapon = ttk.Label(root, text="Weapon")
-weapon.grid(column=2, row=2, sticky=N)
+weapon = weapon_search.weaponsearch(root)
+weapon.grid(column=2, row=2,padx=10, pady=15, sticky=NW)
 weapon.grid_remove()
 
-resin_timer = ttk.Label(root, text="Resin Timer")
-resin_timer.grid(column=2, row=2, sticky=N)
+resin_timer = resin_timer.resintimer(root)
+resin_timer.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=301, ipady=60)
 resin_timer.grid_remove()
 
 todoList = todo.ToDoAppFrame(root)
-todoList.grid(column=2, row=2, padx=10, pady=15, sticky=N)
+todoList.grid(column=2, row=2, padx=10, pady=15, sticky=NW)
 todoList.grid_remove()
 
-notifier = ttk.Label(root, text="Notifier")
-notifier.grid(column=2, row=2, padx=10, pady=15, sticky=N)
+notifier = notifier_gui.NotificationFrame(root)
+notifier.grid(column=2, row=2, padx=10, pady=15, sticky=NW, ipadx=1500, ipady=100)
 notifier.grid_remove()
 
 ## Side bar functions
@@ -189,7 +198,5 @@ notifier_button.grid(column=1, row=6, padx=10, pady=(0, 15))
 
 sideBarFrame.update()
 title.grid(column=1, row=1, sticky=W, pady=(0, 10), padx=(5, root.winfo_width() - (sideBarFrame.winfo_width() + 50) ))
-
-
 
 root.mainloop()

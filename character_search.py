@@ -1,199 +1,473 @@
-###Testing for search function
-
 import sqlite3 
+from tkinter import *
 import tkinter as tk
-from tkinter import ttk 
+import ttkbootstrap as ttk
 from PIL import ImageTk, Image
 from ctypes import windll
+import webbrowser
 
-#FIX BLURRY FONTS
-windll.shcore.SetProcessDpiAwareness(1)
+class charsearch(ttk.LabelFrame):
+    def __init__(self,master,*args,**kargs):
+        super().__init__(master,*args,**kargs)
 
-class charactersearch(tk.Tk):
-  def __init__(self):
-    tk.Tk.__init__(self)
+        self.master = master
+        self.label = ttk.Label(text="Character Search", style="fontt.TLabel")
+        self.config(labelwidget=self.label)
 
-    self.title('Character Search')
-    self.geometry('1295x785')
-    
-    TitleChara = ttk.Label(self, text = "Select Character to show their Informations.",
-    font = ("Arial", 22)).grid(columnspan = 3, row = 1, padx = 20, pady = 15,sticky = 'w') 
+        #Frame1 - MenuFrame
+        self.MenuFrame = ttk.Frame(self)
+        self.MenuFrame.grid(column=0, row=0, sticky='w')
 
-    Searchtext = ttk.Label(self, text = "Select Character ", 
-    font = ("Arial", 20)).grid(column = 0, row = 2, padx = 15 , pady = 10,sticky = 'w') 
+        #Frame2 - InfoFrame
+        self.InfoFrame = ttk.Frame(self)
+        
+        #Menu Frame Codes
+        charLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Character By Clicking Them. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
+        charLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nw')
 
-    #Search Box Combobox
-    global CharaChosen
-    global boxvalue
-    boxvalue = tk.StringVar()
-    self.fetchname()
-    CharaChosen = ttk.Combobox(self, font = ("Arial", 12),values=namelist,width=42,textvariable=boxvalue)
-    CharaChosen.grid(columnspan=2 , column = 1, row = 2 , padx = 20, pady = 20 , sticky = 'w')
-    CharaChosen.current()
-    CharaChosen.bind('<KeyRelease>',self.Search)
+        global boxvalue, CharaChosen
+        boxvalue = tk.StringVar()
+        self.fetchname()
+        CharaChosen = ttk.Combobox(self.MenuFrame, font = ("Arial", 12),values=charnamelist_sort,width=30,textvariable=boxvalue)
+        CharaChosen.grid(column = 2, row = 1 , padx = 20, pady = 20 , sticky = 'nw')
+        CharaChosen.current()
+        CharaChosen.bind('<KeyRelease>',self.search)
 
-    #Buttons to Enter Character Names
-    EnterButton = ttk.Button(self, text="SEARCH", width = 8,command = self.CharacterDataFetch)
-    EnterButton.grid(column = 3, row = 2, padx = 18, pady = 20 , sticky = 'w' )
+        elementframe = ttk.LabelFrame(self.MenuFrame,text = 'Character Element',height = 220,width = 300)
+        elementframe.grid(rowspan = 2,column=0, row=0, padx=8, pady=15,sticky = 'nw')
 
-    #Pulled Data from Search
-    global CharacterName , CharacterStar , CharacterElement , CharacterWeapon , CharacterRegion , CharacterPhoto , CharacterBirthday , CharacterInfo
+        starframe = ttk.LabelFrame(self.MenuFrame,text = 'Character Star',height = 220,width = 300)
+        starframe.grid(rowspan = 2,column=1, row=0, padx=8, pady=15,sticky = 'nw')
 
-    CharacterName = tk.StringVar()
-    CharacterStar = tk.StringVar()
-    CharacterElement = tk.StringVar()
-    CharacterWeapon = tk.StringVar()
-    CharacterRegion = tk.StringVar()
-    CharacterBirthday = tk.StringVar()
-    CharacterInfo = tk.StringVar()
-    CharacterPhoto = ImageTk.PhotoImage(Image.new('RGBA', (265, 515), (0, 0, 0, 0)))
+        self.charimage = ttk.LabelFrame(self.MenuFrame,text = 'Character List',width = 1240,height = 500)
+        self.charimage.grid(columnspan=3,column=0,row=2,sticky='nw')
 
-    CharacterName.set(' ')
-    CharacterStar.set(' ')
-    CharacterElement.set(' ')
-    CharacterWeapon.set(' ')
-    CharacterRegion.set(' ')
-    CharacterBirthday.set(' ')
-    CharacterInfo.set(' ')
-    
-    charframe = ttk.LabelFrame(self,text = 'Character Info',height = 200,width = 760)
-    charframe.grid(columnspan= 4, row=3, padx = 15, pady=4, sticky='nesw')
+        #Sets the Default Value of Checkbox to CHECKED
+        self.cryo_value = tk.BooleanVar(value = 1)
+        self.dendro_value = tk.BooleanVar(value = 1)
+        self.pyro_value = tk.BooleanVar(value = 1)
+        self.hydro_value = tk.BooleanVar(value = 1)
+        self.anemo_value = tk.BooleanVar(value = 1)
+        self.electro_value = tk.BooleanVar(value = 1)
+        self.geo_value = tk.BooleanVar(value = 1)
 
-    CharaName = ttk.Label(charframe,text = "Character Name :" , font = ("Arial",15)).grid(column = 0,row = 4,pady = 5,sticky = 'e')
-    CharaNameData = ttk.Label(charframe,width = 36 , textvariable = CharacterName, font = ("Arial",15)).grid(column = 1,row = 4,padx = 15,pady = 5,sticky = 'w')
+        self.fivestarbutton_value = tk.BooleanVar(value = 1)
+        self.fourstarbutton_value = tk.BooleanVar(value = 1)
 
-    CharStar = ttk.Label(charframe,text = "Character Star :", font = ("Arial",15)).grid(column = 0,row = 5,pady = 5,sticky = 'e')
-    CharaStarData = ttk.Label(charframe,textvariable = CharacterStar, font = ("Arial",15)).grid(column = 1,row = 5,padx = 15,pady = 5,sticky = 'w')
+        chooseweapon = ttk.Label(elementframe, text="Select Your Character's Element",width= 30)
+        chooseweapon.grid(columnspan = 2,column=0, row=0, padx = 10,pady = 5)
 
-    CharElement = ttk.Label(charframe,text = "Character Element :", font = ("Arial",15)).grid(column = 0,row = 6,pady = 5,sticky = 'e')
-    CharaElementData = ttk.Label(charframe,textvariable = CharacterElement, font = ("Arial",15)).grid(column = 1,row = 6,padx = 15,pady = 5,sticky = 'w')
+        #Checkbox for WEAPON TYPES
+        cryotype = ttk.Checkbutton(elementframe,text = 'Cryo',variable=self.cryo_value , command=self.add_images_filtered)
+        cryotype.grid(column=0,row=1,sticky = 'w',padx = 10)
 
-    CharWeapon = ttk.Label(charframe,text = "Character Weapon :", font = ("Arial",15)).grid(column = 0,row = 7,pady = 5,sticky = 'e')
-    CharWeaponData = ttk.Label(charframe,textvariable = CharacterWeapon, font = ("Arial",15)).grid(column = 1,row = 7,padx = 15,pady = 5,sticky = 'w')
+        dendrotype = ttk.Checkbutton(elementframe,text = 'Dendro',variable=self.dendro_value,command=self.add_images_filtered)
+        dendrotype.grid(column=0,row=2,sticky = 'w',padx = 10)
 
-    CharRegion = ttk.Label(charframe,text = "Character Region :", font = ("Arial",15)).grid(column = 0,row = 8,pady = 5,sticky = 'e')
-    CharRegionData = ttk.Label(charframe,textvariable = CharacterRegion, font = ("Arial",15)).grid(column = 1,row = 8,padx = 15,pady = 5,sticky = 'w')
-    
-    CharBirthday = ttk.Label(charframe,text = "Character Birthday :", font = ("Arial",15)).grid(column = 0,row = 9,pady = 5,sticky = 'e')
-    CharBirthdayData = ttk.Label(charframe,textvariable = CharacterBirthday, font = ("Arial",15)).grid(column = 1,row = 9,padx = 15,pady = 5,sticky = 'w')
-    
-    CharInfo = ttk.Label(charframe,text = "Character Info :", font = ("Arial",15)).grid(column = 0,row = 10,pady = 5,sticky = 'ne')
-    CharInfoData = ttk.Label(charframe,textvariable = CharacterInfo , wraplength = 600 , font = ("Arial",12)).grid(columnspan = 2 ,column = 1,row = 10,padx = 15,pady = 5,sticky = 'w')
-    
-    CharEmptyRow = ttk.Label(charframe,text = ' ').grid(columnspan = 4 , row = 11 , pady = 60)
+        pyrotype = ttk.Checkbutton(elementframe,text = 'Pyro',variable=self.pyro_value,command=self.add_images_filtered)
+        pyrotype.grid(column=0,row=3,sticky = 'w',padx = 10)
 
-    global CharacterImage
-    CharacterImage = ttk.Label(charframe)
-    CharacterImage.grid(column = 3,row = 3,rowspan = 10,padx = 15,pady = 15,sticky = 'nw')
-    
-  #Pull Data From SQLite for dropdown listbox names
-  def fetchname(self):
-    conn = sqlite3.connect('genshindata.db')
-    cur = conn.cursor()
-    cur.execute("SELECT Name FROM Characterdata")
-    namerows = cur.fetchall()
-      
-    #Global Variable Namelist to pull
-    global namelist
-    namelist = [row[0] for row in namerows]
-    namelist.sort()
+        hydrotype = ttk.Checkbutton(elementframe,text = 'Hydro',variable=self.hydro_value,command=self.add_images_filtered)
+        hydrotype.grid(column=0,row=4,sticky = 'w',padx = 10)
 
-    conn.close()
-    
-  #Data Fetch From Selection
-  def CharacterDataFetch(self):
-    conn = sqlite3.connect('genshindata.db')
-    cursor = conn.cursor()
-    currentname = CharaChosen.get()
-    
-    if currentname in namelist:
-      #Fetch Character Name
-      cursor.execute("SELECT Name FROM Characterdata WHERE Name = ?", (currentname,))
-      row = cursor.fetchone()
-      if row:
-        CharacterName.set(row[0])
+        anemotype = ttk.Checkbutton(elementframe,text = 'Anemo',variable=self.anemo_value,command=self.add_images_filtered)
+        anemotype.grid(column=1,row=1,sticky = 'w',padx = 10)
 
-      #Determine Character Star
-      cursor.execute("SELECT Star FROM Characterdata WHERE Name = ?", (currentname,))
-      row = cursor.fetchone()
-      if row:
-        TemporaryCharStar = int(row[0])
-        if TemporaryCharStar == 1:
-          CharacterStar.set('5 Star')
+        electrotype = ttk.Checkbutton(elementframe,text = 'Electro',variable=self.electro_value,command=self.add_images_filtered)
+        electrotype.grid(column=1,row=2,sticky = 'w',padx = 10)
+
+        geotype = ttk.Checkbutton(elementframe,text = 'Geo',variable=self.geo_value,command=self.add_images_filtered)
+        geotype.grid(column=1,row=3,sticky = 'w',padx = 10)
+
+        selectallbutton = ttk.Button(elementframe,text='Select All',command=self.selectallcharacter)
+        selectallbutton.grid(column = 0, row = 6 ,sticky = 'es',padx = 8,pady = 3)
+
+        clearbutton = ttk.Button(elementframe,text='Clear All',command=self.clearallcharacter)
+        clearbutton.grid(column = 1, row = 6 ,sticky = 'ws',padx = 8,pady = 3)
+
+
+        #Checkbox for Weapon QUALITY FILTER
+
+        choosequality = ttk.Label(starframe, text="Select Your Character's Star",width= 30)
+        choosequality.grid(columnspan = 2,column=0, row=0, padx = 10,pady = 5)
+
+        five_star = ttk.Checkbutton(starframe,text = '5 STAR ',variable=self.fivestarbutton_value , command=self.add_images_filtered)
+        five_star.grid(columnspan = 2,column=0,row=1,sticky = 'w',padx = 10)
+
+        four_star = ttk.Checkbutton(starframe,text = '4 STAR ',variable=self.fourstarbutton_value , command=self.add_images_filtered)
+        four_star.grid(columnspan = 2,column=0,row=2,sticky = 'w',padx = 10)
+
+        selectallbuttonstar = ttk.Button(starframe,text='Select All',command=self.selectallstar)
+        selectallbuttonstar.grid(column = 0, row = 4 ,sticky = 'es',padx = 8,pady = 8)
+
+        clearbuttonstar = ttk.Button(starframe,text='Clear All',command=self.clearallstar)
+        clearbuttonstar.grid(column = 1, row = 4 ,sticky = 'ws',padx = 8,pady = 8)
+
+        #Create a scrollable frame
+        self.scrollable_frame = ttk.Frame(self.charimage)
+        self.scrollable_frame.grid(column = 0,row = 0,sticky='w',padx = 10)
+
+        #Create a scrollbar
+        self.scrollbar = ttk.Scrollbar(self.scrollable_frame, orient=tk.VERTICAL)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        #Create a canvas
+        self.canvas = tk.Canvas(self.scrollable_frame, yscrollcommand=self.scrollbar.set,width = 1220,height = 480)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+        self.scrollbar.config(command=self.canvas.yview)
+
+        #Create a frame inside the canvas
+        self.image_frame = ttk.Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.image_frame, anchor='nw')
+
+        #Adds images to the frame
+        self.add_images_filtered()
+
+        #Configure canvas scroll region
+        self.canvas.bind("<Configure>", self.on_canvas_configure)
+
+        self.show_MenuFrame()
+
+        #Frame 2 Codes
+        global CharName , CharElement , CharType , CharRegion , CharInfo , CharBday , CharStar
+
+        CharName = tk.StringVar()
+        CharElement = tk.StringVar()
+        CharType = tk.StringVar()
+        CharRegion = tk.StringVar()
+        CharInfo = tk.StringVar()
+        CharBday = tk.StringVar()
+        CharStar = tk.StringVar()
+
+        CharName.set(' ')
+        CharElement.set(' ')
+        CharType.set(' ')
+        CharRegion.set(' ')
+        CharInfo.set(' ')
+        CharBday.set(' ')
+        CharStar.set(' ')
+
+        CharaName = ttk.Label(self.InfoFrame,text = "Character Name :" , font = ("Arial",15)).grid(column = 0,row = 4,pady = 5,sticky = 'e')
+        CharaNameData = ttk.Label(self.InfoFrame,width = 36 , textvariable = CharName, font = ("Arial",15)).grid(column = 1,row = 4,padx = 15,pady = 5,sticky = 'w')
+
+        CharacterStar = ttk.Label(self.InfoFrame,text = "Character Star :", font = ("Arial",15)).grid(column = 0,row = 5,pady = 5,sticky = 'e')
+        CharaStarData = ttk.Label(self.InfoFrame,textvariable = CharStar, font = ("Arial",15)).grid(column = 1,row = 5,padx = 15,pady = 5,sticky = 'w')
+
+        CharacterElement = ttk.Label(self.InfoFrame,text = "Character Element :", font = ("Arial",15)).grid(column = 0,row = 6,pady = 5,sticky = 'e')
+        CharaElementData = ttk.Label(self.InfoFrame,textvariable = CharElement, font = ("Arial",15)).grid(column = 1,row = 6,padx = 15,pady = 5,sticky = 'w')
+
+        CharWeapon = ttk.Label(self.InfoFrame,text = "Character Weapon :", font = ("Arial",15)).grid(column = 0,row = 7,pady = 5,sticky = 'e')
+        CharWeaponData = ttk.Label(self.InfoFrame,textvariable = CharType, font = ("Arial",15)).grid(column = 1,row = 7,padx = 15,pady = 5,sticky = 'w')
+
+        CharacterRegion = ttk.Label(self.InfoFrame,text = "Character Region :", font = ("Arial",15)).grid(column = 0,row = 8,pady = 5,sticky = 'e')
+        CharRegionData = ttk.Label(self.InfoFrame,textvariable = CharRegion, font = ("Arial",15)).grid(column = 1,row = 8,padx = 15,pady = 5,sticky = 'w')
+        
+        CharBirthday = ttk.Label(self.InfoFrame,text = "Character Birthday :", font = ("Arial",15)).grid(column = 0,row = 9,pady = 5,sticky = 'e')
+        CharBirthdayData = ttk.Label(self.InfoFrame,textvariable = CharBday, font = ("Arial",15)).grid(column = 1,row = 9,padx = 15,pady = 5,sticky = 'w')
+        
+        CharacterInfo = ttk.Label(self.InfoFrame,text = "Character Info :", font = ("Arial",15)).grid(column = 0,row = 10,pady = 5,sticky = 'ne')
+        CharacterInfoData = ttk.Label(self.InfoFrame,textvariable = CharInfo , wraplength = 600 , font = ("Arial",12)).grid(columnspan = 2 ,column = 1,row = 10,padx = 15,pady = 5,sticky = 'w')
+        
+        #CharEmptyRow = ttk.Label(self.InfoFrame,text = ' ').grid(columnspan = 4 , row = 11 , pady = 60)
+
+        global CharacterImage
+        CharacterImage = ttk.Label(self.InfoFrame)
+        CharacterImage.grid(column = 3,row = 3,rowspan = 10,padx = 15,pady = 15,sticky = 'nw')
+
+        self.switch_button = ttk.Button(self.InfoFrame,width = 12, text="Back", command= self.switch_frames)
+        self.switch_button.grid(columnspan=2,column=0,row=11,padx=20, pady=10,sticky = 'w')
+
+    def on_canvas_configure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    #Fetch Names of Weapon
+    def fetchname(self):
+        conn = sqlite3.connect('genshindata.db')
+        cur = conn.cursor()
+        cur.execute("SELECT Name FROM Characterdata")
+        namerows = cur.fetchall()
+        global charnamelist , charnamelist_sort
+        charnamelist = [row[0] for row in namerows]
+        charnamelist_sort = [row[0] for row in namerows]
+        charnamelist_sort.sort()
+
+        cur.execute("SELECT Element FROM Characterdata")
+        namerows = cur.fetchall()
+        global charelement
+        charelement = [row[0] for row in namerows]
+
+        cur.execute("SELECT Star FROM Characterdata")
+        namerows = cur.fetchall()
+        global characterstar
+        characterstar = [row[0] for row in namerows]
+
+        conn.close()
+
+    #When Clicked , Show info (Switch Frames)
+    def imageclicked(self,event,clickedname):
+
+        #Retrieve Data
+        conn = sqlite3.connect('genshindata.db')
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT Name FROM CharacterData WHERE Name = ?", (clickedname,))
+        row = cursor.fetchone()
+        if row:
+            CharName.set(row[0])
+        
+        cursor.execute("SELECT Info FROM CharacterData WHERE Name = ?", (clickedname,))
+        row = cursor.fetchone()
+        if row:
+            CharInfo.set(row[0])
+
+        cursor.execute("SELECT Element FROM CharacterData WHERE Name = ?", (clickedname,))
+        row = cursor.fetchone()
+        if row:
+            CharElement.set(row[0])
+
+        cursor.execute("SELECT Star FROM CharacterData WHERE Name = ?", (clickedname,))
+        row = cursor.fetchone()
+        if row:
+            row = row[0]
+            if row == '1':
+                CharStar.set('5 Star')
+            else:
+                CharStar.set('4 Star')
+                
+        cursor.execute("SELECT Birthday FROM CharacterData WHERE Name = ?", (clickedname,))
+        row = cursor.fetchone()
+        if row:
+            CharBday.set(row[0])
+
+        cursor.execute("SELECT WeaponType FROM CharacterData WHERE Name = ?", (clickedname,))
+        row = cursor.fetchone()
+        if row:
+            CharType.set(row[0])
+
+        cursor.execute("SELECT Region FROM CharacterData WHERE Name = ?", (clickedname,))
+        row = cursor.fetchone()
+        if row:
+            CharRegion.set(row[0])
+
+        #Switch to Info Frame
+        if self.current_frame == self.MenuFrame:
+            self.show_InfoFrame()
         else:
-          CharacterStar.set('4 Star')
+            self.show_MenuFrame()
 
-      #Fetch Character Element
-      cursor.execute("SELECT Element FROM Characterdata WHERE Name = ?", (currentname,))
-      row = cursor.fetchone()
-      if row:
-        CharacterElement.set(row[0])
+        try:
+          # Show Character Image
+          image_path = f"Genshin_Image/{clickedname}_Card.png"
+          image = Image.open(image_path)
+          resized_image = image.resize((265, 515))
+          charphoto = ImageTk.PhotoImage(resized_image)
+          CharacterImage.config(image=charphoto)
+          CharacterImage.image = charphoto  # Keep a reference to prevent image from being garbage collected
+        except FileNotFoundError:
+          print("Image not found:", image_path)
 
-      #Fetch Character Weapon Type
-      cursor.execute("SELECT WeaponType FROM Characterdata WHERE Name = ?", (currentname,))
-      row = cursor.fetchone()
-      if row:
-        CharacterWeapon.set(row[0])
+    #Show Menu Frame Func
+    def show_MenuFrame(self):
+        self.current_frame = self.MenuFrame
+        self.MenuFrame.grid(padx=20, pady=8)
+        self.InfoFrame.grid_forget()
+        self.selectallcharacter()
+        self.selectallstar()
+        boxvalue.set('')
+        self.searchdefault()
 
-      #Fetch Character Region
-      cursor.execute("SELECT Region FROM Characterdata WHERE Name = ?", (currentname,))
-      row = cursor.fetchone()
-      if row:
-        CharacterRegion.set(row[0])
+    #Show Info Frame Func
+    def show_InfoFrame(self):
+        self.current_frame = self.InfoFrame
+        self.InfoFrame.grid(padx=20, pady=8)
+        self.MenuFrame.grid_forget()
 
-      #Fetch Character Birthday
-      cursor.execute("SELECT Birthday FROM Characterdata WHERE Name = ?", (currentname,))
-      row = cursor.fetchone()
-      if row:
-        CharacterBirthday.set(row[0])
-      
-      #Fetch Character Info
-      cursor.execute("SELECT Info FROM Characterdata WHERE Name = ?", (currentname,))
-      row = cursor.fetchone()
-      if row:
-        CharacterInfo.set(row[0])
+    #Switching between frames
+    def switch_frames(self):
+        if self.current_frame == self.MenuFrame:
+            self.show_InfoFrame()
+        else:
+            self.show_MenuFrame()
 
-      #Show Character Image
-      try:
-        # Show Character Image
-        image_path = f"Genshin_Image/{currentname}_Card.png"
-        image = Image.open(image_path)
-        resized_image = image.resize((265, 515))
-        charphoto = ImageTk.PhotoImage(resized_image)
-        CharacterImage.config(image=charphoto)
-        CharacterImage.image = charphoto  # Keep a reference to prevent image from being garbage collected
-      except FileNotFoundError:
-        print("Image not found:", image_path)
-        CharacterImage.config(image=CharacterPhoto)
-      
-    #Remove data if Name = False
-    else:
-      CharacterName.set('Please Enter A Valid Name')
-      CharacterStar.set (' ')
-      CharacterElement.set(' ')
-      CharacterWeapon.set(' ')
-      CharacterRegion.set(' ')
-      CharacterBirthday.set(' ')  
-      CharacterInfo.set(' ')  
-      CharacterImage.config(image=CharacterPhoto)
+    #Functions to sort out selected filters 
+    def filterfunc(self):
+        #Determined Filtered Weapon Types
+        global selected_quality , selected_element
+        selected_element = []
+        if self.dendro_value.get():
+            selected_element.append("Dendro")
+        if self.cryo_value.get():
+            selected_element.append("Cryo")
+        if self.pyro_value.get():
+            selected_element.append("Pyro")
+        if self.hydro_value.get():
+            selected_element.append("Hydro")
+        if self.anemo_value.get():
+            selected_element.append("Anemo")
+        if self.electro_value.get():
+            selected_element.append("Electro")
+        if self.geo_value.get():
+            selected_element.append("Geo")
+
+        selected_quality = []
+        if self.fivestarbutton_value.get():
+            selected_quality.append('1')
+        if self.fourstarbutton_value.get():
+            selected_quality.append('0')
+
+    #Function for adding in images , but with filter
+    def add_images_filtered(self):
+        #Destroy Current Frame
+        self.image_frame.destroy()
+        
+        #Create another empty frame
+        self.image_frame = ttk.Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.image_frame, anchor='nw')
+
+        #Determine Filtered Info
+        self.filterfunc()
+
+        #Placeholder for Filtered Data
+        filtered_name = []
+
+        #Sort Out Filtered Names
+        for i, name in enumerate(charnamelist):
+            charname = name
+            
+            conn = sqlite3.connect('genshindata.db')
+            cur = conn.cursor()
+
+            cur.execute("SELECT Element FROM Characterdata WHERE Name = ?", (charnamelist[i],))
+            row = cur.fetchone()
+            currentcharelement = row[0]
+
+            cur.execute("SELECT Star FROM Characterdata WHERE Name = ?", (charnamelist[i],))
+            row = cur.fetchone()
+            currentcharquality = row[0]
+
+            if (currentcharelement in selected_element) and (currentcharquality in selected_quality):
+                filtered_name.append(charname)
+
+        filtered_name.sort()
+
+        #Display New List of Data
+        for i, name in enumerate(filtered_name):
+            row = i // 7  # 7 images per row
+            if row != 0:
+                row = row*2
+            col = i % 7
+            charname = name
+
+            label = ttk.Label(self.image_frame,width = 155,justify='center')
+            label.grid(row=row, column=col, padx=10, pady=10,sticky='n')
+            label.bind("<Button-1>",lambda event, clickedname = charname: self.imageclicked(event,clickedname))
+
+            row = row+1
+            label2 = ttk.Label(self.image_frame,justify='center',wraplength = 155,text = charname)
+            label2.grid(row=row, column=col, padx=10,sticky = 'n')
+
+            #Insert Image of Weapon
+            image_path = f"Genshin_Character_Icon/ui-avataricon-{charname}.png"
+            image = Image.open(image_path)
+            resized_image = image.resize((145, 145))
+            charphoto = ImageTk.PhotoImage(resized_image)
+            label.config(image=charphoto)
+            label.image = charphoto
+        
+    #Function for Clearing all weapon checkbox
+    def clearallcharacter(self):
+        self.cryo_value.set(0)
+        self.dendro_value.set(0)
+        self.pyro_value.set(0)
+        self.hydro_value.set(0)
+        self.anemo_value.set(0)
+        self.electro_value.set(0)
+        self.geo_value.set(0)
+
+        self.add_images_filtered()
+
+    #Function for clearing all weapon's star checkbox
+    def clearallstar(self):
+        self.fivestarbutton_value.set(0)
+        self.fourstarbutton_value.set(0)
+
+        self.add_images_filtered()
+
+    #Select all Weapon
+    def selectallcharacter(self):
+        self.cryo_value.set(1)
+        self.dendro_value.set(1)
+        self.pyro_value.set(1)
+        self.hydro_value.set(1)
+        self.anemo_value.set(1)
+        self.electro_value.set(1)
+        self.geo_value.set(1)
+
+        self.add_images_filtered()
+
+    #Select all stars
+    def selectallstar(self):
+        self.fivestarbutton_value.set(1)
+        self.fourstarbutton_value.set(1)
+
+        self.add_images_filtered()
     
-    boxvalue.set('')
-    conn.close()
+    def search(self,event):
+        searchvalue = CharaChosen.get()
+        global charnamelist
+        charnamelist = []
 
-  #Search Function to Remove Unrelated Object
-  def Search(self,event):
-    searchvalue = CharaChosen.get()
-    if searchvalue == '':
-      CharaChosen['values'] = namelist
+        if searchvalue == '':
+            CharaChosen['values'] = charnamelist_sort
+            for item in charnamelist_sort:
+                charnamelist.append(item)  
+        else:
+            data = []
+            for item in charnamelist_sort:
+                if searchvalue.lower() in item.lower():
+                    data.append(item)
 
-    else:
-      data = []
-      for item in namelist:
-        if searchvalue.lower() in item.lower():
-          data.append(item)
-       
-      CharaChosen['values'] = data 
+            CharaChosen['values'] = data
+            
+            for item in data:
+                charnamelist.append(item)
 
-#RUN WINDOW
-CurrentScreen = charactersearch()
-CurrentScreen.mainloop()
+        self.add_images_filtered()
+
+    def searchdefault(self):
+        searchvalue = CharaChosen.get()
+        global charnamelist
+        charnamelist = []
+
+        if searchvalue == '':
+            CharaChosen['values'] = charnamelist_sort
+            for item in charnamelist_sort:
+                charnamelist.append(item)  
+        else:
+            data = []
+            for item in charnamelist_sort:
+                if searchvalue.lower() in item.lower():
+                    data.append(item)
+
+            CharaChosen['values'] = data
+            
+            for item in data:
+                charnamelist.append(item)
+
+        self.add_images_filtered()
+
+def main():
+    windll.shcore.SetProcessDpiAwareness(1)
+
+    root = ttk.Window()
+    root.title("Character Search")
+    root.geometry('1310x825')
+
+    notic = charsearch(root)
+    notic.grid(column=1, row=1, padx=15, pady=10, ipady=100, ipadx=250)
+
+    root.mainloop()
+
+if __name__ == '__main__':
+    main()
