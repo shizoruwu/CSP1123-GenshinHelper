@@ -248,9 +248,9 @@ class ToDoAppFrame(ttk.LabelFrame):
         title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
         self.canvas_frame.config(width=self.master.winfo_width() - 180, height=self.master.winfo_height()
                              - self.title_frame.winfo_height() - 200)
-        
-if __name__ == "__main__":
 
+
+def main():
     windll.shcore.SetProcessDpiAwareness(1)
 
     # Create a window
@@ -261,5 +261,7 @@ if __name__ == "__main__":
     frame = ToDoAppFrame(root)
     frame.grid()
 
-
     root.mainloop()
+
+if __name__ == "__main__":
+    main()
