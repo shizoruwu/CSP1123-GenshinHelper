@@ -15,13 +15,10 @@ class ToDoAppFrame(ttk.LabelFrame):
         self.label = ttk.Label(text="To-Do List", style="fontt.TLabel")
         self.config(labelwidget=self.label)
 
+
         self.title_frame = ttk.Frame(self)
         self.title_frame.grid(column=0, row=0, sticky=W)
 
-        # Create Label
-        # label = ttk.Label(self.title_frame, text="To-Do List", font=("Georgia", 15))
-        # label.grid(column=1, row=0, padx=(30, 15), pady=20, sticky=W) # Render
-        # Create "add" task button
         add = ttk.Button(self.title_frame, text="Add", width=5, command=self.add_task_window)
         add.grid(column=2, row=0, padx=(30, 0), pady=10, sticky=W)
         delete_button = ttk.Button(self.title_frame, text="Delete", width=7, command=self.delete)
@@ -31,10 +28,6 @@ class ToDoAppFrame(ttk.LabelFrame):
         self.delAllTasks = ttk.Button(self.title_frame, text="Delete All Completed Tasks", width=25, command=self.delAllTaskFunc)
         self.delAllTasks.grid(column=5, row=0, sticky=W, padx=(5,0))
         self.delAllTasks.grid_remove()
-
-        s = ttk.Style()
-        s.configure('a.TFrame', background='red')
-        # , style='a.TFrame'
 
         # Create a frame for canvas
         self.canvas_frame = ttk.Frame(self)
@@ -61,23 +54,20 @@ class ToDoAppFrame(ttk.LabelFrame):
         # Update widgets to get w, h to resize canvas frame
         self.master.update()
         self.title_frame.update()
-        # print(root.winfo_width(), root.winfo_height(), root.winfo_rooty(), root.winfo_y())
-        # print(self.self.title_frame.winfo_width(), self.self.title_frame.winfo_height())
         title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
         self.canvas_frame.config(width=self.master.winfo_width() - 400, height=self.master.winfo_height()
                              - self.title_frame.winfo_height())
 
         # Init a dict for tasks and its status later
-        dictionary = {}
+        self.dictionary = {}
         # Get raw widget variable name(create_checkbox widget(checkbutton name)) for refresh function
         self.raw_tasks = [] 
 
         # Add task and status to dict
         for data in self.database("fetch"):
-            # print(data[1])
-            dictionary[data[0]] = eval(data[1]) # Add items to dict
-        self.tasks = dict(sorted(dictionary.items(), key=lambda item: item[1]))
-        print(f"\ninit -> {self.tasks}")
+            self.dictionary[data[0]] = eval(data[1]) # Add items to dict
+        self.tasks = dict(sorted(self.dictionary.items(), key=lambda item: item[1]))
+
         
         self.create_checkbox(self.tasks_frame)
 
@@ -91,7 +81,7 @@ class ToDoAppFrame(ttk.LabelFrame):
         self.master.bind('<Configure>', self.resize_canvas_frame)
         self.master.bind("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
 
-    def database(self, action, statement=None):
+    def database(self, action, query=None):
         # Connect db
         self.DBconnection = sqlite3.connect("genshindata.db")
         self.DBcursor = self.DBconnection.cursor()
@@ -105,7 +95,7 @@ class ToDoAppFrame(ttk.LabelFrame):
             return self.data
 
         elif action == "others":
-            self.DBcursor.execute(statement)
+            self.DBcursor.execute(query)
         
         self.DBconnection.commit()
         self.DBconnection.close()
@@ -118,9 +108,6 @@ class ToDoAppFrame(ttk.LabelFrame):
 
             var = BooleanVar()
             var.set(status)
-            # if self.sortedTasks[task] == False:
-            #     checkbox = ttk.Checkbutton(master, text=task, variable=var, command=self.get_cb_state)
-            #     checkbox.grid(column=1, row=row_init, padx=(30, 0), pady=5, sticky=W)
             if showCompletedTasks == False:
                 if self.sortedTasks[task] == False:
                     checkbox = ttk.Checkbutton(master, text=task, variable=var, command=lambda show=showCompletedTasks: self.get_cb_state(show))
@@ -135,8 +122,6 @@ class ToDoAppFrame(ttk.LabelFrame):
             # Add checkbox variable to a list for refresh function
             self.raw_tasks.append(checkbox)
             row_init += 1
-        
-        print(f"\nsorted(create_checkbox) -> {self.sortedTasks}")
 
     def show(self):
         self.delAllTasks.grid()
@@ -152,7 +137,6 @@ class ToDoAppFrame(ttk.LabelFrame):
 
         ## Add task function
         def add_task():
-            # print(self.text)
             text = self.entry.get()
             if text == '':
                 print("Error - Blank")
@@ -175,18 +159,16 @@ class ToDoAppFrame(ttk.LabelFrame):
         self.add_window.title("Add Task")
         self.add_window.geometry("+550+150")
 
-        # Create label
+        # Add window widgets
         label2 = ttk.Label(self.add_window, text="Add a task...")
         label2.grid(column=0, row=0, pady=(50, 5))
-        # Create entry
         self.entry = ttk.Entry(self.add_window)
         self.entry.grid(column=0, row=1, padx=50)
-        # Create "add" task button
         add2 = ttk.Button(self.add_window, text="Add", width=5, command=add_task)
         add2.grid(column=0, row=2, pady=(10, 50))
 
     def delete(self):
-         # Create another window
+        # Create another window
         self.delete_window = Toplevel()
         self.delete_window.title("Delete task")
         self.delete_window.geometry("+550+150")
@@ -208,9 +190,10 @@ class ToDoAppFrame(ttk.LabelFrame):
                                 "delete this/these task?", icon="warning")
         if confirm:
             for selected_listbox_index in self.listbox.curselection():
-                # print(listbox.get(selected_listbox_index))
+                print(self.listbox.get(selected_listbox_index))
                 self.database("others", f"DELETE FROM tasks WHERE Task = '{self.listbox.get(selected_listbox_index)}'")
                 self.tasks.pop(f"{self.listbox.get(selected_listbox_index)}")
+                
         else:
             self.delete_window.destroy()
 
@@ -221,21 +204,23 @@ class ToDoAppFrame(ttk.LabelFrame):
     def refresh(self, showCompletedTasks=False):
         for var in self.raw_tasks:
             var.destroy()
+        self.tasks.clear()
+        self.dictionary.clear()
+        self.raw_tasks.clear()
+        self.sortedTasks.clear()
+        for data in self.database("fetch"):
+            self.dictionary[data[0]] = eval(data[1]) # Add items to dict
+        self.tasks = dict(sorted(self.dictionary.items(), key=lambda item: item[1]))
         self.create_checkbox(self.tasks_frame, showCompletedTasks)
 
     def get_cb_state(self, showCompletedTasks):
-        # print(self.sortedTasks)
         for task in self.sortedTasks:
             self.tasks[task] = self.sortedTasks[task].get() # Get the value(state)
             # Update lastest checkbox value(state) to db
             self.database("others", f"UPDATE tasks SET Status = '{self.sortedTasks[task].get()}' WHERE Task = '{task}'")
 
-        print("\nSaved checkbox value.")
-        print(f"(cb_state) - {self.tasks}")
-
         notice = ttk.Label(self.title_frame, text="Task Checked/Unchecked")
         notice.grid(column=6, row=0, sticky=W, padx=5)
-        # notice.after(3000, notice.destroy())
 
         if showCompletedTasks:
             self.refresh(True)
@@ -263,24 +248,18 @@ class ToDoAppFrame(ttk.LabelFrame):
         title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
         self.canvas_frame.config(width=self.master.winfo_width() - 180, height=self.master.winfo_height()
                              - self.title_frame.winfo_height() - 200)
+        
+if __name__ == "__main__":
+
+    windll.shcore.SetProcessDpiAwareness(1)
+
+    # Create a window
+    root = Tk()
+    root.title("To-Do List")
+    root.geometry("900x600+100+100") # (w, h, x, y)
+
+    frame = ToDoAppFrame(root)
+    frame.grid()
 
 
-
-
-
-
-
-
-
-
-# windll.shcore.SetProcessDpiAwareness(1)
-
-# # Create a window
-# root = Tk()
-# root.title("To-Do List")
-# root.geometry("900x600+100+100") # (w, h, x, y)
-
-# frame = ToDoAppFrame(root)
-# frame.grid()
-
-# root.mainloop()
+    root.mainloop()
