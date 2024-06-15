@@ -22,7 +22,7 @@ class charsearch(ttk.LabelFrame):
         self.InfoFrame = ttk.Frame(self)
         
         #Menu Frame Codes
-        charLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Character By Clicking Them. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
+        charLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Character By Clicking Them. \n← Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
         charLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'nw')
 
         global boxvalue, CharaChosen
