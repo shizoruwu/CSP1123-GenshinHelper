@@ -214,8 +214,8 @@ class weaponsearch(ttk.LabelFrame):
     self.switch_button = ttk.Button(self.InfoFrame,width = 12, text="Back", command= self.switch_frames)
     self.switch_button.grid(columnspan=2,column=0,row=1,padx=20, pady=10,sticky = 'w')
 
-    self.add_weapon_todo = ttk.Button(self.InfoFrame, text="Add Weapon to To-do List", command= self.weapon_todolist)
-    self.add_weapon_todo.grid(columnspan=2,column=0,row=2,padx=20, pady=10,sticky = 'w')
+    self.add_weapon_todo = ttk.Button(InfoLabelFrame, text="Add Weapon to To-do List", command= self.weapon_todolist)
+    self.add_weapon_todo.grid(column=0,row=3,padx=10, pady=10,sticky = 'w')
 
   #Add image Functions
   def add_images(self):
@@ -574,7 +574,7 @@ class weaponsearch(ttk.LabelFrame):
       conn = sqlite3.connect('genshindata.db')
       cur = conn.cursor()
       cur.execute("CREATE TABLE IF NOT EXISTS tasks(Task, Status)")
-      todo = f"Upgrade {weapon_todo_update}"
+      todo = f"Upgrade '{weapon_todo_update}'"
       cur.execute(f"INSERT INTO tasks (Task, Status) VALUES (?, ?)", (todo, f"False"))
       conn.commit()
 
