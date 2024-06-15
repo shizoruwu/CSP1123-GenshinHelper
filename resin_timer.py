@@ -153,6 +153,27 @@ class resintimer(ttk.LabelFrame):
                             minute -= 60
                         if resin_amount <= 199:
                             result_text.insert(tk.END, f"{i:03} resin in {hours:02}h {minute:02}min at {new_time.strftime('%I')}:{a:02} {new_time.strftime('%p')}\n")
+                            # Add to notification
+                            if i == 200:
+                                conn = sqlite3.connect('genshindata.db')
+                                cur = conn.cursor()
+                                hour_24fmt = new_time.strftime('%I')+":"
+                                if new_time.strftime('%p') == "PM" and new_time.strftime('%I') != "12":
+                                    hour_24fmt = int(new_time.strftime('%I')) + 12
+                                    hour_24fmt = str(hour_24fmt)+":"
+                                elif new_time.strftime('%I') == "12" and new_time.strftime('%p') == "AM":
+                                    midnight = "00:"
+                                    b = str(a)
+                                    c = midnight + b
+                                    cur.execute(f"UPDATE notification SET Status = '{c}' WHERE Notification = 'RESIN_RESET'")
+                                    conn.commit()
+                                    break
+                                if a >= 0 and a <= 9:
+                                    b = "0" + str(a)
+                                    cur.execute(f"UPDATE notification SET Status = '{str(hour_24fmt)+b}' WHERE Notification = 'RESIN_RESET'")
+                                else:
+                                    cur.execute(f"UPDATE notification SET Status = '{str(hour_24fmt)+str(a)}' WHERE Notification = 'RESIN_RESET'")
+                                conn.commit()
                         else:
                             result_text.delete(1.0, tk.END)
                             result_text.insert(tk.END, f"Your resin is full")
