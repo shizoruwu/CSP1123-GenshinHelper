@@ -143,6 +143,7 @@ class NotificationFrame(ttk.LabelFrame):
                 pid = self.database("fetch_PID")
                 subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
                 subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
+                self.isScriptRunning = False
         elif type == "advanced":
             self.advanced_notification.config(command=lambda: self.on("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
@@ -152,6 +153,7 @@ class NotificationFrame(ttk.LabelFrame):
                 pid = self.database("fetch_PID")
                 subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
                 subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
+                self.isScriptRunning = False
 
     def state(self):
         for notifications in self.notification_list:
