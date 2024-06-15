@@ -28,7 +28,7 @@ def fetch(type="notification list"):
         return get_time[0][0]
 
     elif type == "notification list":
-        notification = DBcursor.execute("SELECT Notification FROM notification WHERE Status = '1' AND rowid > 5")
+        notification = DBcursor.execute("SELECT Notification FROM notification WHERE Status = '1' AND rowid > 5 AND rowid < 13")
         notification = notification.fetchall()
         notification_list = []
         for i in range(len(notification)):
@@ -85,11 +85,11 @@ def toaster(type):
             case "Characters planned to be upgraded":
                 msg += character
             case "Resin Overflow Reminder":
-                print("yes")
+                msg += resin
             case "Abyss Reset":
                 print("yes")
             case "Weekly Bosses Reset":
-                print("yes")
+                boss_toasted = False
             case "Paimon's Shop Reset":
                 print("yes")
 
@@ -105,11 +105,11 @@ def toaster(type):
 
     elif type == 'resin':
         win11toast.toast('Genhsin Helper', resin, button='View Details', on_click = click, duration = "10")
-    elif type == 'boss':
+    elif type == 'boss' and boss_toasted == False:
         win11toast.toast('Genhsin Helper', boss, button='View Details', on_click = click, duration = "10")
-    elif type == 'abyss':
+    elif type == 'abyss' and abyss_toasted == False:
         win11toast.toast('Genhsin Helper', abyss, button='View Details', on_click = click, duration = "10")
-    elif type == 'paimon':
+    elif type == 'paimon' and paimon_toasted == False:
         win11toast.toast('Genhsin Helper', paimon, button='View Details', on_click = click, duration = "10")
 
 def start_service():
@@ -127,9 +127,10 @@ def start_service():
     # Restriction
     normal_toasted = False
     resin_toasted = False
-    boss_toasted = False
-    abyss_toasted = False
-    paimon_toasted = False
+
+    boss_toasted = True
+    abyss_toasted = True
+    paimon_toasted = True
 
     daily_notification_state = fetch("daily notification")
     advanced_notification_state = fetch("advanced notification")
@@ -146,17 +147,14 @@ def start_service():
             toaster('normal')
             normal_toasted = True
         # Every Monday 4am reset weekly bosses
-        elif current_weekday == "Mon" and current_time == "04" and boss_toasted == False:
+        elif current_weekday == "Mon" and current_time == "04":
             toaster('boss')
-            boss_toasted = True
         # Every month 1st and 16 reset Abyss
-        elif today_date == "01" or today_date == "16" and abyss_toasted == False:
+        elif today_date == "01" or today_date == "16":
             toaster("abyss")
-            abyss_toasted = True
         # Every month 1st Paimon's shop reset
-        elif today_date == "01" and paimon_toasted == False:
+        elif today_date == "01":
             toaster("paimon")
-            paimon_toasted = True
 
         ## Reset restriction
         if daily_notification_state == "0":
@@ -172,10 +170,10 @@ def start_service():
             paimon_toasted = True
         else:
             if current_weekday == "Tue":
-                boss_toasted = False
+                boss_toasted = True
             elif today_date == "02" or today_date == "17":
-                abyss_toasted = False
-                paimon_toasted = False
+                abyss_toasted = True
+                paimon_toasted = True
       
 def notifier():
     start_service()

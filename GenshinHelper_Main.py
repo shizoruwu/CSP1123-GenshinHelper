@@ -15,7 +15,7 @@ import resin_timer
 import notifier_gui
 
 windll.shcore.SetProcessDpiAwareness(1)
-root = ttk.Window(themename="light_4")
+root = ttk.Window()
 root.title("Genshin Helper")
 root.geometry("1520x900+200+50")
 
@@ -23,11 +23,7 @@ iconimg = PhotoImage(file='Image/Paimon.png')
 root.iconphoto(False, iconimg)
 
 s = ttk.Style()
-s.configure('green.TButton', foreground = "green")
-s.configure('bd.TButton', borderwidth=5)
 s.configure('font.TLabel', font=("Georgia", 15))
-s.configure('fontt.TLabel', font=("Georgia", 15))
-s.configure('grey.TFrame', background="grey")
 
 load = ttk.Label(root, text="Genshin Helper\nStarting...", image=iconimg, compound=LEFT, style='font.TLabel')
 load.grid(pady=250, sticky=NSEW)
@@ -135,6 +131,7 @@ def todo_grid():
     weapon.grid_remove()
     resin_timer.grid_remove()
     todoList.grid()
+    todoList.refresh()
     notifier.grid_remove()
 
     characterSearch_button.config(bootstyle='primary-outline', image=characterIconB)
