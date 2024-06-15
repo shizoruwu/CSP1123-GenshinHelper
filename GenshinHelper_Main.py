@@ -8,12 +8,12 @@ from PIL import Image, ImageTk
 import os
 import sqlite3
 
-import todo
-import weapon_search
-import character_search
-import character_level
-import resin_timer
-import notifier_gui
+from Feature import todo
+from Feature import weapon_search
+from Feature import character_search
+from Feature import character_level
+from Feature import resin_timer
+from Feature import notifier_gui
 
 windll.shcore.SetProcessDpiAwareness(1)
 root = ttk.Window()

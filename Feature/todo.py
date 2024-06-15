@@ -136,7 +136,7 @@ class ToDoAppFrame(ttk.LabelFrame):
     def add_task_window(self):
 
         ## Add task function
-        def add_task(a):
+        def add_task():
             text = self.entry.get()
             if text == '':
                 print("Error - Blank")
