@@ -68,15 +68,15 @@ class ToDoAppFrame(ttk.LabelFrame):
                              - self.title_frame.winfo_height())
 
         # Init a dict for tasks and its status later
-        dictionary = {}
+        self.dictionary = {}
         # Get raw widget variable name(create_checkbox widget(checkbutton name)) for refresh function
         self.raw_tasks = [] 
 
         # Add task and status to dict
         for data in self.database("fetch"):
             # print(data[1])
-            dictionary[data[0]] = eval(data[1]) # Add items to dict
-        self.tasks = dict(sorted(dictionary.items(), key=lambda item: item[1]))
+            self.dictionary[data[0]] = eval(data[1]) # Add items to dict
+        self.tasks = dict(sorted(self.dictionary.items(), key=lambda item: item[1]))
         print(f"\ninit -> {self.tasks}")
         
         self.create_checkbox(self.tasks_frame)
@@ -221,6 +221,11 @@ class ToDoAppFrame(ttk.LabelFrame):
     def refresh(self, showCompletedTasks=False):
         for var in self.raw_tasks:
             var.destroy()
+            # Add task and status to dict
+        for data in self.database("fetch"):
+            # print(data[1])
+            self.dictionary[data[0]] = eval(data[1]) # Add items to dict
+        self.tasks = dict(sorted(self.dictionary.items(), key=lambda item: item[1]))
         self.create_checkbox(self.tasks_frame, showCompletedTasks)
 
     def get_cb_state(self, showCompletedTasks):
@@ -272,15 +277,18 @@ class ToDoAppFrame(ttk.LabelFrame):
 
 
 
+def main():
+    windll.shcore.SetProcessDpiAwareness(1)
 
-# windll.shcore.SetProcessDpiAwareness(1)
+    # Create a window
+    root = Tk()
+    root.title("To-Do List")
+    root.geometry("900x600+100+100") # (w, h, x, y)
 
-# # Create a window
-# root = Tk()
-# root.title("To-Do List")
-# root.geometry("900x600+100+100") # (w, h, x, y)
+    frame = ToDoAppFrame(root)
+    frame.grid()
 
-# frame = ToDoAppFrame(root)
-# frame.grid()
+    root.mainloop()
 
-# root.mainloop()
+if __name__ == "__main__":
+    main()
