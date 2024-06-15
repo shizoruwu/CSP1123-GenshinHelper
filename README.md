@@ -1,4 +1,4 @@
-#**GENSHIN HELPER v1.0.0**
+# **GENSHIN HELPER v1.0.0**
 
 **This is a Project by TT4L-G6**
 Brought to you by:
