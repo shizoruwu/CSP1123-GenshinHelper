@@ -365,7 +365,7 @@ class characterlevel(ttk.LabelFrame):
 
         #pull image inside
         if currentname == "Traveler":
-          image_path_1 = f"Genshin_Image/{currentname}_Card.png"
+          image_path_1 = f"Assets/Genshin_Image/{currentname}_Card.png"
           image_1 = Image.open(image_path_1)
           resized_image_1 = image_1.resize((500, 515))
           charphoto = ImageTk.PhotoImage(resized_image_1)
@@ -385,7 +385,7 @@ class characterlevel(ttk.LabelFrame):
           sliver_name.grid(row = 1, column = 1, sticky = 'n')
 
         else:
-          image_path_1 = f"Genshin_Image/{currentname}_Card.png"
+          image_path_1 = f"Assets/Genshin_Image/{currentname}_Card.png"
           image_1 = Image.open(image_path_1)
           resized_image_1 = image_1.resize((265, 515))
           charphoto = ImageTk.PhotoImage(resized_image_1)
@@ -404,7 +404,7 @@ class characterlevel(ttk.LabelFrame):
           sliver_name = tk.Label(self.frame2, text = f'{ascension.get()} Sliver', font=('Arial', 10), wraplength=100)
           sliver_name.grid(row = 1, column = 1, columnspan=2, sticky = 'n')
 
-          image_path_10 = f"Materials/normal boss/{normal_boss.get()}.png"
+          image_path_10 = f"Assets/Materials/normal boss/{normal_boss.get()}.png"
           image_10= Image.open(image_path_10)
           resized_image_10 = image_10.resize((100,100))
           norphoto = ImageTk.PhotoImage(resized_image_10)
@@ -414,28 +414,28 @@ class characterlevel(ttk.LabelFrame):
           normal_material = tk.Label(self.frame2, text = normal_boss.get(), font=('Arial', 10), wraplength=100)
           normal_material.grid(row = 3, column = 5, sticky = 'n')
 
-        image_path_2 = f"Materials/ascension/{ascension.get()} Gemstone.png"
+        image_path_2 = f"Assets/Materials/ascension/{ascension.get()} Gemstone.png"
         image_2 = Image.open(image_path_2)
         resized_image_2 = image_2.resize((100,100))
         gemphoto = ImageTk.PhotoImage(resized_image_2)
         gemstone_image.config(image=gemphoto)
         gemstone_image.image = gemphoto
 
-        image_path_3 = f"Materials/ascension/{ascension.get()} Chunk.png"
+        image_path_3 = f"Assets/Materials/ascension/{ascension.get()} Chunk.png"
         image_3 = Image.open(image_path_3)
         resized_image_3 = image_3.resize((100,100))
         chunkphoto = ImageTk.PhotoImage(resized_image_3)
         chunk_image.config(image=chunkphoto)
         chunk_image.image = chunkphoto
 
-        image_path_4 = f"Materials/ascension/{ascension.get()} Fragment.png"
+        image_path_4 = f"Assets/Materials/ascension/{ascension.get()} Fragment.png"
         image_4 = Image.open(image_path_4)
         resized_image_4 = image_4.resize((100,100))
         fragphoto = ImageTk.PhotoImage(resized_image_4)
         fragment_image.config(image=fragphoto)
         fragment_image.image = fragphoto
 
-        image_path_5 = f"Materials/ascension/{ascension.get()} Sliver.png"
+        image_path_5 = f"Assets/Materials/ascension/{ascension.get()} Sliver.png"
         image_5 = Image.open(image_path_5)
         resized_image_5 = image_5.resize((100,100))
         sliphoto = ImageTk.PhotoImage(resized_image_5)
@@ -444,7 +444,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "1":
           #'Divining Scroll, Sealed Scroll, Forbidden Curse Scroll'
-          image_path_6 = f"Materials/enhancement/Divining Scroll.png"
+          image_path_6 = f"Assets/Materials/enhancement/Divining Scroll.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -454,7 +454,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Divining Scroll', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Sealed Scroll.png"
+          image_path_7 = f"Assets/Materials/enhancement/Sealed Scroll.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -464,7 +464,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Sealed Scroll', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Forbidden Curse Scroll.png"
+          image_path_8 = f"Assets/Materials/enhancement/Forbidden Curse Scroll.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -476,7 +476,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "2":
           #'Faded Red Satin, Trimmed Red Silk, Rich Red Brocade'
-          image_path_6 = f"Materials/enhancement/Faded Red Satin.png"
+          image_path_6 = f"Assets/Materials/enhancement/Faded Red Satin.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -486,7 +486,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Faded Red Satin', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Trimmed Red Silk.png"
+          image_path_7 = f"Assets/Materials/enhancement/Trimmed Red Silk.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -496,7 +496,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Trimmed Red Silk', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Rich Red Brocade.png"
+          image_path_8 = f"Assets/Materials/enhancement/Rich Red Brocade.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -508,7 +508,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "3":
           #'Spectral Husk, Spectral Heart, Spectral Nucleus'
-          image_path_6 = f"Materials/enhancement/Spectral Husk.png"
+          image_path_6 = f"Assets/Materials/enhancement/Spectral Husk.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -518,7 +518,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Spectral Husk', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Spectral Heart.png"
+          image_path_7 = f"Assets/Materials/enhancement/Spectral Heart.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -528,7 +528,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Spectral Heart', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Spectral Nucleus.png"
+          image_path_8 = f"Assets/Materials/enhancement/Spectral Nucleus.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -540,7 +540,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "4":
           #'Firm Arrowhead, Sharp Arrowhead, Weathered Arrowhead'
-          image_path_6 = f"Materials/enhancement/Firm Arrowhead.png"
+          image_path_6 = f"Assets/Materials/enhancement/Firm Arrowhead.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -550,7 +550,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Firm Arrowhead', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Sharp Arrowhead.png"
+          image_path_7 = f"Assets/Materials/enhancement/Sharp Arrowhead.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -560,7 +560,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Sharp Arrowhead', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Weathered Arrowhead.png"
+          image_path_8 = f"Assets/Materials/enhancement/Weathered Arrowhead.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -572,7 +572,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "5":
           #'Slime Condensate, Slime Secretions, Slime Concentrate'
-          image_path_6 = f"Materials/enhancement/Slime Condensate.png"
+          image_path_6 = f"Assets/Materials/enhancement/Slime Condensate.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -582,7 +582,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Slime Condensate', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Slime Secretions.png"
+          image_path_7 = f"Assets/Materials/enhancement/Slime Secretions.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -592,7 +592,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Slime Secretions', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Slime Concentrate.png"
+          image_path_8 = f"Assets/Materials/enhancement/Slime Concentrate.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -604,7 +604,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "6":
           #'Fungal Spores, Luminescent Pollen, Crystalline Cyst Dust'
-          image_path_6 = f"Materials/enhancement/Fungal Spores.png"
+          image_path_6 = f"Assets/Materials/enhancement/Fungal Spores.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -614,7 +614,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Fungal Spores', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Luminescent Pollen.png"
+          image_path_7 = f"Assets/Materials/enhancement/Luminescent Pollen.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -624,7 +624,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Luminescent Pollen', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Crystalline Cyst Dust.png"
+          image_path_8 = f"Assets/Materials/enhancement/Crystalline Cyst Dust.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -636,7 +636,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "7":
           #'Treasure Hoarder Insignia, Silver Raven Insignia, Golden Raven Insignia'
-          image_path_6 = f"Materials/enhancement/Treasure Hoarder Insignia.png"
+          image_path_6 = f"Assets/Materials/enhancement/Treasure Hoarder Insignia.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -646,7 +646,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Treasure Hoarder Insignia', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Silver Raven Insignia.png"
+          image_path_7 = f"Assets/Materials/enhancement/Silver Raven Insignia.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -656,7 +656,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Silver Raven Insignia', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Golden Raven Insignia.png"
+          image_path_8 = f"Assets/Materials/enhancement/Golden Raven Insignia.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -668,7 +668,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "8":
           #'Meshing Gear, Mechanical Spur Gear, Artificed Dynamic Gear'
-          image_path_6 = f"Materials/enhancement/Meshing Gear.png"
+          image_path_6 = f"Assets/Materials/enhancement/Meshing Gear.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -678,7 +678,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Meshing Gear', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Mechanical Spur Gear.png"
+          image_path_7 = f"Assets/Materials/enhancement/Mechanical Spur Gear.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -688,7 +688,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Mechanical Spur Gear', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Artificed Dynamic Gear.png"
+          image_path_8 = f"Assets/Materials/enhancement/Artificed Dynamic Gear.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -700,7 +700,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "9":
           #'Damaged Mask, Stained Mask, Ominous Mask'
-          image_path_6 = f"Materials/enhancement/Damaged Mask.png"
+          image_path_6 = f"Assets/Materials/enhancement/Damaged Mask.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -710,7 +710,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Damaged Mask', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Stained Mask.png"
+          image_path_7 = f"Assets/Materials/enhancement/Stained Mask.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -720,7 +720,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Stained Mask', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Ominous Mask.png"
+          image_path_8 = f"Assets/Materials/enhancement/Ominous Mask.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -732,7 +732,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "10":
           #'Recruit's Insignia, Sergeant's Insignia, Lieutenant's Insignia'
-          image_path_6 = f"Materials/enhancement/Recruit's Insignia.png"
+          image_path_6 = f"Assets/Materials/enhancement/Recruit's Insignia.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -742,7 +742,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = "Recruit's Insignia", font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Sergeant's Insignia.png"
+          image_path_7 = f"Assets/Materials/enhancement/Sergeant's Insignia.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -752,7 +752,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = "Sergeant's Insignia", font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Lieutenant's Insignia.png"
+          image_path_8 = f"Assets/Materials/enhancement/Lieutenant's Insignia.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -764,7 +764,7 @@ class characterlevel(ttk.LabelFrame):
       
         if enhancement.get() == "11":
           #'Transoceanic Pearl, Transoceanic Chunk, Xenochromatic Crystal'
-          image_path_6 = f"Materials/enhancement/Transoceanic Pearl.png"
+          image_path_6 = f"Assets/Materials/enhancement/Transoceanic Pearl.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -774,7 +774,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Transoceanic Pearl', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Transoceanic Chunk.png"
+          image_path_7 = f"Assets/Materials/enhancement/Transoceanic Chunk.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -784,7 +784,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Transoceanic Chunk', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Xenochromatic Crystal.png"
+          image_path_8 = f"Assets/Materials/enhancement/Xenochromatic Crystal.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -796,7 +796,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "12":
           #'Whopperflower Nectar, Shimmering Nectar, Energy Nectar'
-          image_path_6 = f"Materials/enhancement/Whopperflower Nectar.png"
+          image_path_6 = f"Assets/Materials/enhancement/Whopperflower Nectar.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -806,7 +806,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Whopperflower Nectar', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Shimmering Nectar.png"
+          image_path_7 = f"Assets/Materials/enhancement/Shimmering Nectar.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -816,7 +816,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Shimmering Nectar', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Energy Nectar.png"
+          image_path_8 = f"Assets/Materials/enhancement/Energy Nectar.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -828,7 +828,7 @@ class characterlevel(ttk.LabelFrame):
 
         if enhancement.get() == "13":
           #'Old Handguard, Kageuchi Handguard, Famed Handguard'
-          image_path_6 = f"Materials/enhancement/Old Handguard.png"
+          image_path_6 = f"Assets/Materials/enhancement/Old Handguard.png"
           image_6 = Image.open(image_path_6)
           resized_image_6 = image_6.resize((100,100))
           enhan1photo = ImageTk.PhotoImage(resized_image_6)
@@ -838,7 +838,7 @@ class characterlevel(ttk.LabelFrame):
           enhan1_name = tk.Label(self.frame2, text = 'Old Handguard', font=('Arial', 10), wraplength=100)
           enhan1_name.grid(row = 3, column = 1, sticky = 'n')
 
-          image_path_7 = f"Materials/enhancement/Kageuchi Handguard.png"
+          image_path_7 = f"Assets/Materials/enhancement/Kageuchi Handguard.png"
           image_7 = Image.open(image_path_7)
           resized_image_7 = image_7.resize((100,100))
           enhan2photo = ImageTk.PhotoImage(resized_image_7)
@@ -848,7 +848,7 @@ class characterlevel(ttk.LabelFrame):
           enhan2_name = tk.Label(self.frame2, text = 'Kageuchi Handguard', font=('Arial', 10), wraplength=100)
           enhan2_name.grid(row = 3, column = 2, sticky = 'n')
 
-          image_path_8 = f"Materials/enhancement/Famed Handguard.png"
+          image_path_8 = f"Assets/Materials/enhancement/Famed Handguard.png"
           image_8 = Image.open(image_path_8)
           resized_image_8 = image_8.resize((100,100))
           enhan3photo = ImageTk.PhotoImage(resized_image_8)
@@ -858,7 +858,7 @@ class characterlevel(ttk.LabelFrame):
           enhan3_name = tk.Label(self.frame2, text = 'Famed Handguard', font=('Arial', 10), wraplength=100)
           enhan3_name.grid(row = 3, column = 3, sticky = 'n')
 
-        image_path_9 = f"Materials/flower/{flower.get()}.png"
+        image_path_9 = f"Assets/Materials/flower/{flower.get()}.png"
         image_9 = Image.open(image_path_9)
         resized_image_9 = image_9.resize((100,100))
         flophoto = ImageTk.PhotoImage(resized_image_9)
