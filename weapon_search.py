@@ -214,6 +214,9 @@ class weaponsearch(ttk.LabelFrame):
     self.switch_button = ttk.Button(self.InfoFrame,width = 12, text="Back", command= self.switch_frames)
     self.switch_button.grid(columnspan=2,column=0,row=1,padx=20, pady=10,sticky = 'w')
 
+    self.add_weapon_todo = ttk.Button(self.InfoFrame, text="Add Weapon to To-do List", command= self.weapon_todolist)
+    self.add_weapon_todo.grid(columnspan=2,column=0,row=2,padx=20, pady=10,sticky = 'w')
+
   #Add image Functions
   def add_images(self):
     for i, name in enumerate(imagenamelist_sort):
@@ -361,6 +364,9 @@ class weaponsearch(ttk.LabelFrame):
       self.show_InfoFrame()
     else:
       self.show_MenuFrame()
+
+    global weapon_todo_update
+    weapon_todo_update = clickedname
 
   #Show Menu Frame Func
   def show_MenuFrame(self):
@@ -563,6 +569,14 @@ class weaponsearch(ttk.LabelFrame):
       WeaponChosen['values'] = namelist
 
     self.add_images_filtered()
+
+  def weapon_todolist(self):
+      conn = sqlite3.connect('genshindata.db')
+      cur = conn.cursor()
+      cur.execute("CREATE TABLE IF NOT EXISTS tasks(Task, Status)")
+      todo = f"Upgrade {weapon_todo_update}"
+      cur.execute(f"INSERT INTO tasks (Task, Status) VALUES (?, ?)", (todo, f"False"))
+      conn.commit()
 
 def main():
     windll.shcore.SetProcessDpiAwareness(1)
