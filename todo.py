@@ -55,8 +55,8 @@ class ToDoAppFrame(ttk.LabelFrame):
         self.master.update()
         self.title_frame.update()
         title_bar_height = self.master.winfo_rooty() - self.master.winfo_y()
-        self.canvas_frame.config(width=self.master.winfo_width() - 400, height=self.master.winfo_height()
-                             - self.title_frame.winfo_height())
+        self.canvas_frame.config(width=self.master.winfo_width() - 230, height=self.master.winfo_height()
+                             - self.title_frame.winfo_height() - 200)
 
         # Init a dict for tasks and its status later
         self.dictionary = {}
@@ -78,7 +78,7 @@ class ToDoAppFrame(ttk.LabelFrame):
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
         # Resize scrollbar when root size changed
-        self.master.bind('<Configure>', self.resize_canvas_frame)
+        # self.master.bind('<Configure>', self.resize_canvas_frame)
         self.master.bind("<MouseWheel>", lambda event: self.canvas.yview_scroll(int(-1*(event.delta/120)), "units"))
 
     def database(self, action, query=None):
@@ -136,20 +136,18 @@ class ToDoAppFrame(ttk.LabelFrame):
     def add_task_window(self):
 
         ## Add task function
-        def add_task():
+        def add_task(a):
             text = self.entry.get()
             if text == '':
                 print("Error - Blank")
             elif text not in self.tasks:
-                self.database("others", f"INSERT INTO tasks VALUES('{text}', 'False')")
+                self.database("others", f"""INSERT INTO tasks VALUES("{text}", "False")""")
                 self.tasks[text] = False
                 print("Task added.")
             elif text in self.tasks:
-                self.database("others", f"INSERT INTO tasks VALUES('{text} (1)', 'False')")
+                self.database("others", f"""INSERT INTO tasks VALUES("{text} (copy)", "False")""")
                 self.tasks[f'{text} (1)'] = False
                 print("Task added.")
-
-            print(f"\n(add_task) -> {self.tasks}")
 
             self.add_window.destroy()
             self.refresh()
@@ -166,6 +164,8 @@ class ToDoAppFrame(ttk.LabelFrame):
         self.entry.grid(column=0, row=1, padx=50)
         add2 = ttk.Button(self.add_window, text="Add", width=5, command=add_task)
         add2.grid(column=0, row=2, pady=(10, 50))
+        add2.bind('<Return>', add_task)
+        self.entry.bind('<Return>', add_task)
 
     def delete(self):
         # Create another window
@@ -190,8 +190,7 @@ class ToDoAppFrame(ttk.LabelFrame):
                                 "delete this/these task?", icon="warning")
         if confirm:
             for selected_listbox_index in self.listbox.curselection():
-                print(self.listbox.get(selected_listbox_index))
-                self.database("others", f"DELETE FROM tasks WHERE Task = '{self.listbox.get(selected_listbox_index)}'")
+                self.database("others", f"""DELETE FROM tasks WHERE Task = "{self.listbox.get(selected_listbox_index)}" """)
                 self.tasks.pop(f"{self.listbox.get(selected_listbox_index)}")
                 
         else:
@@ -217,7 +216,7 @@ class ToDoAppFrame(ttk.LabelFrame):
         for task in self.sortedTasks:
             self.tasks[task] = self.sortedTasks[task].get() # Get the value(state)
             # Update lastest checkbox value(state) to db
-            self.database("others", f"UPDATE tasks SET Status = '{self.sortedTasks[task].get()}' WHERE Task = '{task}'")
+            self.database("others", f"""UPDATE tasks SET Status = "{self.sortedTasks[task].get()}" WHERE Task = "{task}" """)
 
         notice = ttk.Label(self.title_frame, text="Task Checked/Unchecked")
         notice.grid(column=6, row=0, sticky=W, padx=5)
@@ -235,7 +234,7 @@ class ToDoAppFrame(ttk.LabelFrame):
             if status == False:
                 self.tasks[task] = status
             elif status:
-                self.database("others", f"DELETE FROM tasks WHERE Task = '{task}' ")
+                self.database("others", f"""DELETE FROM tasks WHERE Task = "{task}" """)
         
         self.hide()
         self.refresh(False)
