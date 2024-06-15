@@ -28,6 +28,7 @@ class NotificationFrame(ttk.LabelFrame):
 
         self.create_list()
         self.time.bind('<Return>', self.set_time)
+        self.isScriptRunning = False
 
     def database(self, action="others", statement=None):
         # Connect db
@@ -112,13 +113,18 @@ class NotificationFrame(ttk.LabelFrame):
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=NORMAL)
             self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'DAILY_NOTIFICATION'")
-            subprocess.Popen("pythonw notifier.pyw", shell=True)
+            if self.isScriptRunning == False:
+                subprocess.Popen("pythonw notifier.pyw", shell=True)
+                self.isScriptRunning = True
+
         elif type == "advanced":
             self.advanced_notification.config(command=lambda: self.off("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
                     checkbox.config(state=NORMAL)
             self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'ADVANCED_NOTIFICATION'")
-            subprocess.Popen("pythonw notifier.pyw", shell=True)
+            if self.isScriptRunning == False:
+                subprocess.Popen("pythonw notifier.pyw", shell=True)
+                self.isScriptRunning = True
 
     def off(self, type):
         if type == "normal":
