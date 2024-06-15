@@ -69,7 +69,7 @@ def CharacterSearch_grid():
     CharacterLevelCalc.grid_remove()
     weapon.grid_remove()
     resin_timer.grid_remove()
-    todoList.grid_remove()
+    todoLists.destroy()
     notifier.grid_remove()
     
     characterSearch_button.config(bootstyle='danger', image=characterIconW)
@@ -84,7 +84,7 @@ def CharacterLevelCalc_grid():
     CharacterLevelCalc.grid()
     weapon.grid_remove()
     resin_timer.grid_remove()
-    todoList.grid_remove()
+    todoLists.destroy()
     notifier.grid_remove()
 
     characterSearch_button.config(bootstyle='primary-outline', image=characterIconB)
@@ -99,7 +99,7 @@ def weapon_grid():
     CharacterLevelCalc.grid_remove()
     weapon.grid()
     resin_timer.grid_remove()
-    todoList.grid_remove()
+    todoLists.destroy()
     notifier.grid_remove()
 
     characterSearch_button.config(bootstyle='primary-outline', image=characterIconB)
@@ -114,7 +114,7 @@ def resin_timer_grid():
     CharacterLevelCalc.grid_remove()
     weapon.grid_remove()
     resin_timer.grid()
-    todoList.grid_remove()
+    todoLists.destroy()
     notifier.grid_remove()
 
     characterSearch_button.config(bootstyle='primary-outline', image=characterIconB)
@@ -129,7 +129,9 @@ def todo_grid():
     CharacterLevelCalc.grid_remove()
     weapon.grid_remove()
     resin_timer.grid_remove()
-    todoList.grid()
+    global todoLists
+    todoLists = todo.ToDoAppFrame(root)
+    todoLists.grid(column=2, row=2, padx=10, pady=15, sticky=NW)
     notifier.grid_remove()
 
     characterSearch_button.config(bootstyle='primary-outline', image=characterIconB)
@@ -144,7 +146,7 @@ def notifier_grid():
     CharacterLevelCalc.grid_remove()
     weapon.grid_remove()
     resin_timer.grid_remove()
-    todoList.grid_remove()
+    todoLists.destroy()
     notifier.grid()
 
     characterSearch_button.config(bootstyle='primary-outline', image=characterIconB)
@@ -184,7 +186,7 @@ notificationIconW = ImageTk.PhotoImage(notificationImgW)
 ## Side bar
 characterSearch_button = ttk.Button(sideBarFrame, text="Chacracters", image=characterIconW, compound=LEFT, width=10, padding=10, command=CharacterSearch_grid, bootstyle='danger', takefocus=False)
 characterSearch_button.grid(column=1, row=1, padx=10, pady=15)
-characterLevelCalc_button = ttk.Button(sideBarFrame, text="Character\nCalculator", image=calcIconB, compound=LEFT, width=10, padding=10, command=CharacterLevelCalc_grid, bootstyle='primary-outline', takefocus=False)
+characterLevelCalc_button = ttk.Button(sideBarFrame, text="Material\nCalculator", image=calcIconB, compound=LEFT, width=10, padding=10, command=CharacterLevelCalc_grid, bootstyle='primary-outline', takefocus=False)
 characterLevelCalc_button.grid(column=1, row=2, padx=10, pady=(0, 15))
 weapon_button = ttk.Button(sideBarFrame, text="Weapons", image=weaponsIconB, compound=LEFT, width=10, padding=10, command=weapon_grid, bootstyle='primary-outline', takefocus=False)
 weapon_button.grid(column=1, row=3, padx=10, pady=(0, 15))
