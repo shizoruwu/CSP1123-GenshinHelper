@@ -28,12 +28,22 @@ def fetch(type="notification list"):
         return get_time[0][0]
 
     elif type == "notification list":
-        notification = DBcursor.execute("SELECT Notification FROM notification WHERE Status = '1' AND rowid > 5")
+        notification = DBcursor.execute("SELECT Notification FROM notification WHERE Status = '1' AND rowid > 5 AND rowid < 13")
         notification = notification.fetchall()
         notification_list = []
         for i in range(len(notification)):
             notification_list.append(notification[i][0]) 
         return notification_list
+    
+    elif type == "resin":
+        resin_reset = DBcursor.execute("SELECT Status FROM notification WHERE Notification = 'RESIN_RESET'")
+        resin_reset = resin_reset.fetchall()
+        # resin_time = []
+        # resin_time.append(resin_reset[0])
+        resin_time = resin_reset[0][0]
+        resin_time = resin_time.split(sep=":")
+        return resin_time[0], resin_time[1]
+        
 
     # Get Todo amount
     elif type == "todo":
@@ -42,14 +52,25 @@ def fetch(type="notification list"):
         print(data)
         amount = 0
         character = []
+        weapon = []
         for i in range(len(data)):
             if data[i][1] == 'False':
                 amount += 1
         for i in range(len(data)):
             if "Upgrade" in data[i][0] and data[i][1] == 'False':
                 temp = data[i][0]
-                character.append(temp.split(sep=" ")[1])
-        return amount, character
+                if "Level" in temp:
+                    character.append(temp.split(sep=" ")[1])
+                else:
+                    temp = temp.split(sep=" ")[1:][0:]
+                    temp2 = ""
+                    for i in range(len(temp)):
+                        if i == len(temp) - 1:
+                            temp2 += temp[i]
+                        else:
+                            temp2 += temp[i]+" "
+                    weapon.append(temp2)
+        return amount, character, weapon
 
 def click(a):
     import GenshinHelper_Main
@@ -57,23 +78,26 @@ def click(a):
 def toaster(type):
     msg = ""
     characters = ""
-    todo_amount, chr = fetch("todo")
+    weapons = ""
+    todo_amount, chr, wp = fetch("todo")
     for i in chr:
         characters += i + ", "
+    for i in wp:
+        weapons += i + ", "
         
     # weapons = "Kagura's Verity"
 
     # Daily notification messages
     checkin = "Hi! It's the time to check-in!\n"
     todo = f"You have {todo_amount} To-Do Tasks left. "
-    character = f"You planned to upgrade:\n- Characters: {characters}\n"
+    character = f"You planned to upgrade:\n- Character(s): {characters}\n- Weapon(s): {weapons}"
     # Avanced notification messages
     resin = "You resin is about to overflow!!"
     boss = "Weekly bosses has been reset today."
     abyss = "Abyss bosses has been reset today."
     paimon = "Paimon's Shop has been reset today."
     
-
+    resin_toast_allow = False
     for notification in fetch():
         match notification:
             case "Daily Check-in":
@@ -82,16 +106,16 @@ def toaster(type):
             case "To-Do Tasks":
                 print("yes")
                 msg += todo
-            case "Characters planned to be upgraded":
+            case "Characters/Weapons planned to be upgraded":
                 msg += character
             case "Resin Overflow Reminder":
-                print("yes")
+                resin_toast_allow = True
             case "Abyss Reset":
-                print("yes")
+                abyss_toasted = False
             case "Weekly Bosses Reset":
-                print("yes")
+                boss_toasted = False
             case "Paimon's Shop Reset":
-                print("yes")
+                paimon_toasted = False
 
     buttons=[
                 {'activationType': 'protocol', 'arguments': 'http:', 'content': 'View Details'},
@@ -103,19 +127,19 @@ def toaster(type):
     elif type == 'game':
         win11toast.toast('Genhsin Helper', msg, button='View Details', on_click = click, duration = "10")
 
-    elif type == 'resin':
+    elif type == 'resin' and resin_toast_allow == True:
         win11toast.toast('Genhsin Helper', resin, button='View Details', on_click = click, duration = "10")
-    elif type == 'boss':
+        resin_toasted = True
+    elif type == 'boss' and boss_toasted == False:
         win11toast.toast('Genhsin Helper', boss, button='View Details', on_click = click, duration = "10")
-    elif type == 'abyss':
+    elif type == 'abyss' and abyss_toasted == False:
         win11toast.toast('Genhsin Helper', abyss, button='View Details', on_click = click, duration = "10")
-    elif type == 'paimon':
+    elif type == 'paimon' and paimon_toasted == False:
         win11toast.toast('Genhsin Helper', paimon, button='View Details', on_click = click, duration = "10")
 
 def start_service():
     # Add a zero get a proper 24 Hrs Format
     hour = fetch("notice time")
-    hour = hour[0][0]
     if int(hour) >= 0 and int(hour) < 10:
         hour = "0" + hour[0][0]
 
@@ -124,61 +148,66 @@ def start_service():
     global boss_toasted
     global abyss_toasted
     global paimon_toasted
+
     # Restriction
     normal_toasted = False
     resin_toasted = False
-    boss_toasted = False
-    abyss_toasted = False
-    paimon_toasted = False
 
-    daily_notification_state = fetch("daily notification")
-    advanced_notification_state = fetch("advanced notification")
+    boss_toasted = True
+    abyss_toasted = True
+    paimon_toasted = True
 
     while True:
         current_time = datetime.datetime.now().strftime("%H")
-        # current_time = "00"
+        # current_time = "12"
+        current_min = datetime.datetime.now().strftime("%M")
         current_weekday = datetime.datetime.now().strftime("%a")
         today_date = datetime.datetime.now().strftime("%d")
-
         time.sleep(1)
-        # Daily notification
-        if current_time == hour and normal_toasted == False:
-            toaster('normal')
-            normal_toasted = True
-        # Every Monday 4am reset weekly bosses
-        elif current_weekday == "Mon" and current_time == "04" and boss_toasted == False:
-            toaster('boss')
-            boss_toasted = True
-        # Every month 1st and 16 reset Abyss
-        elif today_date == "01" or today_date == "16" and abyss_toasted == False:
-            toaster("abyss")
-            abyss_toasted = True
-        # Every month 1st Paimon's shop reset
-        elif today_date == "01" and paimon_toasted == False:
-            toaster("paimon")
-            paimon_toasted = True
 
         ## Reset restriction
-        if daily_notification_state == "0":
+        if fetch("daily notification") == "0":
             normal_toasted = True
         else:
             if hour != hour:
                 normal_toasted = False
 
-        if advanced_notification_state == "0":
+        if fetch("advanced notification") == "0":
             resin_toasted = True
             boss_toasted = True
             abyss_toasted = True
             paimon_toasted = True
         else:
-            if current_weekday == "Tue":
-                boss_toasted = False
+            if current_min != fetch("resin")[1]:
+                resin_toasted = False
+            elif current_weekday == "Tue":
+                boss_toasted = True
             elif today_date == "02" or today_date == "17":
-                abyss_toasted = False
-                paimon_toasted = False
+                abyss_toasted = True
+                paimon_toasted = True
+
+        # Daily notification
+        if current_time == hour and normal_toasted == False:
+            toaster('normal')
+            normal_toasted = True
+        # Resin
+        elif current_time == fetch("resin")[0] and current_min == fetch("resin")[1] and resin_toasted == False:
+            toaster("resin")
+            resin_toasted = True
+        # Every Monday 4am reset weekly bosses
+        elif current_weekday == "Mon" and current_time == "04":
+            toaster('boss')
+        # Every month 1st and 16 reset Abyss
+        elif today_date == "01" or today_date == "16":
+            toaster("abyss")
+        # Every month 1st Paimon's shop reset
+        elif today_date == "01":
+            toaster("paimon")
       
 def notifier():
+    # fetch("todo")
     start_service()
+
     
 ## Tray stuffs
 def quit(pid):
@@ -194,7 +223,7 @@ def quit(pid):
 def sys_tray(pid):
     global tray
     
-    image = PIL.Image.open(current_path + "\Image\Paimon.png")
+    image = PIL.Image.open(current_path + "\Image\Paimon_tray.png")
     # resized_image= image.resize((1000,1000))
     tray = pystray.Icon("Tray", image, title="Genshin Helper Notification", menu=pystray.Menu(
         pystray.MenuItem("Exit", lambda:quit(pid=pid)),

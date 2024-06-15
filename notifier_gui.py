@@ -25,8 +25,7 @@ class NotificationFrame(ttk.LabelFrame):
 
         for data in self.database("fetch"):
             self.notification_list[data[0]] = data[1]
-        
-        print(f"\n{self.notification_list}")
+
         self.create_list()
         self.time.bind('<Return>', self.set_time)
 
@@ -63,7 +62,6 @@ class NotificationFrame(ttk.LabelFrame):
             # Grid notification switches and time setting
             if data == "DAILY_NOTIFICATION":
                 self.daily_notification_status = var
-                print(self.daily_notification_status.get())
                 self.daily_notification = ttk.Checkbutton(self, text="Desktop Notification", bootstyle="round-toggle", variable=self.daily_notification_status)
                 self.daily_notification.grid(column=1, row=1, padx=20, pady=(10, 0), columnspan=2, sticky=W)
                 if self.daily_notification_status.get() == 1: # True
@@ -89,7 +87,7 @@ class NotificationFrame(ttk.LabelFrame):
                 ToolTip(self.time, text="Press Enter to Apply new value.")
                 ToolTip(label, text="Press Enter to Apply new value.")
 
-            if data != "DAILY_NOTIFICATION" and data != "DAILY_NOTIFICATION_TIME" and data != "ADVANCED_NOTIFICATION" and data != "PID_NOTIFIER" and data != "PID_TRAY":
+            if data != "DAILY_NOTIFICATION" and data != "DAILY_NOTIFICATION_TIME" and data != "ADVANCED_NOTIFICATION" and data != "PID_NOTIFIER" and data != "PID_TRAY" and data != "RESIN_RESET":
                 if data == "Resin Overflow Reminder":
                     row_init += 2
                 self.checkbox = ttk.Checkbutton(self, text=data, variable=var, bootstyle="round-toggle", command=self.state)
@@ -107,19 +105,15 @@ class NotificationFrame(ttk.LabelFrame):
                         checkbox.config(state=NORMAL)
                     else:
                         checkbox.config(state=DISABLED)
-
-        print(self.notification_list)
                         
     def on(self, type):
         if type == "normal":
-            print("normal on")
             self.daily_notification.config(command=lambda: self.off("normal"))
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=NORMAL)
             self.database("others", "UPDATE notification SET Status = '1' WHERE Notification = 'DAILY_NOTIFICATION'")
             subprocess.Popen("pythonw notifier.pyw", shell=True)
         elif type == "advanced":
-            print("advanced on")
             self.advanced_notification.config(command=lambda: self.off("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
                     checkbox.config(state=NORMAL)
@@ -128,7 +122,6 @@ class NotificationFrame(ttk.LabelFrame):
 
     def off(self, type):
         if type == "normal":
-            print("normal off")
             self.daily_notification.config(command=lambda: self.on("normal"))
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=DISABLED)
@@ -137,7 +130,6 @@ class NotificationFrame(ttk.LabelFrame):
             subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
             subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
         elif type == "advanced":
-            print("advanced off")
             self.advanced_notification.config(command=lambda: self.on("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
                     checkbox.config(state=DISABLED)
@@ -163,7 +155,7 @@ class NotificationFrame(ttk.LabelFrame):
             info_label = ttk.Label(self)
             info_label.grid(column=3, row=2, sticky=W, padx=10)
             if status == "success":
-                info_label.config(text="New Value Saved!")
+                info_label.config(text="New Value Saved! Restart notification to take effect.")
             elif status == "exceed":
                 info_label.config(text="Invalid Value, Please type 0 to 23 only.", bootstyle="danger")
             else:
