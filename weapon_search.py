@@ -24,7 +24,7 @@ class weaponsearch(ttk.LabelFrame):
     self.InfoFrame = ttk.Frame(self)
     
     #Menu Frame Codes
-    WeaponLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Weapon to Show Its Info. \n<<-- Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
+    WeaponLabel = ttk.Label(self.MenuFrame,justify='center',text = 'Please Choose a Weapon to Show Its Info. \n← Or Use the FILTER Function on the LEFT',font = ("Arial", 12))
     WeaponLabel.grid(column = 2, row =0, padx = 8, pady = 15, sticky = 'ne')
 
     global boxvalue, WeaponChosen
