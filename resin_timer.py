@@ -27,13 +27,13 @@ class resintimer(ttk.LabelFrame):
     resin_label.grid(row=0, column=0)
 
     resin_label_box = tk.Entry(self, width=40)
-    resin_label_box.grid(row=0, column=0, columnspan=2, padx=(250,0), pady=(3,0))
+    resin_label_box.grid(row=0, column=0, columnspan=2, padx=(300,0), pady=(3,0))
 
     #result
     full_refill = tk.Label(self, text='Results:', font=('Helvetica',20))
     full_refill.grid(row=3, column=0, columnspan=2, sticky='sw', padx=(100,0))
 
-    result_text = tk.Text(self, height=10, width=40, font=('Helvetica',18))
+    result_text = tk.Text(self, height=11, width=40, font=('Times New Roman',18))
     result_text.grid(row=4, column=0, columnspan=2, sticky="n", pady=(20,0))
     result_text.config(state="disabled")
 
@@ -53,13 +53,18 @@ class resintimer(ttk.LabelFrame):
             clock = row[0]
             resin = row[1]
             time = str(row[2])
+            time_float = float(time)
+            time_int = int(time_float)
             new_minutes = row[3]
             #show results after rerun the code
             current_time = datetime.now()
 
             current_minutes = current_time.hour * 60 + current_time.minute
 
-            stored_minutes = int(time[:2]) * 60 + int(time[2:4])
+            if time_int <= 999:
+                stored_minutes = int(time[:2]) * 60 + int(time[2:3])
+            else:
+                stored_minutes = int(time[:2]) * 60 + int(time[2:4])
 
             if current_minutes >= stored_minutes:
                 resin_time = current_minutes - stored_minutes
@@ -82,9 +87,9 @@ class resintimer(ttk.LabelFrame):
             result_text.config(state="normal")
             resin_amount = int(resin_label_box.get())
 
-            if resin_amount < 0 or resin_amount > 160:
+            if resin_amount < 0 or resin_amount > 200:
                 result_text.delete(1.0, tk.END)
-                result_text.insert(tk.END, f"Number must be between 0 to 160")
+                result_text.insert(tk.END, f"Number must be between 0 to 200")
                 self.after(3000, fetch_data)
             else:
                 clear()
@@ -125,10 +130,10 @@ class resintimer(ttk.LabelFrame):
             if new_minutes is None:
                 new_minutes = datetime.now().minute
 
-            #input between 0-160
-            if resin_amount <= 159:
+            #input between 0-200
+            if resin_amount <= 199:
                 result_text.insert(tk.END, f"Your current resins: {resin_amount}\n")
-                for i in range(20, 161, 20):
+                for i in range(20, 201, 20):
                     if resin_amount < i:
                         time_per_resin = 8
                         current_resin = i-resin_amount
@@ -144,7 +149,9 @@ class resintimer(ttk.LabelFrame):
                             minute = a - current_time.minute
                         else:
                             minute = (a + 60) - current_time.minute
-                        if resin_amount <= 159:
+                        if minute == 60:
+                            minute -= 60
+                        if resin_amount <= 199:
                             result_text.insert(tk.END, f"{i:03} resin in {hours:02}h {minute:02}min at {new_time.strftime('%I')}:{a:02} {new_time.strftime('%p')}\n")
                         else:
                             result_text.delete(1.0, tk.END)
@@ -158,7 +165,7 @@ class resintimer(ttk.LabelFrame):
                         cur.execute("INSERT INTO resintimer (clock, resin, time, new_minutes) VALUES (?, ?, ?, ?)", (current_time.strftime("%d-%m-%Y %I:%M %p"), resin_amount, current_time.strftime("%H%M.%S"), current_time.minute))
                         conn.commit()
                         clock_recorded = True
-            elif resin_amount >= 160:
+            elif resin_amount >= 200:
                 result_text.delete(1.0, tk.END)
                 result_text.insert(tk.END, f"Your resin is full")
         except ValueError:
