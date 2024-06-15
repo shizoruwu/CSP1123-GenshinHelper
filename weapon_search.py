@@ -60,25 +60,25 @@ class weaponsearch(ttk.LabelFrame):
 
     #Checkbox for WEAPON TYPES
     swordtype = ttk.Checkbutton(weaponframe,text = 'Sword',variable=self.swordbutton_value , command=self.add_images_filtered)
-    swordtype.grid(columnspan = 2,column=0,row=1,sticky = 'w',padx = 10)
+    swordtype.grid(column=0,row=1,sticky = 'w',padx = 10)
 
     claymoretype = ttk.Checkbutton(weaponframe,text = 'Claymore',variable=self.claymorebutton_value,command=self.add_images_filtered)
-    claymoretype.grid(columnspan = 2,column=0,row=2,sticky = 'w',padx = 10)
+    claymoretype.grid(column=0,row=2,sticky = 'w',padx = 10)
 
     polearmtype = ttk.Checkbutton(weaponframe,text = 'Polearm',variable=self.polearmbutton_value,command=self.add_images_filtered)
-    polearmtype.grid(columnspan = 2,column=0,row=3,sticky = 'w',padx = 10)
+    polearmtype.grid(column=0,row=3,sticky = 'w',padx = 10)
 
     catalysttype = ttk.Checkbutton(weaponframe,text = 'Catalyst',variable=self.catalystbutton_value,command=self.add_images_filtered)
-    catalysttype.grid(columnspan = 2,column=0,row=4,sticky = 'w',padx = 10)
+    catalysttype.grid(column=1,row=1,sticky = 'w',padx = 10)
 
     bowtype = ttk.Checkbutton(weaponframe,text = 'Bow',variable=self.bowbutton_value,command=self.add_images_filtered)
-    bowtype.grid(columnspan = 2,column=0,row=5,sticky = 'w',padx = 10)
+    bowtype.grid(column=1,row=2,sticky = 'w',padx = 10)
 
     selectallbutton = ttk.Button(weaponframe,text='Select All',command=self.selectallweapon)
-    selectallbutton.grid(column = 0, row = 6 ,sticky = 'es',padx = 8,pady = 3)
+    selectallbutton.grid(column = 0, row = 4 ,sticky = 'es',padx = 8,pady = 3)
 
     clearbutton = ttk.Button(weaponframe,text='Clear All',command=self.clearallweapon)
-    clearbutton.grid(column = 1, row = 6 ,sticky = 'ws',padx = 8,pady = 3)
+    clearbutton.grid(column = 1, row = 4 ,sticky = 'ws',padx = 8,pady = 3)
 
 
     #Checkbox for Weapon QUALITY FILTER
@@ -214,6 +214,9 @@ class weaponsearch(ttk.LabelFrame):
     self.switch_button = ttk.Button(self.InfoFrame,width = 12, text="Back", command= self.switch_frames)
     self.switch_button.grid(columnspan=2,column=0,row=1,padx=20, pady=10,sticky = 'w')
 
+    self.add_weapon_todo = ttk.Button(InfoLabelFrame, text="Add Weapon to To-do List", command= self.weapon_todolist)
+    self.add_weapon_todo.grid(column=0,row=3,padx=10, pady=10,sticky = 'w')
+
   #Add image Functions
   def add_images(self):
     for i, name in enumerate(imagenamelist_sort):
@@ -233,7 +236,7 @@ class weaponsearch(ttk.LabelFrame):
       label2.grid(row=row, column=col, padx=10,sticky = 'n')
 
       #Insert Image of Weapon
-      image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
+      image_path = f"Assets/Genshin_Weapon_Image/Weapon_{currentname}.png"
       image = Image.open(image_path)
       resized_image = image.resize((145, 145))
       weapphoto = ImageTk.PhotoImage(resized_image)
@@ -296,14 +299,14 @@ class weaponsearch(ttk.LabelFrame):
     else:
       url = f'https://genshin-impact.fandom.com/wiki/{currentname}'
 
-    image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
+    image_path = f"Assets/Genshin_Weapon_Image/Weapon_{currentname}.png"
     image = Image.open(image_path)
     resized_image = image.resize((145, 145))
     weapphoto = ImageTk.PhotoImage(resized_image)
     displaylabel.config(image=weapphoto,)
     displaylabel.image = weapphoto
 
-    image_path = f"Genshin_Weapon_Image/Weapon_{currentname}_2nd.png"
+    image_path = f"Assets/Genshin_Weapon_Image/Weapon_{currentname}_2nd.png"
     image = Image.open(image_path)
     resized_image = image.resize((145, 145))
     weapphoto = ImageTk.PhotoImage(resized_image)
@@ -361,6 +364,9 @@ class weaponsearch(ttk.LabelFrame):
       self.show_InfoFrame()
     else:
       self.show_MenuFrame()
+
+    global weapon_todo_update
+    weapon_todo_update = clickedname
 
   #Show Menu Frame Func
   def show_MenuFrame(self):
@@ -467,7 +473,7 @@ class weaponsearch(ttk.LabelFrame):
       label2.grid(row=row, column=col, padx=10,sticky = 'n')
 
       #Insert Image of Weapon
-      image_path = f"Genshin_Weapon_Image/Weapon_{currentname}.png"
+      image_path = f"Assets/Genshin_Weapon_Image/Weapon_{currentname}.png"
       image = Image.open(image_path)
       resized_image = image.resize((145, 145))
       weapphoto = ImageTk.PhotoImage(resized_image)
@@ -563,6 +569,14 @@ class weaponsearch(ttk.LabelFrame):
       WeaponChosen['values'] = namelist
 
     self.add_images_filtered()
+
+  def weapon_todolist(self):
+      conn = sqlite3.connect('genshindata.db')
+      cur = conn.cursor()
+      cur.execute("CREATE TABLE IF NOT EXISTS tasks(Task, Status)")
+      todo = f"Upgrade '{weapon_todo_update}'"
+      cur.execute(f"INSERT INTO tasks (Task, Status) VALUES (?, ?)", (todo, f"False"))
+      conn.commit()
 
 def main():
     windll.shcore.SetProcessDpiAwareness(1)

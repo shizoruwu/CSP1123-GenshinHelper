@@ -258,7 +258,7 @@ class charsearch(ttk.LabelFrame):
 
         try:
           # Show Character Image
-          image_path = f"Genshin_Image/{clickedname}_Card.png"
+          image_path = f"Assets/Genshin_Image/{clickedname}_Card.png"
           image = Image.open(image_path)
           resized_image = image.resize((265, 515))
           charphoto = ImageTk.PhotoImage(resized_image)
@@ -368,7 +368,7 @@ class charsearch(ttk.LabelFrame):
             label2.grid(row=row, column=col, padx=10,sticky = 'n')
 
             #Insert Image of Weapon
-            image_path = f"Genshin_Character_Icon/ui-avataricon-{charname}.png"
+            image_path = f"Assets/Genshin_Character_Icon/ui-avataricon-{charname}.png"
             image = Image.open(image_path)
             resized_image = image.resize((145, 145))
             charphoto = ImageTk.PhotoImage(resized_image)
