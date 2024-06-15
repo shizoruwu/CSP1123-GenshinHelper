@@ -46,6 +46,13 @@ class NotificationFrame(ttk.LabelFrame):
         elif action == "fetch_PID":
             data = self.DBcursor.execute("SELECT Status FROM notification WHERE rowid >= 4 AND rowid <= 5")
             return data.fetchall()
+        
+        elif action == "fetch_status":
+            status = self.DBcursor.execute("SELECT Status FROM notification WHERE Notification = 'DAILY_NOTIFICATION'")
+            status = status.fetchall()
+            status2 = self.DBcursor.execute("SELECT Status FROM notification WHERE Notification = 'ADVANCED_NOTIFICATION'")
+            status2 = status2.fetchall()
+            return status[0][0], status2[0][0]
 
         elif action == "others":
             self.DBcursor.execute(statement)
@@ -132,17 +139,19 @@ class NotificationFrame(ttk.LabelFrame):
             for checkbox in self.checkbox_nameVar[:3]:
                     checkbox.config(state=DISABLED)
             self.database("others", "UPDATE notification SET Status = '0' WHERE Notification = 'DAILY_NOTIFICATION'")
-            pid = self.database("fetch_PID")
-            subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
-            subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
+            if self.database("fetch_status")[1] == "0": # If advanced notification status False
+                pid = self.database("fetch_PID")
+                subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
+                subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
         elif type == "advanced":
             self.advanced_notification.config(command=lambda: self.on("advanced"))
             for checkbox in self.checkbox_nameVar[3:]:
                     checkbox.config(state=DISABLED)
             self.database("others", "UPDATE notification SET Status = '0' WHERE Notification = 'ADVANCED_NOTIFICATION'")
-            pid = self.database("fetch_PID")
-            subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
-            subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
+            if self.database("fetch_status")[0] == "0": # If daily notification status False
+                pid = self.database("fetch_PID")
+                subprocess.Popen(f'taskkill /pid {pid[0][0]} /f', shell=True)
+                subprocess.Popen(f'taskkill /pid {pid[1][0]} /f', shell=True)
 
     def state(self):
         for notifications in self.notification_list:
