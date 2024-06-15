@@ -223,7 +223,7 @@ def quit(pid):
 def sys_tray(pid):
     global tray
     
-    image = PIL.Image.open(current_path + "\Image\Paimon_tray.png")
+    image = PIL.Image.open(current_path + r"\Assets\Image\Paimon_tray.png")
     # resized_image= image.resize((1000,1000))
     tray = pystray.Icon("Tray", image, title="Genshin Helper Notification", menu=pystray.Menu(
         pystray.MenuItem("Exit", lambda:quit(pid=pid)),
